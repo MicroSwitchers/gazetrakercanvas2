@@ -1,0 +1,3604 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaze Tracking Canvas - Cortical Visual Impairment Therapy</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Visual Target Management System for Cortical Visual Impairment Therapy by Niall Brown - ECVC">
+    <meta name="keywords" content="gaze tracking, visual therapy, cortical visual impairment, CVI, eye tracking, visual targets">
+    <meta name="author" content="Niall Brown - Early Childhood Vision Consultant">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Gaze Tracker">
+    <meta name="msapplication-TileColor" content="#1e293b">
+    <meta name="msapplication-config" content="browserconfig.xml">
+    
+    <!-- Manifest and Icons -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="gazetracker.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+    <link rel="mask-icon" href="gazetracker.svg" color="#3b82f6">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./dist/output.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-hover: #2563eb;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-color: #6366f1;
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-color: #10b981;
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-color: #f59e0b;
+            --warning-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --danger-color: #ef4444;
+            --danger-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --border-color: #e5e7eb;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --shadow-glow: 0 0 20px rgb(59 130 246 / 0.15);
+            --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+        }
+        
+        .dark {
+            --primary-color: #60a5fa;
+            --primary-hover: #3b82f6;
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-color: #64748b;
+            --secondary-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --success-color: #34d399;
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-color: #fbbf24;
+            --warning-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --danger-color: #f87171;
+            --danger-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #475569;
+            --bg-primary: #1e293b;
+            --bg-secondary: #334155;
+            --bg-tertiary: #475569;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(30, 41, 59, 0.25);
+            --glass-border: rgba(148, 163, 184, 0.18);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.4);
+            --shadow-glow: 0 0 20px rgb(96 165 250 / 0.2);
+            --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.1);
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-feature-settings: 'cv01', 'cv03', 'cv04', 'cv11';
+            overscroll-behavior: none;
+            background: var(--bg-secondary);
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+            color: var(--text-primary);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 100vh;
+        }
+        .drawer {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: fixed;
+            top: 0;
+            height: 100vh;
+            max-height: 100vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            box-shadow: var(--shadow-2xl), var(--shadow-glow);
+            z-index: 50;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .drawer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 50%, 
+                rgba(255, 255, 255, 0.02) 100%);
+            pointer-events: none;
+        }
+        
+        .drawer-right {
+            border-left: 1px solid var(--border-color);
+            border-right: none;
+        }
+        
+        .drawer-left {
+            left: 0;
+            transform: translateX(-100%);
+            border-right: 1px solid var(--border-color);
+        }
+        
+        .drawer-left.open {
+            transform: translateX(0);
+        }
+        
+        .drawer-right {
+            right: 0;
+            transform: translateX(100%);
+        }
+        
+        .drawer-right.open {
+            transform: translateX(0);
+        }
+        .drawer-toggle {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            padding: 12px;
+            z-index: 40;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            border-radius: 12px;
+        }
+        
+        .drawer-toggle::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 100%);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+        
+        .drawer-toggle:hover {
+            background: var(--bg-tertiary);
+            box-shadow: var(--shadow-2xl), var(--shadow-glow);
+            transform: translateY(-50%) scale(1.08) translateZ(0);
+        }
+        
+        .drawer-toggle-left {
+            left: 0;
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-left: none;
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .drawer-left.open ~ .drawer-toggle-left {
+            left: 320px;
+        }
+        
+        .drawer-toggle-right {
+            right: 0;
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-right: none;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .drawer-right.open ~ .drawer-toggle-right {
+            right: 320px;
+        }
+        
+        .drawer-toggle svg {
+            color: var(--primary-color);
+            transition: color 0.2s ease;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .drawer-toggle:hover svg {
+            color: var(--primary-hover);
+        }
+
+        .tool-button {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px) saturate(180%);
+            -webkit-backdrop-filter: blur(10px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            box-shadow: var(--shadow-sm), var(--shadow-inner);
+            position: relative;
+            overflow: hidden;
+            font-weight: 500;
+        }
+        
+        .tool-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.08) 0%, 
+                rgba(255, 255, 255, 0.02) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: inherit;
+        }
+        
+        .tool-button:hover {
+            background: var(--bg-secondary);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            transform: translateY(-2px) scale(1.02);
+            color: var(--text-primary);
+            border-color: var(--primary-color);
+        }
+        
+        .tool-button:hover::before {
+            opacity: 1;
+        }
+        
+        .tool-button.active {
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: 600;
+            box-shadow: var(--shadow-xl), var(--shadow-glow);
+            border-color: transparent;
+            transform: translateY(-1px);
+        }
+        
+        .tool-button.active::before {
+            opacity: 0;
+        }
+        
+        .tool-button svg {
+            transition: transform 0.2s ease;
+        }
+        
+        .tool-button:hover svg {
+            transform: scale(1.1);
+        }
+        #canvas-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            background: var(--bg-primary);
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+            overflow: hidden;
+        }
+        
+        #canvas-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.03) 50%, transparent 100%),
+                linear-gradient(0deg, transparent 0%, rgba(168, 85, 247, 0.03) 50%, transparent 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        canvas {
+            display: block;
+            border-radius: 0;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .context-menu {
+            display: none;
+            position: absolute;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: var(--shadow-2xl), var(--shadow-glow);
+            z-index: 1000;
+            overflow: hidden;
+            min-width: 200px;
+        }
+        
+        .context-menu::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.1) 0%, 
+                rgba(255, 255, 255, 0.05) 100%);
+            pointer-events: none;
+        }
+        
+        .context-menu button {
+            display: block;
+            width: 100%;
+            padding: 14px 18px;
+            text-align: left;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .context-menu button:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-color);
+            transform: translateX(4px);
+        }
+        
+        .context-menu button.danger {
+            color: var(--danger-color);
+        }
+        
+        .context-menu button.danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .context-menu hr {
+            margin: 8px 0;
+            border: none;
+            border-top: 1px solid var(--glass-border);
+            opacity: 0.6;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .accordion-button[aria-expanded="true"] + .accordion-content {
+            max-height: 1000px;
+        }
+        
+        .accordion-button {
+            font-weight: 600;
+            color: var(--text-primary);
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .accordion-button:hover {
+            background: var(--bg-secondary);
+            color: var(--primary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .accordion-button svg.arrow-icon {
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--primary-color);
+            filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+        }
+        
+        .accordion-button[aria-expanded="true"] svg.arrow-icon {
+            transform: rotate(180deg);
+        }
+        
+        .section-header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px) saturate(180%);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm), var(--shadow-inner);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .section-header:hover {
+            box-shadow: var(--shadow-md), var(--shadow-glow);
+            transform: translateY(-1px);
+        }
+        
+        .section-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px) saturate(180%);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm), var(--shadow-inner);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.05) 0%, 
+                rgba(255, 255, 255, 0.02) 100%);
+            pointer-events: none;
+        }
+        .layer-item-button {
+            background: transparent;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .layer-item-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--primary-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: inherit;
+        }
+        
+        .layer-item-button:hover {
+            background: var(--bg-secondary);
+            color: var(--primary-color);
+            transform: scale(1.1) translateY(-1px);
+            box-shadow: var(--shadow-md), var(--shadow-glow);
+        }
+        
+        .layer-item-button:hover::before {
+            opacity: 0.1;
+        }
+        
+        .layer-item-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .layer-item-button.layer-visibility-hidden {
+            opacity: 0.3;
+            color: var(--text-muted);
+        }
+        
+        .layer-item-button.layer-visibility-hidden:hover {
+            opacity: 0.6;
+            color: var(--text-secondary);
+        }
+        
+        .layer-item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm), var(--shadow-inner);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .layer-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.05) 0%, 
+                rgba(255, 255, 255, 0.02) 100%);
+            pointer-events: none;
+        }
+        
+        .layer-item:hover {
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            transform: translateY(-2px) scale(1.02);
+            border-color: var(--primary-color);
+        }
+        
+        .layer-item.selected {
+            background: var(--bg-tertiary);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .upload-button {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            position: relative;
+            overflow: hidden;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .upload-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .upload-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: var(--shadow-2xl), var(--shadow-glow);
+        }
+        
+        .upload-button:hover::before {
+            left: 100%;
+        }
+        
+        .delete-button {
+            background: var(--danger-gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .delete-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(220, 38, 38, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .delete-button:hover {
+            background: #dc2626;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px) scale(1.05);
+        }
+        
+        .delete-button:hover::before {
+            opacity: 1;
+        }
+        
+        .preset-color {
+            border-radius: 12px;
+            border: 3px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm), var(--shadow-inner);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .preset-color::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.2) 0%, 
+                rgba(255, 255, 255, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .preset-color:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            transform: scale(1.1) translateY(-2px);
+        }
+        
+        .preset-color:hover::before {
+            opacity: 1;
+        }
+        
+        .form-input {
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px) saturate(180%);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-inner);
+            position: relative;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md), 0 0 0 3px rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-input::placeholder {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        
+        /* Enhanced select dropdown styling */
+        select.form-input {
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(10px) saturate(180%) !important;
+            color: var(--text-primary) !important;
+            cursor: pointer !important;
+            border: 1px solid rgba(255, 255, 255, 0.18) !important;
+            border-radius: 8px !important;
+            padding: 12px 40px 12px 16px !important;
+            font-size: 14px !important;
+            line-height: 1.4 !important;
+            transition: all 0.2s ease !important;
+            position: relative !important;
+            
+            /* Remove all native appearances */
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            
+            /* Custom arrow */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+            background-position: right 12px center !important;
+            background-repeat: no-repeat !important;
+            background-size: 16px 12px !important;
+        }
+        
+        /* Specific fix for animation select */
+        #animation-select {
+            background: var(--glass-bg) !important;
+            backdrop-filter: blur(10px) saturate(180%) !important;
+            color: var(--text-primary) !important;
+            cursor: pointer !important;
+            border: 1px solid rgba(255, 255, 255, 0.18) !important;
+            border-radius: 8px !important;
+            padding: 12px 40px 12px 16px !important;
+            font-size: 14px !important;
+            line-height: 1.4 !important;
+            transition: all 0.2s ease !important;
+            position: relative !important;
+            
+            /* Remove all native appearances */
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            
+            /* Single custom arrow only */
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+            background-position: right 12px center !important;
+            background-repeat: no-repeat !important;
+            background-size: 16px 12px !important;
+        }
+        
+        /* Remove any pseudo-elements that might be adding arrows */
+        #animation-select::before,
+        #animation-select::after {
+            display: none !important;
+            content: none !important;
+        }
+        
+        .dark select.form-input {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+        }
+        
+        /* Completely remove all native dropdown arrows */
+        select.form-input::-ms-expand {
+            display: none !important;
+        }
+        
+        select.form-input::-webkit-inner-spin-button,
+        select.form-input::-webkit-outer-spin-button {
+            display: none !important;
+            -webkit-appearance: none !important;
+        }
+        
+        /* Firefox specific fixes */
+        @-moz-document url-prefix() {
+            select.form-input {
+                text-indent: 0.01px !important;
+                text-overflow: '' !important;
+            }
+        }
+        
+        select.form-input option {
+            background: var(--bg-primary) !important;
+            color: var(--text-primary) !important;
+            padding: 8px 12px !important;
+            border: none !important;
+        }
+        
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .media-item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px) saturate(180%);
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm), var(--shadow-inner);
+            overflow: hidden;
+            aspect-ratio: 1;
+            position: relative;
+        }
+        
+        .media-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(145deg, 
+                rgba(255, 255, 255, 0.05) 0%, 
+                rgba(255, 255, 255, 0.02) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .media-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-2xl), var(--shadow-glow);
+            transform: translateY(-4px) scale(1.03);
+        }
+        
+        .media-item img {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .media-item:hover img {
+            transform: scale(1.1) rotate(1deg);
+        }
+        #properties-panel-content {
+            display: none;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-active {
+            background: var(--success-color);
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+        
+        .status-inactive {
+            background: var(--text-muted);
+        }
+        
+        .status-drawer-closed {
+            background: var(--text-muted);
+            box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.2);
+        }
+        
+        .professional-badge {
+            display: inline-flex;
+            align-items: center;
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .drawer-header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+        
+        .drawer-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .drawer-subtitle {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin: 2px 0 0 0;
+        }
+        
+        .drawer-author {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin: 2px 0 0 0;
+            font-weight: 500;
+        }
+        
+        /* Scrollbar styling */
+        .drawer::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .drawer::-webkit-scrollbar-track {
+            background: var(--glass-bg);
+            border-radius: 10px;
+        }
+        
+        .drawer::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .drawer::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-gradient);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        /* Animation for elements */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fade-in {
+            animation: fadeInUp 0.3s ease-out;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .drawer {
+                width: 280px;
+            }
+            
+            .drawer-toggle {
+                padding: 10px;
+            }
+        }
+        
+        /* Splash Screen - Clean & Professional */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg-primary);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        #splash-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        #splash-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.98);
+        }
+        
+        #splash-screen .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.2));
+            position: relative;
+            z-index: 2;
+            animation: gentlePulse 2s ease-in-out infinite;
+        }
+        
+        #splash-screen .title {
+            color: var(--text-primary);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -0.5px;
+        }
+        
+        #splash-screen .subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        #splash-screen .author {
+            color: var(--text-muted);
+            font-size: 13px;
+            text-align: center;
+            font-weight: 500;
+            padding: 8px 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            z-index: 2;
+        }
+        
+        @keyframes gentlePulse {
+            0%, 100% { 
+                transform: scale(1); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(1.02); 
+                opacity: 0.95; 
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(1.08) rotate(2deg); 
+                opacity: 0.9; 
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% { 
+                transform: translate(0, 0) rotate(0deg); 
+            }
+            33% { 
+                transform: translate(30px, -30px) rotate(1deg); 
+            }
+            66% { 
+                transform: translate(-20px, 20px) rotate(-1deg); 
+            }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .app-logo {
+            width: 48px;
+            height: 48px;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow-xl);
+            z-index: 10000;
+            min-width: 300px;
+            text-align: center;
+            color: var(--text-primary);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        .progress-text {
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .progress-detail {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+        
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 24px 12px;
+            color: var(--text-muted);
+        }
+        
+        .empty-state svg {
+            margin: 0 auto 12px;
+            opacity: 0.6;
+        }
+        
+        .empty-state .title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state .subtitle {
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        /* Media Grid Improvements */
+        .media-item {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            aspect-ratio: 1;
+        }
+        
+        .drawer-header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .drawer-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        
+        .drawer-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin: 4px 0 0 0;
+        }
+        
+        .drawer-author {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin: 4px 0 0 0;
+            font-weight: 500;
+        }
+        
+        /* Animation Trigger Panel */
+        .animation-trigger-btn {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 4px 6px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 26px;
+            height: 26px;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+            opacity: 0.5;
+        }
+        
+        .animation-trigger-btn:hover {
+            background: var(--bg-secondary);
+            opacity: 0.55;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .animation-trigger-btn:active {
+            transform: translateY(0);
+        }
+        
+        .animation-trigger-btn.triggering {
+            background: rgb(65, 77, 95);
+            color: var(--text-secondary);
+            opacity: 0.52;
+            transform: scale(1.02);
+        }
+        
+        .animation-trigger-btn .key-indicator {
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            font-size: 8px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--bg-primary);
+        }
+        
+        .animation-trigger-btn .animation-icon {
+            font-size: 12px;
+            line-height: 1;
+            color: var(--text-secondary);
+        }
+        
+        .animation-trigger-btn.triggering .animation-icon {
+            color: var(--text-secondary);
+        }
+        
+        .animation-trigger-btn .object-name {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            max-width: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .animation-trigger-btn.gentle-shake .animation-icon {
+            animation: gentle-shake 0.5s ease-in-out;
+        }
+        
+        .animation-trigger-btn.swing .animation-icon {
+            animation: swing 0.5s ease-in-out;
+        }
+        
+        .animation-trigger-btn.circular .animation-icon {
+            animation: circular 0.5s ease-in-out;
+        }
+        
+        /* Animation Keyframes */
+        @keyframes gentle-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+        
+        @keyframes swing {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+        
+        @keyframes circular {
+            0% { transform: rotate(0deg) translateX(2px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(2px) rotate(-360deg); }
+        }
+        
+        /* Object Animations */
+        .canvas-object-shake {
+            animation: object-shake var(--animation-duration, 1s) ease-in-out;
+        }
+        
+        .canvas-object-swing {
+            animation: object-swing var(--animation-duration, 1s) ease-in-out;
+        }
+        
+        .canvas-object-circular {
+            animation: object-circular var(--animation-duration, 1s) ease-in-out;
+        }
+        
+        @keyframes object-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(calc(-1px * var(--animation-intensity, 5))); }
+            75% { transform: translateX(calc(1px * var(--animation-intensity, 5))); }
+        }
+        
+        @keyframes object-swing {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(calc(-1deg * var(--animation-intensity, 5))); }
+            75% { transform: rotate(calc(1deg * var(--animation-intensity, 5))); }
+        }
+        
+        @keyframes object-circular {
+            0% { transform: rotate(0deg) translateX(calc(1px * var(--animation-intensity, 5))) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(calc(1px * var(--animation-intensity, 5))) rotate(-360deg); }
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <img src="gazetracker.svg" alt="Gaze Tracker Logo" class="logo">
+        <h1 class="title">Gaze Tracking Canvas</h1>
+        <p class="subtitle">Visual Target Management System</p>
+        <p class="author">by Niall Brown - Early Childhood Vision Consultant (ECVC)</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="relative w-screen h-screen">
+        <!-- Canvas Area -->
+        <main id="canvas-container" class="w-full h-full">
+            <canvas id="main-canvas"></canvas>
+        </main>
+
+        <!-- Left Controls Drawer -->
+        <aside id="controls-drawer" class="drawer drawer-left w-80 overflow-y-auto">
+            <div class="flex-1 overflow-y-auto p-3">
+                <div class="drawer-header">
+                    <div class="flex items-center mb-2">
+                        <img src="gazetracker.svg" alt="Gaze Tracker Logo" class="app-logo">
+                        <div class="flex-1">
+                            <h1 class="drawer-title">Gaze Tracking Canvas</h1>
+                            <p class="drawer-subtitle">Visual Target Management</p>
+                            <p class="drawer-author">by Niall Brown - ECVC</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="left-panel-accordion" class="space-y-2">
+                <!-- Tools Panel -->
+                <div class="section-header">
+                    <button class="accordion-button w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="true">
+                        <span class="flex items-center">
+                            <span id="tools-status" class="status-indicator status-active"></span>
+                            Tools
+                        </span>
+                        <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                </div>
+                <div class="accordion-content section-content p-3">
+                    <!-- Fullscreen Toggle Button -->
+                    <div class="mb-4">
+                        <button id="fullscreen-toggle" class="tool-button w-full flex items-center justify-center space-x-2 p-3 rounded-md">
+                            <svg id="fullscreen-enter-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                            </svg>
+                            <svg id="fullscreen-exit-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span class="font-medium">
+                                <span id="fullscreen-text">Enter Fullscreen</span>
+                            </span>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <button id="select-tool" class="tool-button active flex items-center justify-center space-x-2 p-3 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path><path d="M13 13l6 6"></path></svg>
+                            <span class="font-medium">Select</span>
+                        </button>
+                        <button id="text-tool" class="tool-button flex items-center justify-center space-x-2 p-3 rounded-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12a4 4 0 0 0 0-8H6v8"></path><path d="M15 20a4 4 0 0 0 0-8H6v8Z"></path></svg>
+                            <span class="font-medium">Text</span>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button id="rect-tool" class="tool-button flex items-center justify-center p-3 rounded-md" title="Rectangle">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+                        </button>
+                        <button id="circle-tool" class="tool-button flex items-center justify-center p-3 rounded-md" title="Circle">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>
+                        </button>
+                        <button id="triangle-tool" class="tool-button flex items-center justify-center p-3 rounded-md" title="Triangle">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L2 22 L22 22 Z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <!-- Properties Inspector -->
+                <div class="section-header">
+                    <button id="properties-accordion-button" class="accordion-button w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="true">
+                        <span class="flex items-center">
+                            <span id="properties-status" class="status-indicator status-active"></span>
+                            Properties
+                        </span>
+                        <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                </div>
+                <div id="properties-panel-content" class="accordion-content section-content p-3">
+                    <!-- Text Properties -->
+                    <div id="text-properties" class="hidden space-y-4">
+                        <div>
+                            <label for="text-content-input" class="form-label block mb-2">Content</label>
+                            <textarea id="text-content-input" rows="3" class="form-input w-full resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label for="text-color-input" class="form-label block mb-2">Color</label>
+                            <input type="color" id="text-color-input" class="form-input w-full h-10 cursor-pointer">
+                        </div>
+                        <div>
+                            <label for="text-size-input" class="form-label block mb-2">Size</label>
+                            <input type="range" id="text-size-input" min="10" max="200" class="w-full">
+                        </div>
+                    </div>
+                    <!-- Shape Properties -->
+                    <div id="shape-properties" class="hidden space-y-4">
+                        <div>
+                            <label for="shape-color-input" class="form-label block mb-2">Color</label>
+                            <input type="color" id="shape-color-input" class="form-input w-full h-10 cursor-pointer">
+                        </div>
+                    </div>
+                    
+                    <!-- Image Properties -->
+                    <div id="image-properties" class="hidden space-y-4">
+                        <div>
+                            <label class="form-label block mb-2">Transform</label>
+                            <div class="flex space-x-2">
+                                <button id="flip-horizontal-btn" class="upload-button flex-1 py-2 px-3 text-sm">
+                                    <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                                    </svg>
+                                    Flip H
+                                </button>
+                                <button id="flip-vertical-btn" class="upload-button flex-1 py-2 px-3 text-sm">
+                                    <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                    </svg>
+                                    Flip V
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Animation Properties -->
+                    <div id="animation-properties" class="space-y-4">
+                        <div>
+                            <label class="form-label block mb-2">Animation</label>
+                            <select id="animation-select" class="form-input w-full">
+                                <option value="">No Animation</option>
+                                <option value="gentle-shake">Gentle Shake</option>
+                                <option value="swing">Swing</option>
+                                <option value="circular">Circular</option>
+                            </select>
+                        </div>
+                        <div id="animation-settings" class="hidden space-y-3">
+                            <div>
+                                <label for="animation-duration" class="form-label block mb-2">Duration (seconds)</label>
+                                <input type="range" id="animation-duration" min="0.5" max="3" step="0.1" value="1" class="w-full">
+                                <span id="duration-value" class="text-xs text-slate-400">1.0s</span>
+                            </div>
+                            <div>
+                                <label for="animation-intensity" class="form-label block mb-2">Intensity</label>
+                                <input type="range" id="animation-intensity" min="1" max="10" value="5" class="w-full">
+                                <span id="intensity-value" class="text-xs text-slate-400">5</span>
+                            </div>
+                            <button id="preview-animation" class="upload-button w-full py-2 px-3 text-sm">
+                                <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Preview Animation
+                            </button>
+                        </div>
+                    </div>
+                    <div id="no-selection-properties" class="text-center py-8">
+                        <div class="text-slate-400 mb-2">
+                            <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-sm text-slate-300 font-medium">Select an object to see its properties</p>
+                    </div>
+                </div>
+                <!-- Background Color -->
+                <div class="section-header">
+                    <button class="accordion-button w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="true">
+                        <span class="flex items-center">
+                            <span id="background-status" class="status-indicator status-active"></span>
+                            Background Color
+                        </span>
+                        <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                </div>
+                <div class="accordion-content section-content p-3">
+                    <div class="space-y-3">
+                        <div>
+                            <label class="form-label block mb-2">Color</label>
+                            <input type="color" id="bg-color-slider" value="#000000" class="form-input w-full h-10 cursor-pointer">
+                        </div>
+                        <div>
+                            <label class="form-label block mb-2">Presets</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <button class="preset-color h-10 rounded" style="background-color: #FBF3E4;" data-color="#FBF3E4"></button>
+                                <button class="preset-color h-10 rounded" style="background-color: #EADDC6;" data-color="#EADDC6"></button>
+                                <button class="preset-color h-10 rounded" style="background-color: #D5C4A1;" data-color="#D5C4A1"></button>
+                                <button class="preset-color h-10 rounded" style="background-color: #FFFFFF;" data-color="#FFFFFF"></button>
+                                <button class="preset-color h-10 rounded" style="background-color: #808080;" data-color="#808080"></button>
+                                <button class="preset-color h-10 rounded" style="background-color: #000000;" data-color="#000000"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Layer Management -->
+                <div class="section-header">
+                    <button class="accordion-button w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="true">
+                        <span class="flex items-center">
+                            <span id="layers-status" class="status-indicator status-active"></span>
+                            Layers
+                        </span>
+                        <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                </div>
+                <div class="accordion-content section-content p-3">
+                    <div id="layer-list" class="space-y-2 max-h-64 overflow-y-auto"></div>
+                    <div id="layers-empty-state" class="empty-state">
+                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                        <div class="title">No Objects Yet</div>
+                        <div class="subtitle">Add text, shapes, or images to see them appear here as layers</div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Right Media Drawer -->
+        <div id="media-library" class="drawer drawer-right w-80">
+            <div class="p-3 flex-shrink-0">
+                <div class="drawer-header">
+                    <h2 class="drawer-title">Media Library</h2>
+                    <p class="drawer-subtitle">Import and manage media assets</p>
+                </div>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto px-3 pb-3">
+                <div id="media-library-accordion" class="space-y-2">
+                    <!-- Visual Targets Section -->
+                    <div class="section-header">
+                        <button class="accordion-button w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="true">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                                Visual Targets
+                            </span>
+                            <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                    </div>
+                    <div class="accordion-content section-content p-3">
+                        <div class="space-y-3">
+                            <label for="image-upload" class="upload-button w-full text-center py-2 px-3 rounded-md cursor-pointer block">
+                                <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                                Add Media
+                            </label>
+                            <input type="file" id="image-upload" multiple accept="image/*,video/*,.gif,.mp4,.mov,.avi,.mkv,.webm,.3gp,.wmv,.flv,.m4v" class="hidden">
+                            <label for="folder-upload" class="upload-button w-full text-center py-2 px-3 rounded-md cursor-pointer block">
+                                <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+                                </svg>
+                                Add Folder
+                            </label>
+                            <input type="file" id="folder-upload" webkitdirectory directory multiple class="hidden">
+                        </div>
+                        <div class="mt-4">
+                            <div id="visual-targets-grid" class="grid grid-cols-3 gap-2"></div>
+                            <div id="visual-targets-empty-state" class="empty-state">
+                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                                <div class="title">No Visual Targets</div>
+                                <div class="subtitle">Add images, videos, or GIFs to place as visual targets on the canvas</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Backgrounds Section -->
+                    <div class="section-header">
+                        <button class="accordion-button w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="true">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                Backgrounds
+                            </span>
+                            <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                    </div>
+                    <div class="accordion-content section-content p-3">
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-2">
+                                <label for="bg-image-input" class="upload-button flex-grow text-center py-2 px-3 rounded-md cursor-pointer">
+                                    <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                    Upload Background
+                                </label>
+                                <input type="file" id="bg-image-input" class="hidden" accept="image/*">
+                                <button id="delete-bg-btn" class="delete-button hidden p-2 rounded-md" title="Remove Background Image">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div id="backgrounds-grid" class="grid grid-cols-2 gap-2"></div>
+                            <div id="backgrounds-empty-state" class="empty-state">
+                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <div class="title">No Backgrounds</div>
+                                <div class="subtitle">Upload images to use as backgrounds. These images will always stay as the bottom layer.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Foregrounds Section -->
+                    <div class="section-header">
+                        <button class="accordion-button w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="true">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                                </svg>
+                                Foregrounds
+                            </span>
+                            <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                    </div>
+                    <div class="accordion-content section-content p-3">
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-2">
+                                <label for="fg-image-input" class="upload-button flex-grow text-center py-2 px-3 rounded-md cursor-pointer">
+                                    <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                    Upload Foreground
+                                </label>
+                                <input type="file" id="fg-image-input" class="hidden" accept="image/*">
+                                <button id="delete-fg-btn" class="delete-button hidden p-2 rounded-md" title="Remove Foreground Image">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div id="foregrounds-grid" class="grid grid-cols-2 gap-2"></div>
+                            <div id="foregrounds-empty-state" class="empty-state">
+                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                                </svg>
+                                <div class="title">No Foregrounds</div>
+                                <div class="subtitle">Upload images to use as foregrounds. These images will always be the top layer and need to have transparent areas to show images behind them.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Drawer Toggles -->
+        <button id="toggle-controls-btn" class="drawer-toggle drawer-toggle-left" title="Toggle Controls">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        </button>
+        <button id="toggle-library-btn" class="drawer-toggle drawer-toggle-right" title="Toggle Media Library">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+        </button>
+
+        <!-- Progress Bar -->
+        <div id="progress-container" class="progress-container" style="display: none;">
+            <div class="progress-text">Loading Media...</div>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+            <div id="progress-detail" class="progress-detail">0 of 0 files processed</div>
+        </div>
+
+        <!-- Context Menu -->
+        <div id="context-menu" class="context-menu">
+            <button id="ctx-animate" class="flex items-center space-x-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>Animate...</span>
+            </button>
+            <hr class="my-1">
+            <button id="ctx-bring-to-front" class="flex items-center space-x-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
+                </svg>
+                <span>Bring to Front</span>
+            </button>
+            <button id="ctx-send-to-back" class="flex items-center space-x-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"></path>
+                </svg>
+                <span>Send to Back</span>
+            </button>
+            <hr class="my-1">
+            <button id="ctx-delete" class="danger flex items-center space-x-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+                <span>Delete</span>
+            </button>
+        </div>
+
+        <!-- Animation Trigger Panel -->
+        <div id="animation-panel" class="fixed bottom-4 left-4 z-40 transition-all duration-300 translate-y-full">
+            <div id="animation-triggers" class="flex items-center space-x-1"></div>
+        </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Splash Screen ---
+            const splashScreen = document.getElementById('splash-screen');
+            
+            // Hide splash screen after 2 seconds
+            setTimeout(() => {
+                splashScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                }, 500);
+            }, 2000);
+            
+            // --- DOM Elements ---
+            const canvas = document.getElementById('main-canvas');
+            const ctx = canvas.getContext('2d');
+            const canvasContainer = document.getElementById('canvas-container');
+            
+            const controlsDrawer = document.getElementById('controls-drawer');
+            const mediaLibrary = document.getElementById('media-library');
+            const toggleControlsBtn = document.getElementById('toggle-controls-btn');
+            const toggleLibraryBtn = document.getElementById('toggle-library-btn');
+            const fullscreenToggle = document.getElementById('fullscreen-toggle');
+            const fullscreenEnterIcon = document.getElementById('fullscreen-enter-icon');
+            const fullscreenExitIcon = document.getElementById('fullscreen-exit-icon');
+            const fullscreenText = document.getElementById('fullscreen-text');
+            
+            const imageUpload = document.getElementById('image-upload');
+            const folderUpload = document.getElementById('folder-upload');
+            const backgroundsGrid = document.getElementById('backgrounds-grid');
+            const foregroundsGrid = document.getElementById('foregrounds-grid');
+            const visualTargetsGrid = document.getElementById('visual-targets-grid');
+            const backgroundsEmptyState = document.getElementById('backgrounds-empty-state');
+            const foregroundsEmptyState = document.getElementById('foregrounds-empty-state');
+            const visualTargetsEmptyState = document.getElementById('visual-targets-empty-state');
+            
+            const selectTool = document.getElementById('select-tool');
+            const textTool = document.getElementById('text-tool');
+            const rectTool = document.getElementById('rect-tool');
+            const circleTool = document.getElementById('circle-tool');
+            const triangleTool = document.getElementById('triangle-tool');
+
+            const bgColorSlider = document.getElementById('bg-color-slider');
+            const presetColorBtns = document.querySelectorAll('.preset-color');
+            const bgImageInput = document.getElementById('bg-image-input');
+            const deleteBgBtn = document.getElementById('delete-bg-btn');
+            const fgImageInput = document.getElementById('fg-image-input');
+            const deleteFgBtn = document.getElementById('delete-fg-btn');
+
+            const layerList = document.getElementById('layer-list');
+            const layersEmptyState = document.getElementById('layers-empty-state');
+            const contextMenu = document.getElementById('context-menu');
+            const accordionButtons = document.querySelectorAll('.accordion-button');
+            
+            // Progress Bar Elements
+            const progressContainer = document.getElementById('progress-container');
+            const progressFill = document.getElementById('progress-fill');
+            const progressDetail = document.getElementById('progress-detail');
+
+            // Properties Panel Elements
+            const propertiesPanel = document.getElementById('properties-panel-content');
+            const textProperties = document.getElementById('text-properties');
+            const shapeProperties = document.getElementById('shape-properties');
+            const imageProperties = document.getElementById('image-properties');
+            const animationProperties = document.getElementById('animation-properties');
+            const noSelectionProperties = document.getElementById('no-selection-properties');
+            const textContentInput = document.getElementById('text-content-input');
+            const textColorInput = document.getElementById('text-color-input');
+            const textSizeInput = document.getElementById('text-size-input');
+            const shapeColorInput = document.getElementById('shape-color-input');
+            const flipHorizontalBtn = document.getElementById('flip-horizontal-btn');
+            const flipVerticalBtn = document.getElementById('flip-vertical-btn');
+            
+            // Animation Elements
+            const animationSelect = document.getElementById('animation-select');
+            const animationSettings = document.getElementById('animation-settings');
+            const animationDuration = document.getElementById('animation-duration');
+            const animationIntensity = document.getElementById('animation-intensity');
+            const durationValue = document.getElementById('duration-value');
+            const intensityValue = document.getElementById('intensity-value');
+            const previewAnimationBtn = document.getElementById('preview-animation');
+            const animationPanel = document.getElementById('animation-panel');
+            const animationTriggers = document.getElementById('animation-triggers');
+
+            // --- State ---
+            let objects = [];
+            let selectedObject = null;
+            let isDragging = false;
+            let isResizing = false;
+            let resizeHandle = null;
+            let dragStartX, dragStartY;
+            let currentTool = 'select';
+            let backgroundColor = '#000000'; // Default to black
+            let backgroundImage = null;
+            let foregroundImage = null;
+            let animationLoopRunning = false;
+            let lastTime = 0;
+            
+            // Shape Creation State
+            // Color harmony palettes - each palette contains harmonious colors
+            const colorHarmonyPalettes = {
+                // Warm Sunset palette
+                warm: [
+                    '#FF6B35', '#F7931E', '#FFD23F', '#FF4500', '#FF8C42',
+                    '#FF6347', '#FFA500', '#FFB347', '#FF7F50', '#FF8C69'
+                ],
+                // Cool Ocean palette  
+                cool: [
+                    '#0077BE', '#00A8CC', '#7DD3C0', '#4ECDC4', '#45B7D1',
+                    '#96CEB4', '#85C1E9', '#5DADE2', '#3498DB', '#2E86AB'
+                ],
+                // Earth/Nature palette
+                earth: [
+                    '#8FBC8F', '#228B22', '#32CD32', '#9ACD32', '#6B8E23',
+                    '#708238', '#87A96B', '#A4BE7B', '#C5D6A6', '#8FC93A'
+                ],
+                // Purple/Magenta palette
+                cosmic: [
+                    '#8E44AD', '#9B59B6', '#AF7AC5', '#C39BD3', '#D7BDE2',
+                    '#BA55D3', '#DA70D6', '#DDA0DD', '#E6E6FA', '#9370DB'
+                ],
+                // Vibrant Mixed (complementary colors)
+                vibrant: [
+                    '#E74C3C', '#3498DB', '#F39C12', '#2ECC71', '#9B59B6',
+                    '#E67E22', '#1ABC9C', '#34495E', '#F1C40F', '#16A085'
+                ]
+            };
+            
+            // Current palette and color management
+            let currentPalette = 'vibrant'; // Start with vibrant
+            let currentColorIndex = 0;
+            let paletteRotationCount = 0;
+            
+            // Function to get next harmonious color
+            function getNextHarmoniousColor() {
+                const palette = colorHarmonyPalettes[currentPalette];
+                const color = palette[currentColorIndex];
+                
+                currentColorIndex++;
+                
+                // When we reach the end of a palette, switch to the next one
+                if (currentColorIndex >= palette.length) {
+                    currentColorIndex = 0;
+                    paletteRotationCount++;
+                    
+                    // Cycle through palettes
+                    const paletteNames = Object.keys(colorHarmonyPalettes);
+                    const currentPaletteIndex = paletteNames.indexOf(currentPalette);
+                    const nextPaletteIndex = (currentPaletteIndex + 1) % paletteNames.length;
+                    currentPalette = paletteNames[nextPaletteIndex];
+                }
+                
+                return color;
+            }
+            
+            let shapeOffsetX = 0;
+            let shapeOffsetY = 0;
+            
+            // Media Library State
+            let mediaAssets = {
+                backgrounds: [],
+                foregrounds: [],
+                visualTargets: []
+            };
+            
+            // Animation State
+            let animatedObjects = [];
+            let animationPanelVisible = false;
+
+            // Animation Panel Management
+            function updateAnimationTriggerPanel() {
+                const animatedObjs = objects.filter(obj => obj.animationType);
+                animationTriggers.innerHTML = '';
+                
+                if (animatedObjs.length === 0) {
+                    hideAnimationPanel();
+                    return;
+                }
+                
+                animatedObjs.forEach((obj, index) => {
+                    const triggerBtn = document.createElement('button');
+                    triggerBtn.className = `animation-trigger-btn ${obj.animationType}`;
+                    triggerBtn.dataset.objectId = obj.id;
+                    triggerBtn.dataset.keyIndex = index + 1;
+                    triggerBtn.title = `${obj.name} - Press ${index + 1}`;
+                    
+                    triggerBtn.innerHTML = `
+                        <div class="key-indicator">${index + 1}</div>
+                        <div class="animation-icon">⚬</div>
+                        <div class="object-name">${obj.name}</div>
+                    `;
+                    
+                    triggerBtn.addEventListener('click', () => {
+                        triggerAnimation(obj);
+                    });
+                    
+                    animationTriggers.appendChild(triggerBtn);
+                });
+                
+                showAnimationPanel();
+            }
+            
+            function showAnimationPanel() {
+                if (!animationPanelVisible) {
+                    animationPanel.classList.remove('translate-y-full');
+                    animationPanelVisible = true;
+                }
+            }
+            
+            function hideAnimationPanel() {
+                if (animationPanelVisible) {
+                    animationPanel.classList.add('translate-y-full');
+                    animationPanelVisible = false;
+                }
+            }
+            
+            function triggerAnimation(obj) {
+                if (!obj || !obj.animationType) {
+                    console.warn('Animation trigger failed: Invalid object or no animation type');
+                    return false;
+                }
+                
+                // Stop any current animation first
+                obj.isAnimating = false;
+                
+                // Ensure animation properties are properly set
+                if (typeof obj.animationDuration === 'undefined') {
+                    obj.animationDuration = 1.0;
+                }
+                if (typeof obj.animationIntensity === 'undefined') {
+                    obj.animationIntensity = 5;
+                }
+                
+                if (obj.startAnimation()) {
+                    // Visual feedback on trigger button
+                    const triggerBtn = document.querySelector(`[data-object-id="${obj.id}"]`);
+                    if (triggerBtn) {
+                        triggerBtn.classList.add('triggering');
+                        setTimeout(() => {
+                            triggerBtn.classList.remove('triggering');
+                        }, 500);
+                    }
+                    
+                    // Start animation loop if not already running
+                    if (!animationLoopRunning) {
+                        startAnimationLoop();
+                    }
+                    return true;
+                }
+                return false;
+            }
+            
+            function startAnimationLoop() {
+                if (animationLoopRunning) return; // Prevent multiple loops
+                animationLoopRunning = true;
+                lastTime = 0;
+                
+                function animate(currentTime) {
+                    if (lastTime === 0) lastTime = currentTime;
+                    const deltaTime = currentTime - lastTime;
+                    lastTime = currentTime;
+                    
+                    // Check if any objects are still animating
+                    const stillAnimating = objects.some(obj => obj.isAnimating);
+                    
+                    if (stillAnimating) {
+                        draw();
+                        requestAnimationFrame(animate);
+                    } else {
+                        animationLoopRunning = false;
+                        lastTime = 0;
+                    }
+                }
+                
+                requestAnimationFrame(animate);
+            }
+
+            // --- Canvas Setup ---
+            function resizeCanvas() {
+                const rect = canvasContainer.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+                draw();
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            
+            // Initialize status indicators
+            updateStatusIndicators();
+            
+            // Initialize empty states
+            updateLayerList();
+            updateEmptyStates();
+
+            // --- Drawing Engine ---
+            function draw() {
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = backgroundColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                if (backgroundImage) {
+                    drawCoverImage(backgroundImage.img);
+                }
+
+                objects.sort((a, b) => a.zIndex - b.zIndex).forEach(obj => {
+                    if (obj.visible) {
+                       obj.draw(ctx);
+                    }
+                });
+                
+                if (foregroundImage) {
+                    drawCoverImage(foregroundImage.img);
+                }
+
+                if (selectedObject && currentTool === 'select') {
+                    drawSelectionHandles(selectedObject);
+                }
+            }
+            
+            function drawCoverImage(img) {
+                const canvasRatio = canvas.width / canvas.height;
+                const imgRatio = img.width / img.height;
+                
+                let drawWidth, drawHeight, drawX, drawY;
+                
+                if (imgRatio > canvasRatio) {
+                    // Image is wider than canvas
+                    drawHeight = canvas.height;
+                    drawWidth = drawHeight * imgRatio;
+                    drawX = (canvas.width - drawWidth) / 2;
+                    drawY = 0;
+                } else {
+                    // Image is taller than canvas
+                    drawWidth = canvas.width;
+                    drawHeight = drawWidth / imgRatio;
+                    drawX = 0;
+                    drawY = (canvas.height - drawHeight) / 2;
+                }
+                
+                ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+            }
+            
+            function drawSelectionHandles(obj) {
+                const center = { x: obj.x + obj.width / 2, y: obj.y + obj.height / 2 };
+                ctx.save();
+                ctx.translate(center.x, center.y);
+                ctx.rotate(obj.rotation);
+                ctx.translate(-center.x, -center.y);
+                
+                ctx.strokeStyle = '#4f46e5';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([6, 3]);
+                ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
+                ctx.setLineDash([]);
+                
+                getResizeHandles(obj).forEach(handle => {
+                    ctx.fillStyle = 'white';
+                    ctx.strokeStyle = '#4f46e5';
+                    ctx.lineWidth = 1.5;
+                    ctx.fillRect(handle.x, handle.y, handle.size, handle.size);
+                    ctx.strokeRect(handle.x, handle.y, handle.size, handle.size);
+                });
+                ctx.restore();
+            }
+
+            // --- Object Classes ---
+            class CanvasObject { 
+                constructor(x, y, width, height, zIndex, type) { 
+                    this.id = Date.now() + Math.random(); 
+                    this.x = x; 
+                    this.y = y; 
+                    this.initialX = x; 
+                    this.initialY = y; 
+                    this.width = width; 
+                    this.height = height; 
+                    this.zIndex = zIndex; 
+                    this.type = type; 
+                    this.visible = true; 
+                    this.rotation = 0; 
+                    this.scale = 1; 
+                    this.flipHorizontal = false;
+                    this.flipVertical = false;
+                    // Animation properties
+                    this.animationType = null;
+                    this.animationDuration = 1.0;
+                    this.animationIntensity = 5;
+                    this.isAnimating = false;
+                    this.animationStartTime = 0;
+                } 
+                
+                isPointInside(px, py) { 
+                    const center = { x: this.x + this.width / 2, y: this.y + this.height / 2 }; 
+                    const translatedX = px - center.x; 
+                    const translatedY = py - center.y; 
+                    const rotatedX = translatedX * Math.cos(-this.rotation) - translatedY * Math.sin(-this.rotation); 
+                    const rotatedY = translatedX * Math.sin(-this.rotation) + translatedY * Math.cos(-this.rotation); 
+                    return Math.abs(rotatedX) <= this.width / 2 && Math.abs(rotatedY) <= this.height / 2; 
+                } 
+                
+                draw(ctx) { 
+                    const center = { x: this.x + this.width / 2, y: this.y + this.height / 2 }; 
+                    ctx.save(); 
+                    ctx.translate(center.x, center.y); 
+                    ctx.rotate(this.rotation); 
+                    ctx.scale(
+                        this.scale * (this.flipHorizontal ? -1 : 1), 
+                        this.scale * (this.flipVertical ? -1 : 1)
+                    ); 
+                    
+                    // Apply animation transform
+                    if (this.isAnimating) {
+                        const elapsed = (Date.now() - this.animationStartTime) / 1000;
+                        const progress = Math.min(elapsed / this.animationDuration, 1);
+                        this.applyAnimationTransform(ctx, progress);
+                        
+                        if (progress >= 1) {
+                            this.isAnimating = false;
+                        }
+                    }
+                    
+                    ctx.translate(-center.x, -center.y); 
+                    this.drawContent(ctx); 
+                    ctx.restore(); 
+                } 
+                
+                applyAnimationTransform(ctx, progress) {
+                    const t = progress * Math.PI * 2; // Full cycle
+                    const intensity = this.animationIntensity;
+                    
+                    switch (this.animationType) {
+                        case 'gentle-shake':
+                            const shakeX = Math.sin(t * 4) * intensity;
+                            ctx.translate(shakeX, 0);
+                            break;
+                        case 'swing':
+                            // Use a pendulum-like motion with proper damping
+                            const frequency = 2; // Slower swing frequency
+                            const amplitude = (intensity * 0.8) * Math.PI / 180; // Convert to radians
+                            const swingAngle = Math.sin(t * frequency) * amplitude;
+                            
+                            // Apply rotation around the object's top center point for natural swing
+                            const pivotY = -this.height / 2;
+                            ctx.translate(0, pivotY);
+                            ctx.rotate(swingAngle);
+                            ctx.translate(0, -pivotY);
+                            break;
+                        case 'circular':
+                            const circularRadius = intensity * 2;
+                            const circularX = Math.cos(t) * circularRadius;
+                            const circularY = Math.sin(t) * circularRadius;
+                            ctx.translate(circularX, circularY);
+                            break;
+                    }
+                }
+                
+                startAnimation() {
+                    if (this.animationType) {
+                        this.isAnimating = true;
+                        this.animationStartTime = Date.now();
+                        return true;
+                    }
+                    return false;
+                }
+                
+                drawContent(ctx) { } 
+                updateMetrics() { } 
+            }
+            class ImageObject extends CanvasObject { 
+                constructor(img, x, y, width, height, zIndex, type = 'image') { 
+                    super(x, y, width, height, zIndex, type); 
+                    this.img = img; 
+                    this.name = type === 'foreground' ? `[FG] ${img.dataset.name}` : (img.dataset.name || 'Image'); 
+                } 
+                
+                drawContent(ctx) { 
+                    // Note: Flipping is handled by the base class draw() method
+                    // so we don't need to apply it here again
+                    ctx.drawImage(this.img, this.x, this.y, this.width, this.height); 
+                } 
+            }
+            
+            class VideoObject extends CanvasObject { 
+                constructor(video, x, y, width, height, zIndex, type = 'video') { 
+                    super(x, y, width, height, zIndex, type); 
+                    this.video = video; 
+                    this.name = video.dataset.name || 'Video'; 
+                } 
+                
+                drawContent(ctx) { 
+                    // Draw video frame to canvas
+                    ctx.drawImage(this.video, this.x, this.y, this.width, this.height); 
+                } 
+            }
+            class TextObject extends CanvasObject { 
+                constructor(text, x, y, zIndex) { 
+                    super(x, y, 0, 0, zIndex, 'text'); 
+                    this.text = text; 
+                    this.color = '#FFFFFF'; 
+                    this.size = 40; 
+                    this.name = `Text: "${text.substring(0, 15)}..."`; 
+                    this.initialX = x;
+                    this.initialY = y;
+                    this.hasBeenPositioned = false; // Track if text has been initially positioned
+                    this.updateMetrics(); 
+                } 
+                drawContent(ctx) { 
+                    ctx.fillStyle = this.color; 
+                    ctx.font = `${this.size}px Inter`; 
+                    ctx.textBaseline = 'top'; 
+                    ctx.fillText(this.text, this.x, this.y); 
+                } 
+                updateMetrics() { 
+                    const tempCanvas = document.createElement('canvas');
+                    const tempCtx = tempCanvas.getContext('2d');
+                    tempCtx.font = `${this.size}px Inter`; 
+                    const metrics = tempCtx.measureText(this.text); 
+                    
+                    // Store old dimensions
+                    const oldWidth = this.width || 0;
+                    const oldHeight = this.height || 0;
+                    
+                    // Update dimensions
+                    this.width = metrics.width; 
+                    this.height = this.size; 
+                    
+                    // Only update position if it's initial creation (not during resize or edit)
+                    if (!this.isResizing && !this.hasBeenPositioned) {
+                        this.x = this.initialX - this.width / 2; 
+                        this.y = this.initialY - this.height / 2;
+                        this.hasBeenPositioned = true;
+                    }
+                    
+                    this.name = `Text: "${this.text.substring(0, 15)}..."`; 
+                } 
+            }
+            class ShapeObject extends CanvasObject { 
+                constructor(shapeType, x, y, zIndex, color = '#FF5733') { 
+                    const size = 100; 
+                    super(x - size/2, y - size/2, size, size, zIndex, 'shape'); 
+                    this.shapeType = shapeType; 
+                    this.color = color; 
+                    this.name = `Shape: ${shapeType}`; 
+                } 
+                drawContent(ctx) { 
+                    ctx.fillStyle = this.color; 
+                    switch(this.shapeType) { 
+                        case 'rect': 
+                            ctx.fillRect(this.x, this.y, this.width, this.height); 
+                            break; 
+                        case 'circle': 
+                            ctx.beginPath(); 
+                            ctx.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2); 
+                            ctx.fill(); 
+                            break; 
+                        case 'triangle': 
+                            ctx.beginPath(); 
+                            ctx.moveTo(this.x + this.width / 2, this.y); 
+                            ctx.lineTo(this.x + this.width, this.y + this.height); 
+                            ctx.lineTo(this.x, this.y + this.height); 
+                            ctx.closePath(); 
+                            ctx.fill(); 
+                            break; 
+                    } 
+                } 
+            }
+            
+            // --- Layer & Properties Panel Management ---
+            function updateAccordionHeightForCategory(category) {
+                // Removed problematic accordion height updates that were causing visual issues
+                // The accordion now uses fixed max-height for stability
+            }
+            
+            function updateLayerList() { 
+                layerList.innerHTML = ''; 
+                const sortedObjects = [...objects].sort((a, b) => b.zIndex - a.zIndex); 
+                
+                if (sortedObjects.length === 0) {
+                    layersEmptyState.style.display = 'block';
+                    layerList.style.display = 'none';
+                    return;
+                }
+                
+                layersEmptyState.style.display = 'none';
+                layerList.style.display = 'block';
+                
+                sortedObjects.forEach((obj, index) => { 
+                    const isTop = index === 0; 
+                    const isBottom = index === sortedObjects.length - 1; 
+                    const div = document.createElement('div'); 
+                    div.className = `layer-item p-3 mb-2 rounded-md flex justify-between items-center cursor-pointer text-sm transition-all ${selectedObject?.id === obj.id ? 'selected' : ''}`; 
+                    div.dataset.id = obj.id; 
+                    
+                    const nameSpan = document.createElement('span'); 
+                    nameSpan.textContent = obj.name; 
+                    nameSpan.className = 'flex-grow truncate mr-3 font-medium'; 
+                    div.appendChild(nameSpan); 
+                    
+                    const controls = document.createElement('div'); 
+                    controls.className = 'flex items-center space-x-2'; 
+                    
+                    const upBtn = document.createElement('button'); 
+                    upBtn.innerHTML = '▲'; 
+                    upBtn.className = 'layer-item-button'; 
+                    upBtn.disabled = isTop; 
+                    upBtn.title = 'Move up'; 
+                    upBtn.onclick = (e) => { e.stopPropagation(); moveObject(obj.id, 'up'); }; 
+                    controls.appendChild(upBtn); 
+                    
+                    const downBtn = document.createElement('button'); 
+                    downBtn.innerHTML = '▼'; 
+                    downBtn.className = 'layer-item-button'; 
+                    downBtn.disabled = isBottom; 
+                    downBtn.title = 'Move down'; 
+                    downBtn.onclick = (e) => { e.stopPropagation(); moveObject(obj.id, 'down'); }; 
+                    controls.appendChild(downBtn); 
+                    
+                    const visibilityToggle = document.createElement('button'); 
+                    visibilityToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 616 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>';
+                    visibilityToggle.className = `layer-item-button ${!obj.visible ? 'layer-visibility-hidden' : ''}`;
+                    visibilityToggle.title = obj.visible ? 'Hide' : 'Show'; 
+                    visibilityToggle.onclick = (e) => { 
+                        e.stopPropagation(); 
+                        obj.visible = !obj.visible; 
+                        draw(); 
+                        updateLayerList(); 
+                    }; 
+                    controls.appendChild(visibilityToggle); 
+                    
+                    div.appendChild(controls); 
+                    div.onclick = () => { 
+                        setSelectedObject(objects.find(o => o.id === obj.id)); 
+                    }; 
+                    layerList.appendChild(div); 
+                }); 
+            }
+            function updatePropertiesPanel() { 
+                propertiesPanel.style.display = 'block'; 
+                noSelectionProperties.style.display = 'none'; 
+                textProperties.style.display = 'none'; 
+                shapeProperties.style.display = 'none'; 
+                imageProperties.style.display = 'none';
+                const animationProperties = document.getElementById('animation-properties');
+                
+                if (selectedObject) { 
+                    if (selectedObject.type === 'text') { 
+                        textProperties.style.display = 'block'; 
+                        textContentInput.value = selectedObject.text; 
+                        textColorInput.value = selectedObject.color; 
+                        textSizeInput.value = selectedObject.size; 
+                    } else if (selectedObject.type === 'shape') { 
+                        shapeProperties.style.display = 'block'; 
+                        shapeColorInput.value = selectedObject.color; 
+                    } else if (selectedObject.type === 'image') {
+                        imageProperties.style.display = 'block';
+                        // Update flip button states
+                        flipHorizontalBtn.classList.toggle('active', selectedObject.flipHorizontal || false);
+                        flipVerticalBtn.classList.toggle('active', selectedObject.flipVertical || false);
+                    }
+                    
+                    // Show animation properties for all object types
+                    animationProperties.style.display = 'block';
+                } else { 
+                    noSelectionProperties.style.display = 'block'; 
+                    animationProperties.style.display = 'none';
+                } 
+                
+                // Update animation properties
+                updateAnimationProperties();
+            }
+            
+            // Debounce timer for animation properties updates
+            let animationUpdateTimeout = null;
+            
+            function updateAnimationProperties() {
+                // Clear any pending updates
+                if (animationUpdateTimeout) {
+                    clearTimeout(animationUpdateTimeout);
+                }
+                
+                // Use a small delay to batch updates and prevent accordion flicker
+                animationUpdateTimeout = setTimeout(() => {
+                    if (selectedObject) {
+                        // Ensure animation properties exist with defaults
+                        if (typeof selectedObject.animationDuration === 'undefined') {
+                            selectedObject.animationDuration = 1.0;
+                        }
+                        if (typeof selectedObject.animationIntensity === 'undefined') {
+                            selectedObject.animationIntensity = 5;
+                        }
+                        
+                        animationSelect.value = selectedObject.animationType || '';
+                        animationDuration.value = selectedObject.animationDuration;
+                        animationIntensity.value = selectedObject.animationIntensity;
+                        durationValue.textContent = selectedObject.animationDuration.toFixed(1) + 's';
+                        intensityValue.textContent = selectedObject.animationIntensity;
+                        
+                        // Show/hide animation settings
+                        if (selectedObject.animationType) {
+                            animationSettings.classList.remove('hidden');
+                        } else {
+                            animationSettings.classList.add('hidden');
+                        }
+                    } else {
+                        animationSelect.value = '';
+                        animationSettings.classList.add('hidden');
+                    }
+                    animationUpdateTimeout = null;
+                }, 50); // 50ms debounce
+            }
+            
+            function setSelectedObject(obj) { selectedObject = obj; draw(); updateLayerList(); updatePropertiesPanel(); }
+
+            // --- UI Interaction ---
+            function updateStatusIndicators() {
+                const isControlsOpen = controlsDrawer.classList.contains('open');
+                const statusIndicators = ['tools-status', 'properties-status', 'background-status', 'foreground-status', 'layers-status'];
+                
+                statusIndicators.forEach(id => {
+                    const indicator = document.getElementById(id);
+                    if (indicator) {
+                        indicator.className = `status-indicator ${isControlsOpen ? 'status-active' : 'status-drawer-closed'}`;
+                    }
+                });
+            }
+            
+            toggleControlsBtn.addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                mediaLibrary.classList.remove('open'); 
+                controlsDrawer.classList.toggle('open'); 
+                updateStatusIndicators();
+            });
+            
+            toggleLibraryBtn.addEventListener('click', (e) => { 
+                e.stopPropagation(); 
+                controlsDrawer.classList.remove('open'); 
+                mediaLibrary.classList.toggle('open'); 
+                updateStatusIndicators();
+            });
+            
+            // Fullscreen toggle functionality
+            fullscreenToggle.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                
+                try {
+                    if (!document.fullscreenElement) {
+                        // Enter fullscreen
+                        await document.documentElement.requestFullscreen();
+                        fullscreenEnterIcon.classList.add('hidden');
+                        fullscreenExitIcon.classList.remove('hidden');
+                        fullscreenText.textContent = 'Exit Fullscreen';
+                        fullscreenToggle.classList.add('active');
+                    } else {
+                        // Exit fullscreen
+                        await document.exitFullscreen();
+                        fullscreenEnterIcon.classList.remove('hidden');
+                        fullscreenExitIcon.classList.add('hidden');
+                        fullscreenText.textContent = 'Enter Fullscreen';
+                        fullscreenToggle.classList.remove('active');
+                    }
+                } catch (error) {
+                    console.log('Fullscreen not supported or failed:', error);
+                }
+            });
+            
+            // Listen for fullscreen changes (e.g., when user presses ESC)
+            document.addEventListener('fullscreenchange', () => {
+                if (!document.fullscreenElement) {
+                    fullscreenEnterIcon.classList.remove('hidden');
+                    fullscreenExitIcon.classList.add('hidden');
+                    fullscreenText.textContent = 'Enter Fullscreen';
+                    fullscreenToggle.classList.remove('active');
+                } else {
+                    fullscreenEnterIcon.classList.add('hidden');
+                    fullscreenExitIcon.classList.remove('hidden');
+                    fullscreenText.textContent = 'Exit Fullscreen';
+                    fullscreenToggle.classList.add('active');
+                }
+            });
+            
+            accordionButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+                    button.setAttribute('aria-expanded', !isExpanded);
+            
+                    // The content is the next sibling of the button's parent header
+                    const content = button.parentElement.nextElementSibling;
+                    if (content && content.classList.contains('accordion-content')) {
+                        if (!isExpanded) {
+                            // Expand: use a stable max-height approach
+                            content.style.maxHeight = '2000px'; // Large enough for any content
+                        } else {
+                            // Collapse
+                            content.style.maxHeight = '0px';
+                        }
+                    }
+                });
+            
+                // Set initial state for accordions that are open by default
+                if (button.getAttribute('aria-expanded') === 'true') {
+                    const content = button.parentElement.nextElementSibling;
+                    if (content) {
+                       content.style.maxHeight = '2000px'; // Stable initial height
+                    }
+                }
+            });
+
+            controlsDrawer.addEventListener('click', e => e.stopPropagation());
+            mediaLibrary.addEventListener('click', e => e.stopPropagation());
+
+            // --- Media Handling ---
+            function showProgress() {
+                progressContainer.style.display = 'block';
+            }
+            
+            function hideProgress() {
+                progressContainer.style.display = 'none';
+            }
+            
+            function updateProgress(current, total) {
+                const percentage = Math.round((current / total) * 100);
+                progressFill.style.width = percentage + '%';
+                progressDetail.textContent = `${current} of ${total} files processed`;
+            }
+            
+            async function handleFiles(files) { 
+                const mediaFiles = Array.from(files).filter(file => 
+                    file.type.startsWith('image/') || 
+                    file.type.startsWith('video/') ||
+                    file.name.toLowerCase().endsWith('.gif')
+                );
+                
+                if (mediaFiles.length === 0) return;
+                
+                // Store fullscreen state before loading
+                const wasFullscreen = !!document.fullscreenElement;
+                
+                if (mediaFiles.length > 1) {
+                    showProgress();
+                    updateProgress(0, mediaFiles.length);
+                }
+                
+                for (let i = 0; i < mediaFiles.length; i++) {
+                    const file = mediaFiles[i];
+                    
+                    await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = e => {
+                            if (file.type.startsWith('video/') || file.name.toLowerCase().endsWith('.mp4') || 
+                                file.name.toLowerCase().endsWith('.mov') || file.name.toLowerCase().endsWith('.avi') ||
+                                file.name.toLowerCase().endsWith('.mkv') || file.name.toLowerCase().endsWith('.webm') ||
+                                file.name.toLowerCase().endsWith('.3gp') || file.name.toLowerCase().endsWith('.wmv') ||
+                                file.name.toLowerCase().endsWith('.flv') || file.name.toLowerCase().endsWith('.m4v')) {
+                                // Handle video files
+                                const video = document.createElement('video');
+                                video.src = e.target.result;
+                                video.dataset.name = file.name;
+                                video.loop = true;
+                                video.muted = true;
+                                video.playsInline = true;
+                                video.onloadedmetadata = () => {
+                                    addMediaItem(video);
+                                    if (mediaFiles.length > 1) {
+                                        updateProgress(i + 1, mediaFiles.length);
+                                    }
+                                    resolve();
+                                };
+                                video.onerror = () => {
+                                    console.error('Error loading video:', file.name);
+                                    if (mediaFiles.length > 1) {
+                                        updateProgress(i + 1, mediaFiles.length);
+                                    }
+                                    resolve();
+                                };
+                            } else {
+                                // Handle image files (including GIFs)
+                                const img = new Image();
+                                img.src = e.target.result;
+                                img.dataset.name = file.name;
+                                img.onload = () => {
+                                    addMediaItem(img);
+                                    if (mediaFiles.length > 1) {
+                                        updateProgress(i + 1, mediaFiles.length);
+                                    }
+                                    resolve();
+                                };
+                                img.onerror = () => {
+                                    console.error('Error loading image:', file.name);
+                                    if (mediaFiles.length > 1) {
+                                        updateProgress(i + 1, mediaFiles.length);
+                                    }
+                                    resolve();
+                                };
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                    
+                    // Small delay to allow UI to update
+                    if (mediaFiles.length > 10) {
+                        await new Promise(resolve => setTimeout(resolve, 10));
+                    }
+                }
+                
+                if (mediaFiles.length > 1) {
+                    // Hide progress bar after a short delay
+                    setTimeout(hideProgress, 500);
+                }
+                
+                // Restore fullscreen state if it was active before loading
+                if (wasFullscreen && !document.fullscreenElement) {
+                    try {
+                        await document.documentElement.requestFullscreen();
+                    } catch (error) {
+                        console.log('Could not restore fullscreen after image loading:', error);
+                    }
+                }
+            }
+            function addMediaItem(mediaElement) { 
+                // Add to visual targets by default
+                addToMediaLibrary(mediaElement, 'visualTargets');
+            }
+            
+            function addToMediaLibrary(mediaElement, category) {
+                // Add to memory
+                mediaAssets[category].push(mediaElement);
+                
+                // Add to UI
+                const targetGrid = getGridForCategory(category);
+                const emptyState = getEmptyStateForCategory(category);
+                
+                if (targetGrid && emptyState) {
+                    emptyState.style.display = 'none';
+                    targetGrid.style.display = 'grid';
+                }
+                
+                createMediaItemElement(mediaElement, category, targetGrid);
+                
+                // Update accordion height for the category
+                updateAccordionHeightForCategory(category);
+            }
+            
+            function getGridForCategory(category) {
+                switch(category) {
+                    case 'backgrounds': return backgroundsGrid;
+                    case 'foregrounds': return foregroundsGrid;
+                    case 'visualTargets': return visualTargetsGrid;
+                    default: return null;
+                }
+            }
+            
+            function getEmptyStateForCategory(category) {
+                switch(category) {
+                    case 'backgrounds': return backgroundsEmptyState;
+                    case 'foregrounds': return foregroundsEmptyState;
+                    case 'visualTargets': return visualTargetsEmptyState;
+                    default: return null;
+                }
+            }
+            
+            function createMediaItemElement(mediaElement, category, targetGrid) {
+                const div = document.createElement('div'); 
+                div.className = 'media-item relative cursor-pointer'; 
+                
+                const isVideo = mediaElement.tagName === 'VIDEO';
+                const displayElement = document.createElement(isVideo ? 'video' : 'img');
+                
+                if (isVideo) {
+                    displayElement.src = mediaElement.src;
+                    displayElement.className = 'absolute top-0 left-0 w-full h-full object-cover';
+                    displayElement.muted = true;
+                    displayElement.loop = true;
+                    displayElement.playsInline = true;
+                    displayElement.dataset.name = mediaElement.dataset.name;
+                    displayElement.dataset.category = category;
+                    
+                    // Auto-play video on hover for preview
+                    div.addEventListener('mouseenter', () => {
+                        displayElement.play().catch(e => console.log('Video play failed:', e));
+                    });
+                    div.addEventListener('mouseleave', () => {
+                        displayElement.pause();
+                        displayElement.currentTime = 0;
+                    });
+                } else {
+                    displayElement.src = mediaElement.src;
+                    displayElement.className = 'absolute top-0 left-0 w-full h-full object-cover';
+                    displayElement.draggable = true;
+                    displayElement.dataset.name = mediaElement.dataset.name;
+                    displayElement.dataset.category = category;
+                }
+                
+                const overlay = document.createElement('div');
+                overlay.className = 'absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center';
+                
+                // Add video indicator icon for videos
+                if (isVideo) {
+                    const videoIndicator = document.createElement('div');
+                    videoIndicator.className = 'absolute top-2 right-2 bg-black bg-opacity-70 rounded-full p-1';
+                    videoIndicator.innerHTML = `
+                        <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    `;
+                    div.appendChild(videoIndicator);
+                }
+                
+                if (category === 'backgrounds') {
+                    overlay.innerHTML = `
+                        <div class="text-white opacity-0 hover:opacity-100 transition-opacity duration-300">
+                            <svg class="w-6 h-6 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <p class="text-xs font-medium">Set Background</p>
+                        </div>
+                    `;
+                } else if (category === 'foregrounds') {
+                    overlay.innerHTML = `
+                        <div class="text-white opacity-0 hover:opacity-100 transition-opacity duration-300">
+                            <svg class="w-6 h-6 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            <p class="text-xs font-medium">Set Foreground</p>
+                        </div>
+                    `;
+                } else {
+                    overlay.innerHTML = `
+                        <div class="text-white opacity-0 hover:opacity-100 transition-opacity duration-300">
+                            <svg class="w-6 h-6 mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <circle cx="12" cy="12" r="6"></circle>
+                                <circle cx="12" cy="12" r="2"></circle>
+                            </svg>
+                            <p class="text-xs font-medium">Add to Canvas</p>
+                        </div>
+                    `;
+                }
+                
+                div.appendChild(displayElement); 
+                div.appendChild(overlay);
+                targetGrid.appendChild(div); 
+                
+                if (!isVideo) {
+                    displayElement.addEventListener('dragstart', (e) => { 
+                        e.dataTransfer.setData('text/plain', mediaElement.src); 
+                        e.dataTransfer.setData('name', mediaElement.dataset.name); 
+                        e.dataTransfer.setData('category', category);
+                        e.dataTransfer.setData('mediaType', isVideo ? 'video' : 'image');
+                    }); 
+                }
+                
+                div.addEventListener('click', () => { 
+                    if (category === 'backgrounds') {
+                        setBackgroundImage(mediaElement);
+                    } else if (category === 'foregrounds') {
+                        setForegroundImage(mediaElement);
+                    } else {
+                        if (isVideo) {
+                            addVideoToCanvas(mediaElement.src, mediaElement.dataset.name);
+                        } else {
+                            addImageToCanvas(mediaElement.src, mediaElement.dataset.name); 
+                        }
+                        mediaLibrary.classList.remove('open'); 
+                    }
+                }); 
+                
+                // Add context menu for moving between categories
+                div.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    showMediaContextMenu(e.clientX, e.clientY, mediaElement, category, div);
+                });
+            }
+            
+            function setBackgroundImage(img) {
+                backgroundImage = { img: img };
+                deleteBgBtn.classList.remove('hidden');
+                draw();
+            }
+            
+            function setForegroundImage(img) {
+                foregroundImage = { img: img };
+                deleteFgBtn.classList.remove('hidden');
+                draw();
+            }
+            
+            function showMediaContextMenu(x, y, img, currentCategory, element) {
+                const menu = document.createElement('div');
+                menu.className = 'context-menu';
+                menu.style.display = 'block';
+                menu.style.left = x + 'px';
+                menu.style.top = y + 'px';
+                
+                const categories = [
+                    { key: 'backgrounds', label: 'Move to Backgrounds' },
+                    { key: 'foregrounds', label: 'Move to Foregrounds' },
+                    { key: 'visualTargets', label: 'Move to Visual Targets' }
+                ];
+                
+                categories.forEach(cat => {
+                    if (cat.key !== currentCategory) {
+                        const button = document.createElement('button');
+                        button.textContent = cat.label;
+                        button.addEventListener('click', () => {
+                            moveMediaItem(img, currentCategory, cat.key, element);
+                            document.body.removeChild(menu);
+                        });
+                        menu.appendChild(button);
+                    }
+                });
+                
+                document.body.appendChild(menu);
+                
+                // Close menu when clicking outside
+                setTimeout(() => {
+                    document.addEventListener('click', function closeMenu() {
+                        if (document.body.contains(menu)) {
+                            document.body.removeChild(menu);
+                        }
+                        document.removeEventListener('click', closeMenu);
+                    });
+                }, 100);
+            }
+            
+            function moveMediaItem(img, fromCategory, toCategory, element) {
+                // Remove from old category
+                const fromIndex = mediaAssets[fromCategory].findIndex(item => item.src === img.src);
+                if (fromIndex !== -1) {
+                    mediaAssets[fromCategory].splice(fromIndex, 1);
+                }
+                
+                // Add to new category
+                mediaAssets[toCategory].push(img);
+                
+                // Remove from old grid
+                element.parentNode.removeChild(element);
+                
+                // Add to new grid
+                const targetGrid = getGridForCategory(toCategory);
+                const emptyState = getEmptyStateForCategory(toCategory);
+                
+                if (targetGrid && emptyState) {
+                    emptyState.style.display = 'none';
+                    targetGrid.style.display = 'grid';
+                }
+                
+                createMediaItemElement(img, toCategory, targetGrid);
+                
+                // Update accordion heights for both categories
+                updateAccordionHeightForCategory(fromCategory);
+                updateAccordionHeightForCategory(toCategory);
+                
+                // Update empty states
+                updateEmptyStates();
+            }
+            
+            function updateEmptyStates() {
+                Object.keys(mediaAssets).forEach(category => {
+                    const grid = getGridForCategory(category);
+                    const emptyState = getEmptyStateForCategory(category);
+                    
+                    if (grid && emptyState) {
+                        if (mediaAssets[category].length === 0) {
+                            emptyState.style.display = 'block';
+                            grid.style.display = 'none';
+                        } else {
+                            emptyState.style.display = 'none';
+                            grid.style.display = 'grid';
+                        }
+                    }
+                });
+            }
+            imageUpload.addEventListener('change', (e) => handleFiles(e.target.files));
+            folderUpload.addEventListener('change', (e) => handleFiles(e.target.files));
+
+            // --- Canvas Drag & Drop ---
+            function addImageToCanvas(imgSrc, name, x, y) { const img = new Image(); img.src = imgSrc; img.dataset.name = name; img.onload = () => { const w = 150; const h = (img.height / img.width) * w; const finalX = (x === undefined) ? (canvas.width / 2) - (w / 2) : x - (w/2); const finalY = (y === undefined) ? (canvas.height / 2) - (h / 2) : y - (h/2); const newObj = new ImageObject(img, finalX, finalY, w, h, getNextZIndex()); objects.push(newObj); setSelectedObject(newObj); updateAnimationTriggerPanel(); }; }
+            
+            function addVideoToCanvas(videoSrc, name, x, y) { 
+                const video = document.createElement('video'); 
+                video.src = videoSrc; 
+                video.dataset.name = name; 
+                video.muted = true;
+                video.loop = true;
+                video.playsInline = true;
+                video.onloadedmetadata = () => { 
+                    const w = 150; 
+                    const h = (video.videoHeight / video.videoWidth) * w; 
+                    const finalX = (x === undefined) ? (canvas.width / 2) - (w / 2) : x - (w/2); 
+                    const finalY = (y === undefined) ? (canvas.height / 2) - (h / 2) : y - (h/2); 
+                    const newObj = new VideoObject(video, finalX, finalY, w, h, getNextZIndex()); 
+                    objects.push(newObj); 
+                    setSelectedObject(newObj); 
+                    updateAnimationTriggerPanel(); 
+                    video.play().catch(e => console.log('Video autoplay failed:', e));
+                }; 
+            }
+            canvas.addEventListener('dragover', (e) => e.preventDefault());
+            canvas.addEventListener('drop', (e) => { 
+                e.preventDefault(); 
+                const mediaSrc = e.dataTransfer.getData('text/plain'); 
+                const name = e.dataTransfer.getData('name'); 
+                const mediaType = e.dataTransfer.getData('mediaType') || 'image';
+                if (!mediaSrc) return; 
+                const rect = canvas.getBoundingClientRect(); 
+                const x = e.clientX - rect.left; 
+                const y = e.clientY - rect.top; 
+                if (mediaType === 'video') {
+                    addVideoToCanvas(mediaSrc, name, x, y);
+                } else {
+                    addImageToCanvas(mediaSrc, name, x, y); 
+                }
+            });
+
+            // --- Tool Selection & Mouse Events ---
+            function setActiveTool(tool) { currentTool = tool; document.querySelectorAll('.tool-button').forEach(b => b.classList.remove('active')); const activeBtn = document.getElementById(`${tool}-tool`); if(activeBtn) activeBtn.classList.add('active'); }
+            function addCanvasObject(type) { 
+                const centerX = canvas.width / 2; 
+                const centerY = canvas.height / 2; 
+                let newObj; 
+                
+                if(type === 'text') { 
+                    // Add slight offset for text objects too
+                    const textX = centerX + shapeOffsetX;
+                    const textY = centerY + shapeOffsetY;
+                    newObj = new TextObject("Text", textX, textY, getNextZIndex()); 
+                } else { 
+                    // Get next harmonious color
+                    const color = getNextHarmoniousColor();
+                    
+                    // Calculate offset position
+                    const shapeX = centerX + shapeOffsetX;
+                    const shapeY = centerY + shapeOffsetY;
+                    
+                    newObj = new ShapeObject(type, shapeX, shapeY, getNextZIndex(), color); 
+                } 
+                
+                // Update offset for next object (spiral pattern)
+                const offsetAmount = 40;
+                const angle = objects.length * 0.5; // Spiral angle
+                shapeOffsetX = Math.cos(angle) * offsetAmount * (1 + objects.length * 0.2);
+                shapeOffsetY = Math.sin(angle) * offsetAmount * (1 + objects.length * 0.2);
+                
+                // Keep offset within reasonable bounds
+                const maxOffset = Math.min(canvas.width, canvas.height) / 3;
+                shapeOffsetX = Math.max(-maxOffset, Math.min(maxOffset, shapeOffsetX));
+                shapeOffsetY = Math.max(-maxOffset, Math.min(maxOffset, shapeOffsetY));
+                
+                objects.push(newObj); 
+                setActiveTool('select'); 
+                setSelectedObject(newObj); 
+                updateAnimationTriggerPanel(); 
+            }
+            selectTool.addEventListener('click', () => setActiveTool('select'));
+            textTool.addEventListener('click', () => addCanvasObject('text'));
+            rectTool.addEventListener('click', () => addCanvasObject('rect'));
+            circleTool.addEventListener('click', () => addCanvasObject('circle'));
+            triangleTool.addEventListener('click', () => addCanvasObject('triangle'));
+            function getMousePos(e) { const rect = canvas.getBoundingClientRect(); return { x: e.clientX - rect.left, y: e.clientY - rect.top }; }
+            function getObjectAt(x, y) { const sorted = [...objects].sort((a, b) => b.zIndex - a.zIndex); for (const obj of sorted) { if (obj.visible && obj.isPointInside(x, y)) { return obj; } } return null; }
+            canvas.addEventListener('mousedown', (e) => { const { x, y } = getMousePos(e); if (e.button === 2) { const obj = getObjectAt(x, y); if (obj) { setSelectedObject(obj); e.preventDefault(); showContextMenu(e.clientX, e.clientY); } return; } hideContextMenu(); if (currentTool !== 'select') return; isDragging = false; isResizing = false; const handle = getResizeHandleAt(x, y); if (handle) { isResizing = true; resizeHandle = handle.position; setSelectedObject(handle.object); selectedObject.original = { x: selectedObject.x, y: selectedObject.y, width: selectedObject.width, height: selectedObject.height, size: selectedObject.size }; } else { const obj = getObjectAt(x, y); setSelectedObject(obj); if (obj) { isDragging = true; dragStartX = x - obj.x; dragStartY = y - obj.y; } } });
+            canvas.addEventListener('mousemove', (e) => { const { x, y } = getMousePos(e); if (isResizing) { resizeObject(x, y); return; } if (isDragging && selectedObject) { selectedObject.x = x - dragStartX; selectedObject.y = y - dragStartY; draw(); return; } const handle = getResizeHandleAt(x, y); if (handle) { canvas.style.cursor = handle.cursor; } else if (getObjectAt(x, y)) { canvas.style.cursor = 'move'; } else { canvas.style.cursor = 'default'; } });
+            canvas.addEventListener('mouseup', () => { if(isResizing && selectedObject) { selectedObject.initialX = selectedObject.x; selectedObject.initialY = selectedObject.y; } isDragging = false; isResizing = false; resizeHandle = null; });
+            
+            // --- Properties Panel Listeners ---
+            textContentInput.addEventListener('input', (e) => { 
+                if(selectedObject?.type === 'text') {
+                    // Store current center position before changing text
+                    const currentCenterX = selectedObject.x + selectedObject.width / 2;
+                    const currentCenterY = selectedObject.y + selectedObject.height / 2;
+                    
+                    selectedObject.text = e.target.value; 
+                    selectedObject.isResizing = true; 
+                    selectedObject.updateMetrics(); 
+                    selectedObject.isResizing = false; 
+                    
+                    // Restore center position after text change
+                    selectedObject.x = currentCenterX - selectedObject.width / 2;
+                    selectedObject.y = currentCenterY - selectedObject.height / 2;
+                    
+                    draw(); 
+                    updateLayerList(); 
+                } 
+            });
+            textColorInput.addEventListener('input', (e) => { 
+                if(selectedObject?.type === 'text') { 
+                    selectedObject.color = e.target.value; 
+                    draw(); 
+                } 
+            });
+            textSizeInput.addEventListener('input', (e) => { 
+                if(selectedObject?.type === 'text') {
+                    // Store current center position before changing size
+                    const currentCenterX = selectedObject.x + selectedObject.width / 2;
+                    const currentCenterY = selectedObject.y + selectedObject.height / 2;
+                    
+                    selectedObject.size = parseInt(e.target.value); 
+                    selectedObject.isResizing = true; 
+                    selectedObject.updateMetrics(); 
+                    selectedObject.isResizing = false; 
+                    
+                    // Restore center position after size change
+                    selectedObject.x = currentCenterX - selectedObject.width / 2;
+                    selectedObject.y = currentCenterY - selectedObject.height / 2;
+                    
+                    draw(); 
+                } 
+            });
+            shapeColorInput.addEventListener('input', (e) => { 
+                if(selectedObject?.type === 'shape') { 
+                    selectedObject.color = e.target.value; 
+                    draw(); 
+                } 
+            });
+            
+            // Flip functionality
+            flipHorizontalBtn.addEventListener('click', () => {
+                if(selectedObject?.type === 'image') {
+                    selectedObject.flipHorizontal = !selectedObject.flipHorizontal;
+                    flipHorizontalBtn.classList.toggle('active', selectedObject.flipHorizontal);
+                    draw();
+                } else {
+                    // Show feedback if no image selected
+                    flipHorizontalBtn.style.animation = 'shake 0.3s ease-in-out';
+                    setTimeout(() => flipHorizontalBtn.style.animation = '', 300);
+                }
+            });
+            
+            flipVerticalBtn.addEventListener('click', () => {
+                if(selectedObject?.type === 'image') {
+                    selectedObject.flipVertical = !selectedObject.flipVertical;
+                    flipVerticalBtn.classList.toggle('active', selectedObject.flipVertical);
+                    draw();
+                } else {
+                    // Show feedback if no image selected
+                    flipVerticalBtn.style.animation = 'shake 0.3s ease-in-out';
+                    setTimeout(() => flipVerticalBtn.style.animation = '', 300);
+                }
+            });
+
+            // --- Other functions (BG/FG controls, Resizing, Animation, etc.) ---
+            function moveObject(objectId, direction) { 
+                const sorted = [...objects].sort((a, b) => a.zIndex - b.zIndex); 
+                const currentIndex = sorted.findIndex(o => o.id === objectId); 
+                let swapIndex; 
+                if (direction === 'up') { 
+                    swapIndex = currentIndex + 1; 
+                } else { 
+                    swapIndex = currentIndex - 1; 
+                } 
+                if (swapIndex >= 0 && swapIndex < sorted.length) { 
+                    let tempZ = sorted[currentIndex].zIndex; 
+                    sorted[currentIndex].zIndex = sorted[swapIndex].zIndex; 
+                    sorted[swapIndex].zIndex = tempZ; 
+                } 
+                draw(); 
+                updateLayerList(); 
+            }
+            
+            function getNextZIndex() { 
+                const maxZ = objects.reduce((max, obj) => (obj.zIndex > max ? obj.zIndex : max), 0); 
+                return maxZ + 1; 
+            }
+            
+            // Background color handling
+            bgColorSlider.addEventListener('input', (e) => { 
+                backgroundColor = e.target.value; 
+                backgroundImage = null; 
+                deleteBgBtn.classList.add('hidden'); 
+                bgImageInput.value = ''; 
+                draw(); 
+            });
+            
+            presetColorBtns.forEach(btn => { 
+                btn.addEventListener('click', (e) => { 
+                    backgroundColor = e.target.dataset.color; 
+                    bgColorSlider.value = backgroundColor; 
+                    backgroundImage = null; 
+                    deleteBgBtn.classList.add('hidden'); 
+                    bgImageInput.value = ''; 
+                    draw(); 
+                }); 
+            });
+            bgImageInput.addEventListener('change', (e) => { 
+                const file = e.target.files[0]; 
+                if (file) { 
+                    // Store fullscreen state before loading
+                    const wasFullscreen = !!document.fullscreenElement;
+                    
+                    const reader = new FileReader(); 
+                    reader.onload = (event) => { 
+                        const img = new Image(); 
+                        img.onload = async () => { 
+                            img.dataset.name = file.name;
+                            backgroundImage = { img: img, name: 'Background Image' }; 
+                            deleteBgBtn.classList.remove('hidden'); 
+                            // Add to media library
+                            addToMediaLibrary(img, 'backgrounds');
+                            draw(); 
+                            
+                            // Restore fullscreen state if it was active before loading
+                            if (wasFullscreen && !document.fullscreenElement) {
+                                try {
+                                    await document.documentElement.requestFullscreen();
+                                } catch (error) {
+                                    console.log('Could not restore fullscreen after background image loading:', error);
+                                }
+                            }
+                        }; 
+                        img.src = event.target.result; 
+                    }; 
+                    reader.readAsDataURL(file); 
+                } 
+            });
+            
+            deleteBgBtn.addEventListener('click', () => { 
+                backgroundImage = null; 
+                deleteBgBtn.classList.add('hidden'); 
+                bgImageInput.value = ''; 
+                // Note: Image remains in media library for reuse
+                draw(); 
+            });
+            
+            fgImageInput.addEventListener('change', (e) => { 
+                const file = e.target.files[0]; 
+                if (file) { 
+                    // Store fullscreen state before loading
+                    const wasFullscreen = !!document.fullscreenElement;
+                    
+                    const reader = new FileReader(); 
+                    reader.onload = (event) => { 
+                        const img = new Image(); 
+                        img.onload = async () => { 
+                            img.dataset.name = file.name;
+                            foregroundImage = { img: img, name: 'Foreground Image' }; 
+                            deleteFgBtn.classList.remove('hidden'); 
+                            // Add to media library
+                            addToMediaLibrary(img, 'foregrounds');
+                            draw(); 
+                            
+                            // Restore fullscreen state if it was active before loading
+                            if (wasFullscreen && !document.fullscreenElement) {
+                                try {
+                                    await document.documentElement.requestFullscreen();
+                                } catch (error) {
+                                    console.log('Could not restore fullscreen after foreground image loading:', error);
+                                }
+                            }
+                        }; 
+                        img.src = event.target.result; 
+                    }; 
+                    reader.readAsDataURL(file); 
+                } 
+            });
+            
+            deleteFgBtn.addEventListener('click', () => { 
+                foregroundImage = null; 
+                deleteFgBtn.classList.add('hidden'); 
+                fgImageInput.value = ''; 
+                // Note: Image remains in media library for reuse
+                draw(); 
+            });
+            
+            // --- Resize Handle Functions ---
+            function getResizeHandles(obj) { 
+                const s = 10; 
+                return [ 
+                    { position: 'tl', x: obj.x - s/2, y: obj.y - s/2, size: s, cursor: 'nwse-resize' }, 
+                    { position: 'tr', x: obj.x + obj.width - s/2, y: obj.y - s/2, size: s, cursor: 'nesw-resize' }, 
+                    { position: 'bl', x: obj.x - s/2, y: obj.y + obj.height - s/2, size: s, cursor: 'nesw-resize' }, 
+                    { position: 'br', x: obj.x + obj.width - s/2, y: obj.y + obj.height - s/2, size: s, cursor: 'nwse-resize' }, 
+                ]; 
+            }
+            
+            function getResizeHandleAt(x, y) { 
+                if (!selectedObject) return null; 
+                for (const handle of getResizeHandles(selectedObject)) { 
+                    if (x >= handle.x && x <= handle.x + handle.size && y >= handle.y && y <= handle.y + handle.size) { 
+                        return { object: selectedObject, position: handle.position, cursor: handle.cursor }; 
+                    } 
+                } 
+                return null; 
+            }
+            
+            function resizeObject(mouseX, mouseY) { 
+                if (!selectedObject || !selectedObject.original) return; 
+                const obj = selectedObject; 
+                const orig = obj.original; 
+                
+                if (obj.type === 'text') { 
+                    // Store the original center position (from when resize started)
+                    const originalCenterX = orig.x + orig.width / 2; 
+                    const originalCenterY = orig.y + orig.height / 2; 
+                    
+                    // Calculate scale based on the resize handle being dragged
+                    let scale = 1;
+                    switch (resizeHandle) {
+                        case 'br': // Bottom-right handle
+                            const deltaX = mouseX - (orig.x + orig.width);
+                            const deltaY = mouseY - (orig.y + orig.height);
+                            const avgDelta = (deltaX + deltaY) / 2;
+                            scale = Math.max(0.2, 1 + avgDelta / 100); // Adjust sensitivity
+                            break;
+                        case 'tl': // Top-left handle  
+                            const deltaX2 = orig.x - mouseX;
+                            const deltaY2 = orig.y - mouseY;
+                            const avgDelta2 = (deltaX2 + deltaY2) / 2;
+                            scale = Math.max(0.2, 1 + avgDelta2 / 100);
+                            break;
+                        default:
+                            // For other handles, use distance from center
+                            const dist = Math.hypot(mouseX - originalCenterX, mouseY - originalCenterY);
+                            const baseDist = Math.max(orig.width, orig.height) / 2;
+                            scale = Math.max(0.2, dist / baseDist);
+                    }
+                    
+                    obj.size = Math.max(10, orig.size * scale); 
+                    obj.isResizing = true; 
+                    obj.updateMetrics(); 
+                    obj.isResizing = false;
+                    
+                    // Keep text centered at original position
+                    obj.x = originalCenterX - obj.width / 2; 
+                    obj.y = originalCenterY - obj.height / 2; 
+                } else { 
+                    const aspectRatio = orig.width / orig.height; 
+                    let newWidth, newHeight; 
+                    
+                    switch (resizeHandle) { 
+                        case 'br': 
+                            newWidth = mouseX - orig.x; 
+                            newHeight = mouseY - orig.y; 
+                            obj.x = orig.x; 
+                            obj.y = orig.y; 
+                            break; 
+                        case 'bl': 
+                            newWidth = (orig.x + orig.width) - mouseX; 
+                            newHeight = mouseY - orig.y; 
+                            obj.x = mouseX; 
+                            obj.y = orig.y; 
+                            break; 
+                        case 'tr': 
+                            newWidth = mouseX - orig.x; 
+                            newHeight = (orig.y + orig.height) - mouseY; 
+                            obj.x = orig.x; 
+                            obj.y = (orig.y + orig.height) - newHeight; 
+                            break; 
+                        case 'tl': 
+                            newWidth = (orig.x + orig.width) - mouseX; 
+                            newHeight = (orig.y + orig.height) - mouseY; 
+                            obj.x = mouseX; 
+                            obj.y = (orig.y + orig.height) - newHeight; 
+                            break; 
+                    } 
+                    
+                    // For rectangles, allow deformation but snap to square when close
+                    if (obj.shapeType === 'rect') {
+                        const snapThreshold = 20; // Snap when within 20 pixels
+                        const sizeDifference = Math.abs(newWidth - newHeight);
+                        
+                        if (sizeDifference < snapThreshold) {
+                            // Snap to square - use the average size
+                            const avgSize = (newWidth + newHeight) / 2;
+                            newWidth = avgSize;
+                            newHeight = avgSize;
+                        }
+                    } else {
+                        // For other shapes (circles, triangles), maintain aspect ratio
+                        newHeight = newWidth / aspectRatio;
+                    }
+                    
+                    obj.width = newWidth > 10 ? newWidth : 10; 
+                    obj.height = newHeight > 10 ? newHeight : 10; 
+                } 
+                
+                draw(); 
+            }
+            
+            // --- Context Menu Functions ---
+            function showContextMenu(x, y) { 
+                contextMenu.style.display = 'block'; 
+                contextMenu.style.left = `${x}px`; 
+                contextMenu.style.top = `${y}px`; 
+            }
+            
+            function hideContextMenu() { 
+                contextMenu.style.display = 'none'; 
+            }
+            
+            function deleteObject(obj) { 
+                objects = objects.filter(o => o.id !== obj.id); 
+                setSelectedObject(null); 
+                hideContextMenu(); 
+                updateAnimationTriggerPanel(); // Update animation panel when object is deleted
+            }
+            
+            // --- Event Listeners ---
+            document.addEventListener('click', hideContextMenu);
+            canvas.addEventListener('contextmenu', e => e.preventDefault());
+            
+            document.getElementById('ctx-delete').addEventListener('click', () => { 
+                if (selectedObject) deleteObject(selectedObject); 
+            });
+            
+            document.getElementById('ctx-bring-to-front').addEventListener('click', () => { 
+                if(selectedObject) { 
+                    selectedObject.zIndex = getNextZIndex(); 
+                    draw(); 
+                    updateLayerList(); 
+                }
+            });
+            
+            document.getElementById('ctx-send-to-back').addEventListener('click', () => { 
+                if(selectedObject) { 
+                    const minZ = Math.min(...objects.map(o => o.zIndex).filter(z => z > 0)); 
+                    selectedObject.zIndex = minZ - 1; 
+                    draw(); 
+                    updateLayerList(); 
+                }
+            });
+            
+            document.getElementById('ctx-animate').addEventListener('click', () => { 
+                if (!selectedObject) return; 
+                // Use the modern animation system instead of the legacy one
+                const animType = prompt("Choose animation:\n1. gentle-shake\n2. swing\n3. circular\n(or leave empty for no animation)")?.toLowerCase(); 
+                if (['gentle-shake', 'swing', 'circular'].includes(animType)) { 
+                    selectedObject.animationType = animType;
+                    // Ensure animation properties are set
+                    if (typeof selectedObject.animationDuration === 'undefined') {
+                        selectedObject.animationDuration = 1.0;
+                    }
+                    if (typeof selectedObject.animationIntensity === 'undefined') {
+                        selectedObject.animationIntensity = 5;
+                    }
+                    updateAnimationProperties();
+                    updateAnimationTriggerPanel();
+                    hideContextMenu();
+                } else if (animType === '') {
+                    // Remove animation
+                    selectedObject.animationType = null;
+                    selectedObject.isAnimating = false;
+                    updateAnimationProperties();
+                    updateAnimationTriggerPanel();
+                    hideContextMenu();
+                } 
+            });
+            
+            // --- Animation Event Listeners ---
+            animationSelect.addEventListener('change', (e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                if (selectedObject) {
+                    selectedObject.animationType = e.target.value || null;
+                    // Ensure animation properties are initialized
+                    if (selectedObject.animationType && typeof selectedObject.animationDuration === 'undefined') {
+                        selectedObject.animationDuration = 1.0;
+                    }
+                    if (selectedObject.animationType && typeof selectedObject.animationIntensity === 'undefined') {
+                        selectedObject.animationIntensity = 5;
+                    }
+                    updateAnimationProperties();
+                    updateAnimationTriggerPanel();
+                }
+            });
+            
+            animationDuration.addEventListener('input', (e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                if (selectedObject) {
+                    selectedObject.animationDuration = parseFloat(e.target.value);
+                    durationValue.textContent = parseFloat(e.target.value).toFixed(1) + 's';
+                }
+            });
+            
+            animationIntensity.addEventListener('input', (e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                if (selectedObject) {
+                    selectedObject.animationIntensity = parseInt(e.target.value);
+                    intensityValue.textContent = e.target.value;
+                }
+            });
+            
+            previewAnimationBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                if (selectedObject && selectedObject.animationType) {
+                    // Force stop any current animation first
+                    selectedObject.isAnimating = false;
+                    // Small delay to ensure clean start
+                    setTimeout(() => {
+                        triggerAnimation(selectedObject);
+                    }, 50);
+                }
+            });
+            
+            // Keyboard shortcuts for animation triggers
+            document.addEventListener('keydown', (e) => {
+                // Only trigger if no input is focused
+                if (document.activeElement.tagName === 'INPUT' || 
+                    document.activeElement.tagName === 'TEXTAREA' || 
+                    document.activeElement.tagName === 'SELECT') {
+                    return;
+                }
+                
+                const keyNum = parseInt(e.key);
+                if (keyNum >= 1 && keyNum <= 9) {
+                    const animatedObjs = objects.filter(obj => obj.animationType);
+                    if (animatedObjs[keyNum - 1]) {
+                        e.preventDefault();
+                        triggerAnimation(animatedObjs[keyNum - 1]);
+                    }
+                }
+            });
+            
+            // --- Keyboard Events ---
+            window.addEventListener('keydown', (e) => { 
+                if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return; 
+                if (e.key === 'v') setActiveTool('select'); 
+                if ((e.key === 'Delete' || e.key === 'Backspace') && selectedObject) { 
+                    deleteObject(selectedObject); 
+                } 
+            });
+
+            // --- Data Loss Warning ---
+            let hasUnsavedChanges = false;
+            
+            // Track changes when objects are added
+            const trackObjectChanges = () => {
+                hasUnsavedChanges = true;
+            };
+            
+            // Override objects.push to track changes
+            const originalPush = objects.push;
+            objects.push = function(...items) {
+                trackObjectChanges();
+                return originalPush.apply(this, items);
+            };
+            
+            // Track deletions
+            const originalDeleteObject = deleteObject;
+            window.deleteObject = (obj) => {
+                originalDeleteObject(obj);
+                trackObjectChanges();
+            };
+            
+            // Warn before page unload
+            window.addEventListener('beforeunload', (e) => {
+                if (hasUnsavedChanges && objects.length > 0) {
+                    const message = 'You have unsaved work. Are you sure you want to leave? All canvas objects will be lost.';
+                    e.preventDefault();
+                    e.returnValue = message;
+                    return message;
+                }
+            });
+
+            // --- PWA Installation Prompt ---
+            let deferredPrompt;
+            
+            window.addEventListener('beforeinstallprompt', (e) => {
+                console.log('[PWA] Install prompt triggered');
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                // Show install button or notification
+                showInstallPrompt();
+            });
+
+            function showInstallPrompt() {
+                // Create install notification
+                const installNotification = document.createElement('div');
+                installNotification.className = 'fixed top-4 right-4 z-50 bg-blue-600 text-white p-4 rounded-lg shadow-lg max-w-sm transition-all duration-300';
+                installNotification.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        <div class="flex-1">
+                            <h4 class="font-semibold">Install Gaze Tracker</h4>
+                            <p class="text-sm opacity-90">Add to your home screen for quick access</p>
+                        </div>
+                        <button id="install-app-btn" class="bg-white text-blue-600 px-3 py-1 rounded font-medium text-sm hover:bg-gray-100 transition-colors">
+                            Install
+                        </button>
+                        <button id="dismiss-install-btn" class="text-white hover:text-gray-200 transition-colors ml-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                document.body.appendChild(installNotification);
+                
+                // Handle install button click
+                document.getElementById('install-app-btn').addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        console.log('[PWA] User choice:', outcome);
+                        deferredPrompt = null;
+                        installNotification.remove();
+                    }
+                });
+                
+                // Handle dismiss button click
+                document.getElementById('dismiss-install-btn').addEventListener('click', () => {
+                    installNotification.remove();
+                    deferredPrompt = null;
+                });
+                
+                // Auto dismiss after 10 seconds
+                setTimeout(() => {
+                    if (installNotification.parentNode) {
+                        installNotification.remove();
+                    }
+                }, 10000);
+            }
+
+            // --- Service Worker Registration ---
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', async () => {
+                    try {
+                        const registration = await navigator.serviceWorker.register('./sw.js');
+                        console.log('[PWA] Service Worker registered successfully:', registration.scope);
+                        
+                        // Handle service worker updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    showUpdatePrompt(newWorker);
+                                }
+                            });
+                        });
+                    } catch (error) {
+                        console.error('[PWA] Service Worker registration failed:', error);
+                    }
+                });
+            }
+
+            function showUpdatePrompt(newWorker) {
+                const updateNotification = document.createElement('div');
+                updateNotification.className = 'fixed bottom-4 right-4 z-50 bg-green-600 text-white p-4 rounded-lg shadow-lg max-w-sm';
+                updateNotification.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <div class="flex-1">
+                            <h4 class="font-semibold">Update Available</h4>
+                            <p class="text-sm opacity-90">A new version is ready</p>
+                        </div>
+                        <button id="update-app-btn" class="bg-white text-green-600 px-3 py-1 rounded font-medium text-sm hover:bg-gray-100">
+                            Update
+                        </button>
+                    </div>
+                `;
+                
+                document.body.appendChild(updateNotification);
+                
+                document.getElementById('update-app-btn').addEventListener('click', () => {
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    window.location.reload();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
