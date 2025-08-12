@@ -1337,10 +1337,13 @@
         <aside id="controls-drawer" class="drawer drawer-left w-80 overflow-y-auto">
             <div class="flex-1 overflow-y-auto p-3">
                 <div class="drawer-header">
-                    <div class="flex items-center mb-2">
+                    <div class="flex items-center">
                         <img src="gazetracker.svg" alt="Gaze Tracker Logo" class="app-logo">
                         <div class="flex-1">
-                            <h1 class="drawer-title">Gaze Tracking Canvas</h1>
+                            <div class="flex items-center justify-between">
+                                <h1 class="drawer-title">Gaze Tracking Canvas</h1>
+                                <span class="professional-badge">PRO</span>
+                            </div>
                             <p class="drawer-subtitle">Visual Target Management</p>
                             <p class="drawer-author">by Niall Brown - ECVC</p>
                         </div>
@@ -1368,18 +1371,16 @@
                             <svg id="fullscreen-exit-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
-                            <span class="font-medium">
-                                <span id="fullscreen-text">Enter Fullscreen</span>
-                            </span>
+                            <span id="fullscreen-text">Fullscreen</span>
                         </button>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-3 mb-4">
-                        <button id="select-tool" class="tool-button active flex items-center justify-center space-x-2 p-3 rounded-md">
+                        <button id="select-tool" class="tool-button active flex items-center justify-center space-x-2 p-3 rounded-md" title="Select Tool (V)">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path><path d="M13 13l6 6"></path></svg>
                             <span class="font-medium">Select</span>
                         </button>
-                        <button id="text-tool" class="tool-button flex items-center justify-center space-x-2 p-3 rounded-md">
+                        <button id="text-tool" class="tool-button flex items-center justify-center space-x-2 p-3 rounded-md" title="Add Text">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12a4 4 0 0 0 0-8H6v8"></path><path d="M15 20a4 4 0 0 0 0-8H6v8Z"></path></svg>
                             <span class="font-medium">Text</span>
                         </button>
@@ -1481,13 +1482,14 @@
                             </button>
                         </div>
                     </div>
-                    <div id="no-selection-properties" class="text-center py-8">
+                    <div id="no-selection-properties" class="text-center py-8 animate-fade-in">
                         <div class="text-slate-400 mb-2">
-                            <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <p class="text-sm text-slate-300 font-medium">Select an object to see its properties</p>
+                        <p class="text-sm text-slate-300 font-medium">Select an object on the canvas to see its properties.</p>
+                        <p class="text-xs text-slate-400 mt-1">You can edit color, animation, and more.</p>
                     </div>
                 </div>
                 <!-- Background Color -->
@@ -1681,11 +1683,15 @@
         </div>
     
         <!-- Drawer Toggles -->
-        <button id="toggle-controls-btn" class="drawer-toggle drawer-toggle-left" title="Toggle Controls">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        <button id="toggle-controls-btn" class="drawer-toggle drawer-toggle-left" title="Toggle Controls (Ctrl+L)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+            </svg>
         </button>
-        <button id="toggle-library-btn" class="drawer-toggle drawer-toggle-right" title="Toggle Media Library">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+        <button id="toggle-library-btn" class="drawer-toggle drawer-toggle-right" title="Toggle Media Library (Ctrl+M)">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+            </svg>
         </button>
 
         <!-- Progress Bar -->
@@ -3450,6 +3456,17 @@
             // --- Keyboard Events ---
             window.addEventListener('keydown', (e) => { 
                 if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return; 
+
+                // Drawer Toggles
+                if (e.ctrlKey && e.key === 'l') {
+                    e.preventDefault();
+                    toggleControlsBtn.click();
+                }
+                if (e.ctrlKey && e.key === 'm') {
+                    e.preventDefault();
+                    toggleLibraryBtn.click();
+                }
+
                 if (e.key === 'v') setActiveTool('select'); 
                 if ((e.key === 'Delete' || e.key === 'Backspace') && selectedObject) { 
                     deleteObject(selectedObject); 
