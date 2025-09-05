@@ -60,45 +60,46 @@
         }
         
         .dark {
-            --primary-color: #60a5fa;
-            --primary-hover: #3b82f6;
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-color: #64748b;
-            --secondary-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            --success-color: #34d399;
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --warning-color: #fbbf24;
-            --warning-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            --danger-color: #f87171;
-            --danger-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
-            --border-color: #475569;
-            --bg-primary: #1e293b;
-            --bg-secondary: #334155;
-            --bg-tertiary: #475569;
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --glass-bg: rgba(30, 41, 59, 0.25);
-            --glass-border: rgba(148, 163, 184, 0.18);
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
-            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.4);
-            --shadow-glow: 0 0 20px rgb(96 165 250 / 0.2);
-            --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.1);
+            /* Professional deep slate palette */
+            --primary-color: #5fa8ff;
+            --primary-hover: #428fe8;
+            --primary-gradient: linear-gradient(145deg,#4379d8 0%,#6c55d8 100%);
+            --secondary-color: #4f5d75;
+            --secondary-gradient: linear-gradient(145deg,#3b485c 0%,#556279 100%);
+            --success-color: #2fbf9b;
+            --success-gradient: linear-gradient(145deg,#1d9f7d 0%,#31c6a2 100%);
+            --warning-color: #e0b750;
+            --warning-gradient: linear-gradient(145deg,#c7962c 0%,#f0d068 100%);
+            --danger-color: #e26666;
+            --danger-gradient: linear-gradient(145deg,#c64747 0%,#f07f7f 100%);
+            --text-primary: #e6edf3;
+            --text-secondary: #b5c2cf;
+            --text-muted: #6e7b89;
+            --border-color: #253242;
+            --bg-primary: #0d141c;
+            --bg-secondary: #17202a;
+            --bg-tertiary: #202c37;
+            --bg-gradient: radial-gradient(circle at 20% 20%,#162235 0%, #101821 55%, #0d141c 100%);
+            --glass-bg: rgba(21,30,40,0.55);
+            --glass-border: rgba(120,140,160,0.18);
+            --shadow-sm: 0 1px 2px -1px rgba(0,0,0,0.55);
+            --shadow-md: 0 4px 8px -2px rgba(0,0,0,0.55),0 2px 4px -2px rgba(0,0,0,0.5);
+            --shadow-lg: 0 12px 24px -6px rgba(0,0,0,0.6),0 4px 8px -4px rgba(0,0,0,0.55);
+            --shadow-xl: 0 24px 36px -10px rgba(0,0,0,0.65),0 8px 16px -8px rgba(0,0,0,0.6);
+            --shadow-2xl: 0 40px 60px -15px rgba(0,0,0,0.7);
+            --shadow-glow: 0 0 0 1px rgba(95,168,255,0.25),0 0 16px -4px rgba(95,168,255,0.25);
+            --shadow-inner: inset 0 2px 6px 0 rgba(0,0,0,0.4);
         }
         
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             font-feature-settings: 'cv01', 'cv03', 'cv04', 'cv11';
             overscroll-behavior: none;
-            background: var(--bg-secondary);
+            background: var(--bg-primary);
             background-image: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.1) 0%, transparent 50%);
+                radial-gradient(circle at 15% 50%, rgba(120, 119, 198, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(255, 119, 198, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(120, 219, 255, 0.1) 0%, transparent 40%);
             color: var(--text-primary);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             min-height: 100vh;
@@ -159,7 +160,7 @@
         }
         .drawer-toggle {
             position: fixed;
-            top: 50%;
+            top: 20%;
             transform: translateY(-50%);
             background: var(--glass-bg);
             backdrop-filter: blur(20px) saturate(180%);
@@ -233,14 +234,14 @@
         }
 
         .tool-button {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px) saturate(180%);
-            -webkit-backdrop-filter: blur(10px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0));
+            backdrop-filter: blur(14px) saturate(180%);
+            -webkit-backdrop-filter: blur(14px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
             color: var(--text-secondary);
-            box-shadow: var(--shadow-sm), var(--shadow-inner);
+            box-shadow: var(--shadow-sm);
             position: relative;
             overflow: hidden;
             font-weight: 500;
@@ -262,11 +263,11 @@
         }
         
         .tool-button:hover {
-            background: var(--bg-secondary);
-            box-shadow: var(--shadow-lg), var(--shadow-glow);
-            transform: translateY(-2px) scale(1.02);
+            background: linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.01));
+            box-shadow: var(--shadow-md), var(--shadow-glow);
+            transform: translateY(-2px) scale(1.015);
             color: var(--text-primary);
-            border-color: var(--primary-color);
+            border-color: rgba(95,168,255,0.35);
         }
         
         .tool-button:hover::before {
@@ -274,11 +275,11 @@
         }
         
         .tool-button.active {
-            background: var(--primary-gradient);
-            color: white;
+            background: linear-gradient(145deg,rgba(95,168,255,0.25) 0%,rgba(108,85,216,0.28) 100%);
+            color: #fff;
             font-weight: 600;
-            box-shadow: var(--shadow-xl), var(--shadow-glow);
-            border-color: transparent;
+            box-shadow: 0 0 0 1px rgba(95,168,255,0.35), var(--shadow-md);
+            border-color: rgba(95,168,255,0.45);
             transform: translateY(-1px);
         }
         
@@ -293,6 +294,18 @@
         .tool-button:hover svg {
             transform: scale(1.1);
         }
+
+        /* Accessible focus states */
+        .tool-button:focus-visible,
+        .accordion-button:focus-visible,
+        .upload-button:focus-visible,
+        .delete-button:focus-visible,
+        .layer-item-button:focus-visible,
+        .preset-color-bg:focus-visible {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
         #canvas-container {
             width: 100%;
             height: 100vh;
@@ -389,41 +402,38 @@
             border-top: 1px solid var(--glass-border);
             opacity: 0.6;
         }
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .accordion-button[aria-expanded="true"] + .accordion-content {
-            max-height: 1000px;
-        }
-        
         .accordion-button {
             font-weight: 600;
-            color: var(--text-primary);
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            border-radius: 14px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0));
+            backdrop-filter: blur(14px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.07);
+            letter-spacing: .3px;
+            box-shadow: var(--shadow-sm);
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            will-change: background, border-color;
         }
         
         .accordion-button:hover {
-            background: var(--bg-secondary);
-            color: var(--primary-color);
-            transform: translateY(-1px);
+            background: linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.01));
+            color: var(--text-primary);
+            border-color: rgba(95,168,255,0.35);
             box-shadow: var(--shadow-md);
-        }
+    }
         
         .accordion-button svg.arrow-icon {
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             color: var(--primary-color);
             filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+            transform: rotate(0deg); /* Expanded (default open) points down */
         }
-        
-        .accordion-button[aria-expanded="true"] svg.arrow-icon {
-            transform: rotate(180deg);
+
+        /* Collapsed state: rotate to point right */
+        .accordion-button[aria-expanded="false"] svg.arrow-icon {
+            transform: rotate(-90deg);
         }
         
         .section-header {
@@ -467,14 +477,17 @@
         .layer-item-button {
             background: transparent;
             border: none;
-            padding: 8px;
-            border-radius: 8px;
+            padding: 2px;
+            border-radius: 3px;
             cursor: pointer;
             color: var(--text-secondary);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-size: 12px;
+            font-size: 9px;
             position: relative;
             overflow: hidden;
+            min-width: 20px;
+            height: 20px;
+            flex-shrink: 0;
         }
         
         .layer-item-button::before {
@@ -521,11 +534,19 @@
             background: var(--glass-bg);
             backdrop-filter: blur(10px) saturate(180%);
             border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            border-radius: 8px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: var(--shadow-sm), var(--shadow-inner);
             position: relative;
             overflow: hidden;
+            max-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        #layer-list {
+            overflow-x: hidden !important;
+            width: 100%;
         }
         
         .layer-item::before {
@@ -543,7 +564,7 @@
         
         .layer-item:hover {
             box-shadow: var(--shadow-lg), var(--shadow-glow);
-            transform: translateY(-2px) scale(1.02);
+            transform: translateY(-1px);
             border-color: var(--primary-color);
         }
         
@@ -657,6 +678,38 @@
         
         .preset-color:hover::before {
             opacity: 1;
+        }
+
+        .preset-color-bg {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm), var(--shadow-inner);
+            position: relative;
+            overflow: hidden;
+            margin: 4px; /* spacing between circles */
+        }
+
+        /* Ensure parent rows allow wrapping with consistent gap */
+        .preset-row, .neutral-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px; /* extra insurance with margin */
+            justify-content: flex-start;
+        }
+
+        .preset-color-bg.selected {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-lg), var(--shadow-glow), 0 0 0 2px var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .preset-color-bg:hover {
+            transform: scale(1.15) translateY(-1px);
+            box-shadow: var(--shadow-xl), var(--shadow-glow);
         }
         
         .form-input {
@@ -824,8 +877,9 @@
         .media-item:hover img {
             transform: scale(1.1) rotate(1deg);
         }
+        /* Always keep properties panel rendered; internal states manage visibility */
         #properties-panel-content {
-            display: none;
+            display: block;
         }
         
         .status-indicator {
@@ -1180,31 +1234,32 @@
         
         /* Animation Trigger Panel */
         .animation-trigger-btn {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 4px 6px;
-            font-size: 10px;
+            background: rgba(30,41,59,0.35); /* much lighter, translucent */
+            border: 1px solid rgba(148,163,184,0.25);
+            border-radius: 3px;
+            padding: 2px 4px;
+            font-size: 9px;
             font-weight: 600;
-            color: var(--text-secondary);
+            letter-spacing: .5px;
+            color: var(--text-muted);
             cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
+            transition: background .18s ease, transform .18s ease, opacity .25s ease;
+            display: inline-flex;
+            flex-direction: row;
             align-items: center;
             justify-content: center;
-            min-width: 26px;
-            height: 26px;
+            min-width: 20px;
+            height: 18px; /* slimmer */
             position: relative;
-            box-shadow: var(--shadow-sm);
-            opacity: 0.5;
+            box-shadow: none;
+            opacity: 0.35; /* very low profile */
+            backdrop-filter: blur(4px) saturate(140%);
         }
         
         .animation-trigger-btn:hover {
-            background: var(--bg-secondary);
+            background: rgba(51,65,85,0.55);
             opacity: 0.55;
             transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
         }
         
         .animation-trigger-btn:active {
@@ -1212,47 +1267,42 @@
         }
         
         .animation-trigger-btn.triggering {
-            background: rgb(65, 77, 95);
+            background: rgba(56,189,248,0.3);
             color: var(--text-secondary);
-            opacity: 0.52;
-            transform: scale(1.02);
+            opacity: 0.7;
+            transform: scale(1.05);
         }
         
         .animation-trigger-btn .key-indicator {
-            position: absolute;
-            top: -3px;
-            right: -3px;
-            background: var(--primary-color);
-            color: white;
-            border-radius: 50%;
-            width: 12px;
-            height: 12px;
-            font-size: 8px;
-            font-weight: 700;
+            background: rgba(148,163,184,0.25);
+            color: var(--text-secondary);
+            border-radius: 2px;
+            padding: 0 2px;
+            width: auto;
+            height: 14px;
+            font-size: 9px;
+            font-weight: 600;
+            line-height: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid var(--bg-primary);
+            border: 1px solid rgba(148,163,184,0.35);
+            margin-right: 2px;
         }
         
         .animation-trigger-btn .animation-icon {
-            font-size: 12px;
+            font-size: 8px;
             line-height: 1;
-            color: var(--text-secondary);
+            color: var(--text-muted);
+            margin-left: 1px;
         }
         
         .animation-trigger-btn.triggering .animation-icon {
             color: var(--text-secondary);
         }
         
-        .animation-trigger-btn .object-name {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-            max-width: 60px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        .animation-trigger-btn .object-name { /* hide for low profile */
+            display: none;
         }
         
         .animation-trigger-btn.gentle-shake .animation-icon {
@@ -1342,7 +1392,6 @@
                         <div class="flex-1">
                             <div class="flex items-center justify-between">
                                 <h1 class="drawer-title">Gaze Tracking Canvas</h1>
-                                <span class="professional-badge">PRO</span>
                             </div>
                             <p class="drawer-subtitle">Visual Target Management</p>
                             <p class="drawer-author">by Niall Brown - ECVC</p>
@@ -1374,6 +1423,8 @@
                             <span id="fullscreen-text">Fullscreen</span>
                         </button>
                     </div>
+
+                    <!-- (Moved Save Image button to persistent footer) -->
                     
                     <div class="grid grid-cols-2 gap-3 mb-4">
                         <button id="select-tool" class="tool-button active flex items-center justify-center space-x-2 p-3 rounded-md" title="Select Tool (V)">
@@ -1453,7 +1504,7 @@
                     </div>
                     
                     <!-- Animation Properties -->
-                    <div id="animation-properties" class="space-y-4">
+                    <div id="animation-properties" class="space-y-4 hidden">
                         <div>
                             <label class="form-label block mb-2">Animation</label>
                             <select id="animation-select" class="form-input w-full">
@@ -1484,12 +1535,12 @@
                     </div>
                     <div id="no-selection-properties" class="text-center py-8 animate-fade-in">
                         <div class="text-slate-400 mb-2">
-                            <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            <svg class="w-12 h-12 mx-auto mb-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <p class="text-sm text-slate-300 font-medium">Select an object on the canvas to see its properties.</p>
-                        <p class="text-xs text-slate-400 mt-1">You can edit color, animation, and more.</p>
+                        <p id="no-selection-message" class="text-sm text-slate-300 font-medium">Add a visual target or shape to begin editing its properties.</p>
+                        <p class="text-xs text-slate-500 mt-1">Once selected, its color, animation, and transforms appear here.</p>
                     </div>
                 </div>
                 <!-- Background Color -->
@@ -1505,18 +1556,25 @@
                 <div class="accordion-content section-content p-3">
                     <div class="space-y-3">
                         <div>
-                            <label class="form-label block mb-2">Color</label>
+                            <label class="form-label block mb-2">Background Colour</label>
                             <input type="color" id="bg-color-slider" value="#000000" class="form-input w-full h-10 cursor-pointer">
                         </div>
                         <div>
-                            <label class="form-label block mb-2">Presets</label>
-                            <div class="grid grid-cols-3 gap-3">
-                                <button class="preset-color h-10 rounded" style="background-color: #FBF3E4;" data-color="#FBF3E4"></button>
-                                <button class="preset-color h-10 rounded" style="background-color: #EADDC6;" data-color="#EADDC6"></button>
-                                <button class="preset-color h-10 rounded" style="background-color: #D5C4A1;" data-color="#D5C4A1"></button>
-                                <button class="preset-color h-10 rounded" style="background-color: #FFFFFF;" data-color="#FFFFFF"></button>
-                                <button class="preset-color h-10 rounded" style="background-color: #808080;" data-color="#808080"></button>
-                                <button class="preset-color h-10 rounded" style="background-color: #000000;" data-color="#000000"></button>
+                            <label class="form-label block mb-2">Quick Background Colours</label>
+                            <!-- Row 1: High Contrast & Greys -->
+                            <div class="flex justify-between px-2 mb-8 gap-2">
+                                <button class="preset-color-bg" style="background-color: #000000;" data-color="#000000" title="Black"></button>
+                                <button class="preset-color-bg" style="background-color: #2a2a2a;" data-color="#2a2a2a" title="Dark Grey"></button>
+                                <button class="preset-color-bg" style="background-color: #808080;" data-color="#808080" title="Medium Grey"></button>
+                                <button class="preset-color-bg" style="background-color: #c0c0c0;" data-color="#c0c0c0" title="Light Grey"></button>
+                            </div>
+                            
+                            <!-- Row 2: Light Colors & Neutrals -->
+                            <div class="flex justify-between px-2 mt-2 gap-2">
+                                <button class="preset-color-bg" style="background-color: #ffffff; border-color: #333;" data-color="#ffffff" title="White"></button>
+                                <button class="preset-color-bg" style="background-color: #f5f5dc;" data-color="#f5f5dc" title="Beige"></button>
+                                <button class="preset-color-bg" style="background-color: #ddd8c7;" data-color="#ddd8c7" title="Cream"></button>
+                                <button class="preset-color-bg" style="background-color: #d2b48c;" data-color="#d2b48c" title="Tan"></button>
                             </div>
                         </div>
                     </div>
@@ -1531,14 +1589,22 @@
                         <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                 </div>
-                <div class="accordion-content section-content p-3">
-                    <div id="layer-list" class="space-y-2 max-h-64 overflow-y-auto"></div>
+                <div class="accordion-content section-content p-2">
+                    <div id="layer-list" class="space-y-1 max-h-64 overflow-y-auto mb-2"></div>
                     <div id="layers-empty-state" class="empty-state">
                         <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                         </svg>
                         <div class="title">No Objects Yet</div>
                         <div class="subtitle">Add text, shapes, or images to see them appear here as layers</div>
+                    </div>
+                    <div class="pt-2 mt-2 border-t border-slate-600/40">
+                        <button id="save-image-btn" class="tool-button w-full flex items-center justify-center space-x-2 p-2 rounded-md text-sm" title="Export Scene to Image (PNG)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3 3-3m2 8H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z" />
+                            </svg>
+                            <span class="font-medium">Export Scene to Image</span>
+                        </button>
                     </div>
                 </div>
                 </div>
@@ -1570,11 +1636,11 @@
                     </div>
                     <div class="accordion-content section-content p-3">
                         <div class="space-y-3">
-                            <label for="image-upload" class="upload-button w-full text-center py-2 px-3 rounded-md cursor-pointer block">
+                            <label for="image-upload" class="upload-button w-full text-center py-2 px-3 rounded-md cursor-pointer block" title="Add a visual target (image, video, gif)">
                                 <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                                 </svg>
-                                Add Media
+                                Add Visual Target
                             </label>
                             <input type="file" id="image-upload" multiple accept="image/*,video/*,.gif,.mp4,.mov,.avi,.mkv,.webm,.3gp,.wmv,.flv,.m4v" class="hidden">
                             <label for="folder-upload" class="upload-button w-full text-center py-2 px-3 rounded-md cursor-pointer block">
@@ -1781,7 +1847,7 @@
             const triangleTool = document.getElementById('triangle-tool');
 
             const bgColorSlider = document.getElementById('bg-color-slider');
-            const presetColorBtns = document.querySelectorAll('.preset-color');
+            const presetColorBtns = document.querySelectorAll('.preset-color-bg');
             const bgImageInput = document.getElementById('bg-image-input');
             const deleteBgBtn = document.getElementById('delete-bg-btn');
             const fgImageInput = document.getElementById('fg-image-input');
@@ -2330,16 +2396,16 @@
                     const isTop = index === 0; 
                     const isBottom = index === sortedObjects.length - 1; 
                     const div = document.createElement('div'); 
-                    div.className = `layer-item p-3 mb-2 rounded-md flex justify-between items-center cursor-pointer text-sm transition-all ${selectedObject?.id === obj.id ? 'selected' : ''}`; 
+                    div.className = `layer-item px-3 py-1 mb-1 rounded-md flex justify-between items-center cursor-pointer text-xs transition-all ${selectedObject?.id === obj.id ? 'selected' : ''}`; 
                     div.dataset.id = obj.id; 
                     
                     const nameSpan = document.createElement('span'); 
                     nameSpan.textContent = obj.name; 
-                    nameSpan.className = 'flex-grow truncate mr-3 font-medium'; 
+                    nameSpan.className = 'flex-grow truncate mr-1 ml-1 font-medium text-xs overflow-hidden'; 
                     div.appendChild(nameSpan); 
                     
                     const controls = document.createElement('div'); 
-                    controls.className = 'flex items-center space-x-2'; 
+                    controls.className = 'flex items-center gap-1'; 
                     
                     const upBtn = document.createElement('button'); 
                     upBtn.innerHTML = '▲'; 
@@ -2383,6 +2449,9 @@
                 shapeProperties.style.display = 'none'; 
                 imageProperties.style.display = 'none';
                 const animationProperties = document.getElementById('animation-properties');
+                const noSelectionMsg = document.getElementById('no-selection-message');
+                // Always start hidden
+                animationProperties.style.display = 'none';
                 
                 if (selectedObject) { 
                     if (selectedObject.type === 'text') { 
@@ -2399,11 +2468,19 @@
                         flipHorizontalBtn.classList.toggle('active', selectedObject.flipHorizontal || false);
                         flipVerticalBtn.classList.toggle('active', selectedObject.flipVertical || false);
                     }
-                    
-                    // Show animation properties for all object types
-                    animationProperties.style.display = 'block';
+                    // Show animation properties only for animatable types
+                    const animatableTypes = ['text','shape','image'];
+                    if (animatableTypes.includes(selectedObject.type)) {
+                        animationProperties.style.display = 'block';
+                        animationProperties.classList.remove('hidden');
+                    }
                 } else { 
                     noSelectionProperties.style.display = 'block'; 
+                    if (objects.length === 0) {
+                        noSelectionMsg.textContent = 'Add a visual target, shape, or text object to see its properties here.';
+                    } else {
+                        noSelectionMsg.textContent = 'Select an object on the canvas to see and edit its properties.';
+                    }
                     animationProperties.style.display = 'none';
                 } 
                 
@@ -2455,14 +2532,24 @@
 
             // --- UI Interaction ---
             function updateStatusIndicators() {
-                const isControlsOpen = controlsDrawer.classList.contains('open');
-                const statusIndicators = ['tools-status', 'properties-status', 'background-status', 'foreground-status', 'layers-status'];
-                
-                statusIndicators.forEach(id => {
-                    const indicator = document.getElementById(id);
-                    if (indicator) {
-                        indicator.className = `status-indicator ${isControlsOpen ? 'status-active' : 'status-drawer-closed'}`;
+                // Map status IDs to their accordion button (assumes structure: indicator inside button span sibling)
+                const mapping = [
+                    { id: 'tools-status', buttonIndex: 0 },
+                    { id: 'properties-status', buttonIndex: 1 },
+                    { id: 'background-status', buttonIndex: 2 },
+                    { id: 'layers-status', buttonIndex: 3 }
+                ];
+
+                mapping.forEach(m => {
+                    const indicator = document.getElementById(m.id);
+                    if (!indicator) return;
+                    // Find nearest ancestor button
+                    const btn = indicator.closest('button.accordion-button');
+                    let isExpanded = false;
+                    if (btn) {
+                        isExpanded = btn.getAttribute('aria-expanded') === 'true';
                     }
+                    indicator.className = `status-indicator ${isExpanded ? 'status-active' : 'status-drawer-closed'}`;
                 });
             }
             
@@ -2519,6 +2606,42 @@
                     fullscreenToggle.classList.add('active');
                 }
             });
+
+            // Export Scene button (clean snapshot without selection box)
+            const saveImageBtn = document.getElementById('save-image-btn');
+            saveImageBtn.addEventListener('click', () => {
+                try {
+                    const prevSelected = selectedObject;
+                    // Hide selection box
+                    selectedObject = null;
+                    draw();
+                    requestAnimationFrame(() => {
+                        canvas.toBlob((blob) => {
+                            // Restore selection
+                            selectedObject = prevSelected;
+                            draw();
+                            if (!blob) {
+                                alert('Failed to create image.');
+                                return;
+                            }
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                            link.download = `gaze-tracker-image-${timestamp}.png`;
+                            link.href = url;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            URL.revokeObjectURL(url);
+                            saveImageBtn.classList.add('active');
+                            setTimeout(()=> saveImageBtn.classList.remove('active'), 900);
+                        }, 'image/png', 1.0);
+                    });
+                } catch (err) {
+                    console.error('Save image failed', err);
+                    alert('Failed to save image.');
+                }
+            });
             
             accordionButtons.forEach(button => {
                 button.addEventListener('click', (e) => {
@@ -2539,6 +2662,8 @@
                             content.style.maxHeight = '0px';
                         }
                     }
+                    // After toggle, refresh indicator lights
+                    updateStatusIndicators();
                 });
             
                 // Set initial state for accordions that are open by default
@@ -2548,6 +2673,8 @@
                        content.style.maxHeight = '2000px'; // Stable initial height
                     }
                 }
+                // Set initial indicators once
+                updateStatusIndicators();
             });
 
             controlsDrawer.addEventListener('click', e => e.stopPropagation());
@@ -3112,11 +3239,26 @@
                 backgroundImage = null; 
                 deleteBgBtn.classList.add('hidden'); 
                 bgImageInput.value = ''; 
+                
+                // Update selected state on preset buttons
+                presetColorBtns.forEach(btn => {
+                    if (btn.dataset.color === e.target.value) {
+                        btn.classList.add('selected');
+                    } else {
+                        btn.classList.remove('selected');
+                    }
+                });
+                
                 draw(); 
             });
             
             presetColorBtns.forEach(btn => { 
                 btn.addEventListener('click', (e) => { 
+                    // Remove selected class from all buttons
+                    presetColorBtns.forEach(b => b.classList.remove('selected'));
+                    // Add selected class to clicked button
+                    e.target.classList.add('selected');
+                    
                     backgroundColor = e.target.dataset.color; 
                     bgColorSlider.value = backgroundColor; 
                     backgroundImage = null; 
@@ -3322,6 +3464,11 @@
             
             // --- Context Menu Functions ---
             function showContextMenu(x, y) { 
+                // Determine if selection supports animation (text, shape, image only)
+                const animateBtn = document.getElementById('ctx-animate');
+                const animatableTypes = ['text','shape','image'];
+                const canAnimate = selectedObject && animatableTypes.includes(selectedObject.type);
+                animateBtn.style.display = canAnimate ? 'flex' : 'none';
                 contextMenu.style.display = 'block'; 
                 contextMenu.style.left = `${x}px`; 
                 contextMenu.style.top = `${y}px`; 
