@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gaze-tracker-v1.0.0';
+const CACHE_NAME = 'gaze-tracker-v1.1.0';
 const urlsToCache = [
   './',
   './index.html',
@@ -13,7 +13,19 @@ const urlsToCache = [
   './icons/icon-192x192.png',
   './icons/icon-384x384.png',
   './icons/icon-512x512.png',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap',
+  'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap',
+  'https://fonts.googleapis.com/css2?family=Andika:ital,wght@0,400;0,700;1,400;1,700&display=swap',
+  'https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap',
+  // Self-hosted Luciole fonts
+  './fonts/Luciole_webfonts/Luciole-Regular/Luciole-Regular.woff2',
+  './fonts/Luciole_webfonts/Luciole-Regular/Luciole-Regular.woff',
+  './fonts/Luciole_webfonts/Luciole-Bold/Luciole-Bold.woff2',
+  './fonts/Luciole_webfonts/Luciole-Bold/Luciole-Bold.woff',
+  './fonts/Luciole_webfonts/Luciole-Italic/Luciole-Italic.woff2',
+  './fonts/Luciole_webfonts/Luciole-Italic/Luciole-Italic.woff',
+  './fonts/Luciole_webfonts/Luciole-BoldItalic/Luciole-BoldItalic.woff2',
+  './fonts/Luciole_webfonts/Luciole-BoldItalic/Luciole-BoldItalic.woff'
 ];
 
 // Install Service Worker

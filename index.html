@@ -27,68 +27,133 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="./dist/output.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Andika:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="preload" as="font" href="./fonts/Luciole_webfonts/Luciole-Regular/Luciole-Regular.woff2" type="font/woff2" crossorigin>
     <style>
+        /* Luciole webfonts (self-hosted) */
+        @font-face {
+            font-family: 'Luciole';
+            src: url('./fonts/Luciole_webfonts/Luciole-Regular/Luciole-Regular.woff2') format('woff2'),
+                 url('./fonts/Luciole_webfonts/Luciole-Regular/Luciole-Regular.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Luciole';
+            src: url('./fonts/Luciole_webfonts/Luciole-Italic/Luciole-Italic.woff2') format('woff2'),
+                 url('./fonts/Luciole_webfonts/Luciole-Italic/Luciole-Italic.woff') format('woff');
+            font-weight: 400;
+            font-style: italic;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Luciole';
+            src: url('./fonts/Luciole_webfonts/Luciole-Bold/Luciole-Bold.woff2') format('woff2'),
+                 url('./fonts/Luciole_webfonts/Luciole-Bold/Luciole-Bold.woff') format('woff');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Luciole';
+            src: url('./fonts/Luciole_webfonts/Luciole-BoldItalic/Luciole-BoldItalic.woff2') format('woff2'),
+                 url('./fonts/Luciole_webfonts/Luciole-BoldItalic/Luciole-BoldItalic.woff') format('woff');
+            font-weight: 700;
+            font-style: italic;
+            font-display: swap;
+        }
         :root {
-            --primary-color: #3b82f6;
+            /* Material Design 3 tokens (light) */
+            --md-primary: #3b82f6;
+            --md-on-primary: #ffffff;
+            --md-primary-container: #dbeafe;
+            --md-on-primary-container: #0b3a82;
+            --md-surface: #ffffff;
+            --md-surface-variant: #f2f4f7;
+            --md-on-surface: #1f2937;
+            --md-on-surface-variant: #475569;
+            --md-outline: #d0d5dd;
+            --md-outline-variant: #e5e7eb;
+            --md-error: #ef4444;
+            --md-on-error: #ffffff;
+            /* Elevations */
+            --md-elev-0: none;
+            --md-elev-1: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.10);
+            --md-elev-2: 0 2px 4px rgba(16, 24, 40, 0.08), 0 4px 8px rgba(16, 24, 40, 0.08);
+            --md-elev-3: 0 8px 12px rgba(16, 24, 40, 0.10), 0 2px 6px rgba(16, 24, 40, 0.08);
+
+            /* Back-compat variables mapped to MD tokens */
+            --primary-color: var(--md-primary);
             --primary-hover: #2563eb;
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-color: #6366f1;
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --success-color: #10b981;
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --warning-color: #f59e0b;
-            --warning-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            --danger-color: #ef4444;
-            --danger-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-            --text-primary: #1f2937;
+            --text-primary: var(--md-on-surface);
             --text-secondary: #6b7280;
             --text-muted: #9ca3af;
-            --border-color: #e5e7eb;
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8fafc;
-            --bg-tertiary: #f1f5f9;
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --glass-bg: rgba(255, 255, 255, 0.25);
-            --glass-border: rgba(255, 255, 255, 0.18);
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-            --shadow-glow: 0 0 20px rgb(59 130 246 / 0.15);
-            --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+            --border-color: var(--md-outline);
+            --bg-primary: var(--md-surface);
+            --bg-secondary: var(--md-surface-variant);
+            --bg-tertiary: #eef2f6;
+            --glass-bg: var(--md-surface);
+            --glass-border: var(--md-outline-variant);
+            --shadow-sm: var(--md-elev-1);
+            --shadow-md: var(--md-elev-1);
+            --shadow-lg: var(--md-elev-2);
+            --shadow-xl: var(--md-elev-3);
+            --shadow-2xl: var(--md-elev-3);
+            --shadow-glow: none;
+            --shadow-inner: inset 0 1px 2px rgba(16,24,40,0.04);
+
+            /* Scrollbar (light) */
+            --scrollbar-track: var(--bg-secondary);
+            --scrollbar-thumb: #cbd5e1; /* slate-300 */
+            --scrollbar-thumb-hover: var(--primary-color);
         }
         
         .dark {
-            /* Professional deep slate palette */
-            --primary-color: #5fa8ff;
+            /* Material Design 3 tokens (dark) */
+            --md-primary: #5fa8ff;
+            --md-on-primary: #0b1220;
+            --md-primary-container: #0b1220;
+            --md-on-primary-container: #cfe3ff;
+            --md-surface: #0d141c;
+            --md-surface-variant: #151c26;
+            --md-on-surface: #e6edf3;
+            --md-on-surface-variant: #b5c2cf;
+            --md-outline: #253242;
+            --md-outline-variant: #1b2633;
+            --md-error: #ffb4ab;
+            --md-on-error: #690005;
+            --md-elev-0: none;
+            --md-elev-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.30);
+            --md-elev-2: 0 2px 4px rgba(0, 0, 0, 0.45), 0 4px 8px rgba(0, 0, 0, 0.35);
+            --md-elev-3: 0 8px 12px rgba(0, 0, 0, 0.50), 0 2px 6px rgba(0, 0, 0, 0.40);
+
+            /* Back-compat mappings */
+            --primary-color: var(--md-primary);
             --primary-hover: #428fe8;
-            --primary-gradient: linear-gradient(145deg,#4379d8 0%,#6c55d8 100%);
-            --secondary-color: #4f5d75;
-            --secondary-gradient: linear-gradient(145deg,#3b485c 0%,#556279 100%);
-            --success-color: #2fbf9b;
-            --success-gradient: linear-gradient(145deg,#1d9f7d 0%,#31c6a2 100%);
-            --warning-color: #e0b750;
-            --warning-gradient: linear-gradient(145deg,#c7962c 0%,#f0d068 100%);
-            --danger-color: #e26666;
-            --danger-gradient: linear-gradient(145deg,#c64747 0%,#f07f7f 100%);
-            --text-primary: #e6edf3;
+            --text-primary: var(--md-on-surface);
             --text-secondary: #b5c2cf;
             --text-muted: #6e7b89;
-            --border-color: #253242;
-            --bg-primary: #0d141c;
-            --bg-secondary: #17202a;
-            --bg-tertiary: #202c37;
-            --bg-gradient: radial-gradient(circle at 20% 20%,#162235 0%, #101821 55%, #0d141c 100%);
-            --glass-bg: rgba(21,30,40,0.55);
-            --glass-border: rgba(120,140,160,0.18);
-            --shadow-sm: 0 1px 2px -1px rgba(0,0,0,0.55);
-            --shadow-md: 0 4px 8px -2px rgba(0,0,0,0.55),0 2px 4px -2px rgba(0,0,0,0.5);
-            --shadow-lg: 0 12px 24px -6px rgba(0,0,0,0.6),0 4px 8px -4px rgba(0,0,0,0.55);
-            --shadow-xl: 0 24px 36px -10px rgba(0,0,0,0.65),0 8px 16px -8px rgba(0,0,0,0.6);
-            --shadow-2xl: 0 40px 60px -15px rgba(0,0,0,0.7);
-            --shadow-glow: 0 0 0 1px rgba(95,168,255,0.25),0 0 16px -4px rgba(95,168,255,0.25);
-            --shadow-inner: inset 0 2px 6px 0 rgba(0,0,0,0.4);
+            --border-color: var(--md-outline);
+            --bg-primary: var(--md-surface);
+            --bg-secondary: var(--md-surface-variant);
+            --bg-tertiary: #101722;
+            --glass-bg: var(--md-surface);
+            --glass-border: var(--md-outline-variant);
+            --shadow-sm: var(--md-elev-1);
+            --shadow-md: var(--md-elev-1);
+            --shadow-lg: var(--md-elev-2);
+            --shadow-xl: var(--md-elev-3);
+            --shadow-2xl: var(--md-elev-3);
+            --shadow-glow: none;
+            --shadow-inner: inset 0 1px 2px rgba(0,0,0,0.25);
+
+            /* Scrollbar (dark) */
+            --scrollbar-track: var(--md-surface-variant);
+            --scrollbar-thumb: var(--text-muted);
+            --scrollbar-thumb-hover: var(--primary-color);
         }
         
         body {
@@ -96,60 +161,46 @@
             font-feature-settings: 'cv01', 'cv03', 'cv04', 'cv11';
             overscroll-behavior: none;
             background: var(--bg-primary);
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(120, 119, 198, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 85% 30%, rgba(255, 119, 198, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 50% 80%, rgba(120, 219, 255, 0.1) 0%, transparent 40%);
+            background-image: none;
             color: var(--text-primary);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Limit transitions to avoid paint glitches on text */
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             min-height: 100vh;
         }
         .drawer {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Avoid transitioning "all" to prevent text paint issues during open/close */
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: fixed;
             top: 0;
             height: 100vh;
             max-height: 100vh;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            box-shadow: var(--shadow-2xl), var(--shadow-glow);
+            background: var(--md-surface);
+            box-shadow: var(--md-elev-2);
             z-index: 50;
-            border: 1px solid var(--glass-border);
+            border: 1px solid var(--md-outline-variant);
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
+        .drawer::before { content: none; }
         
-        .drawer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(145deg, 
-                rgba(255, 255, 255, 0.1) 0%, 
-                rgba(255, 255, 255, 0.05) 50%, 
-                rgba(255, 255, 255, 0.02) 100%);
-            pointer-events: none;
+        .drawer-toggle {
+            position: fixed;
+            top: 20%;
+            transform: translateY(-50%);
+            background: var(--md-surface-variant);
+            border: 1px solid var(--md-outline);
+            padding: 12px;
+            z-index: 60; /* above .drawer (50) */
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 0;
+            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            box-shadow: var(--md-elev-2);
+            border-radius: 12px;
         }
-        
-        .drawer-right {
-            border-left: 1px solid var(--border-color);
-            border-right: none;
-        }
-        
-        .drawer-left {
-            left: 0;
-            transform: translateX(-100%);
-            border-right: 1px solid var(--border-color);
-        }
-        
-        .drawer-left.open {
-            transform: translateX(0);
-        }
-        
         .drawer-right {
             right: 0;
             transform: translateX(100%);
@@ -158,40 +209,23 @@
         .drawer-right.open {
             transform: translateX(0);
         }
-        .drawer-toggle {
-            position: fixed;
-            top: 20%;
-            transform: translateY(-50%);
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            padding: 12px;
-            z-index: 40;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-lg), var(--shadow-glow);
-            border-radius: 12px;
+        /* Re-add left drawer closed/open states */
+        .drawer-left {
+            left: 0;
+            transform: translateX(-100%);
+            border-right: 1px solid var(--border-color);
+        }
+        .drawer-left.open {
+            transform: translateX(0);
         }
         
-        .drawer-toggle::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(145deg, 
-                rgba(255, 255, 255, 0.1) 0%, 
-                rgba(255, 255, 255, 0.05) 100%);
-            border-radius: inherit;
-            pointer-events: none;
-        }
+        
+    .drawer-toggle::before { content: none; }
         
         .drawer-toggle:hover {
-            background: var(--bg-tertiary);
-            box-shadow: var(--shadow-2xl), var(--shadow-glow);
-            transform: translateY(-50%) scale(1.08) translateZ(0);
+            background: var(--bg-secondary);
+            box-shadow: var(--md-elev-3);
+            transform: translateY(-50%) scale(1.03);
         }
         
         .drawer-toggle-left {
@@ -225,21 +259,19 @@
         .drawer-toggle svg {
             color: var(--primary-color);
             transition: color 0.2s ease;
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
         }
         
         .drawer-toggle:hover svg {
             color: var(--primary-hover);
         }
-
+        /* Tool button base */
         .tool-button {
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            background: linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0));
-            backdrop-filter: blur(14px) saturate(180%);
-            -webkit-backdrop-filter: blur(14px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
+            transition: background 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease, color 0.15s ease;
+            background: var(--bg-secondary);
+            border: 1px solid var(--md-outline);
+            border-radius: 12px;
             color: var(--text-secondary);
             box-shadow: var(--shadow-sm);
             position: relative;
@@ -247,27 +279,13 @@
             font-weight: 500;
         }
         
-        .tool-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(145deg, 
-                rgba(255, 255, 255, 0.08) 0%, 
-                rgba(255, 255, 255, 0.02) 100%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            border-radius: inherit;
-        }
+    .tool-button::before { content: none; }
         
         .tool-button:hover {
-            background: linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.01));
-            box-shadow: var(--shadow-md), var(--shadow-glow);
-            transform: translateY(-2px) scale(1.015);
+            background: var(--bg-tertiary);
+            box-shadow: var(--shadow-md);
             color: var(--text-primary);
-            border-color: rgba(95,168,255,0.35);
+            border-color: var(--md-outline);
         }
         
         .tool-button:hover::before {
@@ -275,12 +293,11 @@
         }
         
         .tool-button.active {
-            background: linear-gradient(145deg,rgba(95,168,255,0.25) 0%,rgba(108,85,216,0.28) 100%);
-            color: #fff;
+            background: var(--md-primary);
+            color: var(--md-on-primary);
             font-weight: 600;
-            box-shadow: 0 0 0 1px rgba(95,168,255,0.35), var(--shadow-md);
-            border-color: rgba(95,168,255,0.45);
-            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--md-primary);
         }
         
         .tool-button.active::before {
@@ -297,7 +314,6 @@
 
         /* Accessible focus states */
         .tool-button:focus-visible,
-        .accordion-button:focus-visible,
         .upload-button:focus-visible,
         .delete-button:focus-visible,
         .layer-item-button:focus-visible,
@@ -305,31 +321,24 @@
             outline: 2px solid var(--primary-color);
             outline-offset: 2px;
         }
+        /* Move accordion focus outline to the outer card to avoid double border */
+        .accordion-button:focus-visible { outline: none; }
+        .section-header:focus-within {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+            border-radius: 12px;
+        }
 
         #canvas-container {
             width: 100%;
             height: 100vh;
             position: relative;
             background: var(--bg-primary);
-            background-image: 
-                radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+            background-image: none;
             overflow: hidden;
         }
         
-        #canvas-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.03) 50%, transparent 100%),
-                linear-gradient(0deg, transparent 0%, rgba(168, 85, 247, 0.03) 50%, transparent 100%);
-            pointer-events: none;
-            z-index: 1;
-        }
+    #canvas-container::before { content: none; }
         
         canvas {
             display: block;
@@ -341,29 +350,16 @@
         .context-menu {
             display: none;
             position: absolute;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            box-shadow: var(--shadow-2xl), var(--shadow-glow);
+            background: var(--bg-primary);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 12px;
+            box-shadow: var(--shadow-xl);
             z-index: 1000;
             overflow: hidden;
             min-width: 200px;
         }
         
-        .context-menu::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(145deg, 
-                rgba(255, 255, 255, 0.1) 0%, 
-                rgba(255, 255, 255, 0.05) 100%);
-            pointer-events: none;
-        }
+    .context-menu::before { content: none; }
         
         .context-menu button {
             display: block;
@@ -376,15 +372,14 @@
             font-size: 14px;
             font-weight: 500;
             color: var(--text-primary);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: background 0.2s ease, color 0.2s ease;
             position: relative;
             z-index: 1;
         }
         
         .context-menu button:hover {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--primary-color);
-            transform: translateX(4px);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
         }
         
         .context-menu button.danger {
@@ -399,35 +394,30 @@
         .context-menu hr {
             margin: 8px 0;
             border: none;
-            border-top: 1px solid var(--glass-border);
+            border-top: 1px solid var(--md-outline-variant);
             opacity: 0.6;
         }
         .accordion-button {
             font-weight: 600;
             color: var(--text-secondary);
-            border-radius: 14px;
+            border-radius: inherit; /* match outer card radius to avoid double contour */
             transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            background: linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0));
-            backdrop-filter: blur(14px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.07);
+            background: transparent; /* let section-header own the glass look */
+            backdrop-filter: none;
+            border: none; /* avoid double border: header draws the border */
             letter-spacing: .3px;
-            box-shadow: var(--shadow-sm);
+            box-shadow: none; /* avoid double edge with header shadow */
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
             will-change: background, border-color;
         }
         
-        .accordion-button:hover {
-            background: linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.01));
-            color: var(--text-primary);
-            border-color: rgba(95,168,255,0.35);
-            box-shadow: var(--shadow-md);
-    }
+    .accordion-button:hover { color: var(--text-primary); }
         
         .accordion-button svg.arrow-icon {
             transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
             color: var(--primary-color);
-            filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+            filter: none;
             transform: rotate(0deg); /* Expanded (default open) points down */
         }
 
@@ -437,43 +427,29 @@
         }
         
         .section-header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px) saturate(180%);
+            background: var(--bg-secondary);
             border-radius: 12px;
             margin-bottom: 8px;
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow-sm), var(--shadow-inner);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--md-outline-variant);
+            box-shadow: none;
+            transition: border-color 0.2s ease, background 0.2s ease;
+            contain: paint;
+            background-clip: padding-box;
         }
         
-        .section-header:hover {
-            box-shadow: var(--shadow-md), var(--shadow-glow);
-            transform: translateY(-1px);
-        }
+    .section-header:hover { box-shadow: none; transform: none; border-color: var(--md-outline-variant); }
         
         .section-content {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px) saturate(180%);
+            background: var(--bg-primary);
             border-radius: 12px;
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow-sm), var(--shadow-inner);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--md-outline-variant);
+            box-shadow: var(--shadow-sm);
+            transition: border-color 0.2s ease, background 0.2s ease;
             position: relative;
             overflow: hidden;
         }
         
-        .section-content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(145deg, 
-                rgba(255, 255, 255, 0.05) 0%, 
-                rgba(255, 255, 255, 0.02) 100%);
-            pointer-events: none;
-        }
+    .section-content::before { content: none; }
         .layer-item-button {
             background: transparent;
             border: none;
@@ -490,24 +466,13 @@
             flex-shrink: 0;
         }
         
-        .layer-item-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--primary-gradient);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            border-radius: inherit;
-        }
+    .layer-item-button::before { content: none; }
         
         .layer-item-button:hover {
             background: var(--bg-secondary);
             color: var(--primary-color);
-            transform: scale(1.1) translateY(-1px);
-            box-shadow: var(--shadow-md), var(--shadow-glow);
+            transform: scale(1.06);
+            box-shadow: var(--shadow-md);
         }
         
         .layer-item-button:hover::before {
@@ -531,12 +496,11 @@
         }
         
         .layer-item {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px) saturate(180%);
-            border: 1px solid var(--glass-border);
+            background: var(--bg-primary);
+            border: 1px solid var(--md-outline-variant);
             border-radius: 8px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-sm), var(--shadow-inner);
+            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: var(--shadow-sm);
             position: relative;
             overflow: hidden;
             max-width: 100%;
@@ -549,97 +513,62 @@
             width: 100%;
         }
         
-        .layer-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(145deg, 
-                rgba(255, 255, 255, 0.05) 0%, 
-                rgba(255, 255, 255, 0.02) 100%);
-            pointer-events: none;
-        }
+    .layer-item::before { content: none; }
         
         .layer-item:hover {
-            box-shadow: var(--shadow-lg), var(--shadow-glow);
-            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
             border-color: var(--primary-color);
         }
         
         .layer-item.selected {
-            background: var(--bg-tertiary);
+            background: var(--bg-secondary);
             border-color: var(--primary-color);
             box-shadow: var(--shadow-md);
         }
         
         .upload-button {
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 12px 20px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--md-outline);
+            border-radius: 8px;
+            padding: 10px 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-lg), var(--shadow-glow);
+            transition: background 0.2s ease, border-color 0.2s ease;
+            box-shadow: none;
             position: relative;
             overflow: hidden;
             font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            text-transform: none;
+            letter-spacing: 0.2px;
         }
         
-        .upload-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s ease;
-        }
+    .upload-button::before { content: none; }
         
-        .upload-button:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: var(--shadow-2xl), var(--shadow-glow);
-        }
+    .upload-button:hover { background: var(--bg-tertiary); }
         
         .upload-button:hover::before {
             left: 100%;
         }
         
         .delete-button {
-            background: var(--danger-gradient);
-            color: white;
+            background: var(--md-error);
+            color: var(--md-on-error);
             border: none;
             border-radius: 10px;
             padding: 8px 12px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: background 0.2s ease, box-shadow 0.2s ease;
             box-shadow: var(--shadow-md);
             position: relative;
             overflow: hidden;
         }
         
-        .delete-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(220, 38, 38, 0.2);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+    .delete-button::before { content: none; }
         
         .delete-button:hover {
             background: #dc2626;
             box-shadow: var(--shadow-lg);
-            transform: translateY(-2px) scale(1.05);
         }
         
         .delete-button:hover::before {
@@ -648,46 +577,32 @@
         
         .preset-color {
             border-radius: 12px;
-            border: 3px solid var(--glass-border);
+            border: 2px solid var(--md-outline-variant);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-sm), var(--shadow-inner);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+            box-shadow: var(--shadow-sm);
             position: relative;
             overflow: hidden;
         }
         
-        .preset-color::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(145deg, 
-                rgba(255, 255, 255, 0.2) 0%, 
-                rgba(255, 255, 255, 0.05) 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
+    .preset-color::before { content: none; }
         
         .preset-color:hover {
             border-color: var(--primary-color);
-            box-shadow: var(--shadow-lg), var(--shadow-glow);
-            transform: scale(1.1) translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            transform: scale(1.03);
         }
         
-        .preset-color:hover::before {
-            opacity: 1;
-        }
+    .preset-color:hover::before { content: none; }
 
         .preset-color-bg {
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            border: 2px solid var(--glass-border);
+            border: 2px solid var(--md-outline-variant);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-sm), var(--shadow-inner);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+            box-shadow: var(--shadow-sm);
             position: relative;
             overflow: hidden;
             margin: 4px; /* spacing between circles */
@@ -703,35 +618,32 @@
 
         .preset-color-bg.selected {
             border-color: var(--primary-color);
-            box-shadow: var(--shadow-lg), var(--shadow-glow), 0 0 0 2px var(--primary-color);
-            transform: scale(1.1);
+            box-shadow: var(--shadow-lg), 0 0 0 2px var(--primary-color);
+            transform: scale(1.06);
         }
 
         .preset-color-bg:hover {
-            transform: scale(1.15) translateY(-1px);
-            box-shadow: var(--shadow-xl), var(--shadow-glow);
+            transform: scale(1.08);
+            box-shadow: var(--shadow-xl);
         }
         
         .form-input {
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            border: 1px solid var(--md-outline);
+            border-radius: 8px;
             padding: 12px 16px;
             font-size: 14px;
             font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px) saturate(180%);
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+            background: var(--bg-primary);
             color: var(--text-primary);
-            box-shadow: var(--shadow-inner);
+            box-shadow: none;
             position: relative;
         }
         
         .form-input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: var(--shadow-md), 0 0 0 3px rgba(59, 130, 246, 0.1);
-            transform: translateY(-1px);
-            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
         
         .form-input::placeholder {
@@ -741,16 +653,15 @@
         
         /* Enhanced select dropdown styling */
         select.form-input {
-            background: var(--glass-bg) !important;
-            backdrop-filter: blur(10px) saturate(180%) !important;
+            background: var(--bg-primary) !important;
             color: var(--text-primary) !important;
             cursor: pointer !important;
-            border: 1px solid rgba(255, 255, 255, 0.18) !important;
+            border: 1px solid var(--md-outline) !important;
             border-radius: 8px !important;
             padding: 12px 40px 12px 16px !important;
             font-size: 14px !important;
             line-height: 1.4 !important;
-            transition: all 0.2s ease !important;
+            transition: border-color 0.15s ease !important;
             position: relative !important;
             
             /* Remove all native appearances */
@@ -767,16 +678,15 @@
         
         /* Specific fix for animation select */
         #animation-select {
-            background: var(--glass-bg) !important;
-            backdrop-filter: blur(10px) saturate(180%) !important;
+            background: var(--bg-primary) !important;
             color: var(--text-primary) !important;
             cursor: pointer !important;
-            border: 1px solid rgba(255, 255, 255, 0.18) !important;
+            border: 1px solid var(--md-outline) !important;
             border-radius: 8px !important;
             padding: 12px 40px 12px 16px !important;
             font-size: 14px !important;
             line-height: 1.4 !important;
-            transition: all 0.2s ease !important;
+            transition: border-color 0.15s ease !important;
             position: relative !important;
             
             /* Remove all native appearances */
@@ -837,35 +747,22 @@
         }
         
         .media-item {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px) saturate(180%);
-            border: 2px solid var(--glass-border);
-            border-radius: 16px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-sm), var(--shadow-inner);
+            background: var(--bg-primary);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 12px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+            box-shadow: var(--shadow-sm);
             overflow: hidden;
             aspect-ratio: 1;
             position: relative;
         }
         
-        .media-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(145deg, 
-                rgba(255, 255, 255, 0.05) 0%, 
-                rgba(255, 255, 255, 0.02) 100%);
-            pointer-events: none;
-            z-index: 1;
-        }
+    .media-item::before { content: none; }
         
         .media-item:hover {
             border-color: var(--primary-color);
-            box-shadow: var(--shadow-2xl), var(--shadow-glow);
-            transform: translateY(-4px) scale(1.03);
+            box-shadow: var(--shadow-xl);
+            transform: scale(1.02);
         }
         
         .media-item img {
@@ -923,6 +820,9 @@
             padding: 12px;
             border-radius: 6px;
             margin-bottom: 12px;
+            /* Isolate layer to prevent text pop-in due to parent transitions */
+            contain: paint;
+            will-change: auto;
         }
         
         .drawer-title {
@@ -930,6 +830,11 @@
             font-weight: 700;
             color: var(--text-primary);
             margin: 0;
+            /* Avoid opacity/visibility animation on titles */
+            transition: color 0.2s ease;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
         }
         
         .drawer-subtitle {
@@ -945,25 +850,31 @@
             font-weight: 500;
         }
         
-        /* Scrollbar styling */
-        .drawer::-webkit-scrollbar {
+        /* Scrollbar styling (theme-aware, Material flat) */
+        .drawer,
+        .drawer * {
+            scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+            scrollbar-width: thin;
+        }
+        .drawer::-webkit-scrollbar,
+        .drawer *::-webkit-scrollbar {
             width: 8px;
+            height: 8px;
         }
-        
-        .drawer::-webkit-scrollbar-track {
-            background: var(--glass-bg);
+        .drawer::-webkit-scrollbar-track,
+        .drawer *::-webkit-scrollbar-track {
+            background: var(--scrollbar-track);
             border-radius: 10px;
         }
-        
-        .drawer::-webkit-scrollbar-thumb {
-            background: var(--primary-gradient);
+        .drawer::-webkit-scrollbar-thumb,
+        .drawer *::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
             border-radius: 10px;
-            border: 1px solid var(--glass-border);
+            border: 1px solid var(--md-outline-variant);
         }
-        
-        .drawer::-webkit-scrollbar-thumb:hover {
-            background: var(--secondary-gradient);
-            box-shadow: var(--shadow-glow);
+        .drawer::-webkit-scrollbar-thumb:hover,
+        .drawer *::-webkit-scrollbar-thumb:hover {
+            background: var(--scrollbar-thumb-hover);
         }
         
         /* Animation for elements */
@@ -993,7 +904,7 @@
             }
         }
         
-        /* Splash Screen - Clean & Professional */
+        /* Splash Screen - Material flat */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -1001,7 +912,7 @@
             width: 100vw;
             height: 100vh;
             background: var(--bg-primary);
-            backdrop-filter: blur(10px);
+            backdrop-filter: none;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -1011,18 +922,7 @@
             overflow: hidden;
         }
         
-        #splash-screen::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
-            pointer-events: none;
-        }
+    #splash-screen::before { content: none; }
         
         #splash-screen.fade-out {
             opacity: 0;
@@ -1034,7 +934,7 @@
             width: 80px;
             height: 80px;
             margin-bottom: 24px;
-            filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.2));
+            filter: none;
             position: relative;
             z-index: 2;
             animation: gentlePulse 2s ease-in-out infinite;
@@ -1067,10 +967,9 @@
             text-align: center;
             font-weight: 500;
             padding: 8px 20px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
+            background: var(--bg-secondary);
             border-radius: 20px;
-            border: 1px solid var(--glass-border);
+            border: 1px solid var(--md-outline-variant);
             position: relative;
             z-index: 2;
         }
@@ -1128,9 +1027,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(75, 85, 99, 0.5);
+            background: var(--bg-primary);
+            border: 1px solid var(--md-outline-variant);
             border-radius: 12px;
             padding: 24px;
             box-shadow: var(--shadow-xl);
@@ -1168,6 +1066,34 @@
             color: var(--text-secondary);
             font-size: 12px;
         }
+
+        /* Fullscreen return toast */
+        #fullscreen-toast {
+            position: fixed;
+            left: 50%;
+            bottom: 16px;
+            transform: translateX(-50%);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 8px;
+            padding: 10px 14px;
+            box-shadow: var(--shadow-xl);
+            display: none;
+            z-index: 10001;
+            gap: 12px;
+            align-items: center;
+        }
+        #fullscreen-toast .toast-actions { display: inline-flex; gap: 8px; }
+        #return-fullscreen-btn {
+            background: var(--md-primary);
+            color: var(--md-on-primary);
+            border: none;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
         
         /* Empty States */
         .empty-state {
@@ -1204,38 +1130,12 @@
             aspect-ratio: 1;
         }
         
-        .drawer-header {
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-        }
         
-        .drawer-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0;
-        }
-        
-        .drawer-subtitle {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin: 4px 0 0 0;
-        }
-        
-        .drawer-author {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin: 4px 0 0 0;
-            font-weight: 500;
-        }
         
         /* Animation Trigger Panel */
         .animation-trigger-btn {
-            background: rgba(30,41,59,0.35); /* much lighter, translucent */
-            border: 1px solid rgba(148,163,184,0.25);
+            background: var(--bg-secondary);
+            border: 1px solid var(--md-outline-variant);
             border-radius: 3px;
             padding: 2px 4px;
             font-size: 9px;
@@ -1252,12 +1152,11 @@
             height: 18px; /* slimmer */
             position: relative;
             box-shadow: none;
-            opacity: 0.35; /* very low profile */
-            backdrop-filter: blur(4px) saturate(140%);
+            opacity: 0.6; /* subtle */
         }
         
         .animation-trigger-btn:hover {
-            background: rgba(51,65,85,0.55);
+            background: var(--bg-tertiary);
             opacity: 0.55;
             transform: translateY(-1px);
         }
@@ -1309,8 +1208,8 @@
             animation: gentle-shake 0.5s ease-in-out;
         }
         
-        .animation-trigger-btn.swing .animation-icon {
-            animation: swing 0.5s ease-in-out;
+        .animation-trigger-btn.pendum .animation-icon {
+            animation: pendum 0.5s ease-in-out;
         }
         
         .animation-trigger-btn.circular .animation-icon {
@@ -1324,10 +1223,10 @@
             75% { transform: translateX(2px); }
         }
         
-        @keyframes swing {
+        @keyframes pendum {
             0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-5deg); }
-            75% { transform: rotate(5deg); }
+            25% { transform: rotate(-6deg); }
+            75% { transform: rotate(6deg); }
         }
         
         @keyframes circular {
@@ -1340,8 +1239,8 @@
             animation: object-shake var(--animation-duration, 1s) ease-in-out;
         }
         
-        .canvas-object-swing {
-            animation: object-swing var(--animation-duration, 1s) ease-in-out;
+        .canvas-object-pendum {
+            animation: object-pendum var(--animation-duration, 1s) ease-in-out;
         }
         
         .canvas-object-circular {
@@ -1354,16 +1253,22 @@
             75% { transform: translateX(calc(1px * var(--animation-intensity, 5))); }
         }
         
-        @keyframes object-swing {
+        @keyframes object-pendum {
             0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(calc(-1deg * var(--animation-intensity, 5))); }
-            75% { transform: rotate(calc(1deg * var(--animation-intensity, 5))); }
+            25% { transform: rotate(calc(-1.5deg * var(--animation-intensity, 5))); }
+            75% { transform: rotate(calc(1.5deg * var(--animation-intensity, 5))); }
         }
         
         @keyframes object-circular {
             0% { transform: rotate(0deg) translateX(calc(1px * var(--animation-intensity, 5))) rotate(0deg); }
             100% { transform: rotate(360deg) translateX(calc(1px * var(--animation-intensity, 5))) rotate(-360deg); }
         }
+    /* About links */
+    .about-link { color: #93c5fd; text-decoration: underline; text-underline-offset: 2px; }
+    /* Text style toggle buttons */
+    .btn-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(148,163,184,0.25); background: rgba(255,255,255,0.04); color: #e2e8f0; font-weight: 600; min-width: 36px; }
+    .btn-toggle:hover { background: rgba(255,255,255,0.08); }
+    .btn-toggle.active { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.45); color: #bfdbfe; }
     </style>
 </head>
 <body class="overflow-hidden">
@@ -1470,6 +1375,25 @@
                             <input type="color" id="text-color-input" class="form-input w-full h-10 cursor-pointer">
                         </div>
                         <div>
+                            <label for="text-font-select" class="form-label block mb-2">Font</label>
+                            <select id="text-font-select" class="form-input w-full">
+                                <option value="luciole">Luciole (Low Vision)</option>
+                                <option value="atkinson">Atkinson Hyperlegible (Low Vision)</option>
+                                <option value="andika">Andika (Printed 'a')</option>
+                                <option value="serif">Noto Serif (Serif)</option>
+                                <option value="inter">Inter</option>
+                                <option value="system">System UI</option>
+                            </select>
+                            <div class="text-xs text-slate-400 mt-1">Printed 'a' example: <span style="font-family: Andika, Inter, system-ui, sans-serif; font-size: 1.1em;">a</span></div>
+                        </div>
+                        <div>
+                            <label class="form-label block mb-2">Style</label>
+                            <div class="flex gap-2">
+                                <button id="text-bold-toggle" type="button" class="btn-toggle" title="Bold" aria-pressed="false"><span style="font-weight:700">B</span></button>
+                                <button id="text-italic-toggle" type="button" class="btn-toggle" title="Italic" aria-pressed="false"><span style="font-style:italic">I</span></button>
+                            </div>
+                        </div>
+                        <div>
                             <label for="text-size-input" class="form-label block mb-2">Size</label>
                             <input type="range" id="text-size-input" min="10" max="200" class="w-full">
                         </div>
@@ -1510,7 +1434,7 @@
                             <select id="animation-select" class="form-input w-full">
                                 <option value="">No Animation</option>
                                 <option value="gentle-shake">Gentle Shake</option>
-                                <option value="swing">Swing</option>
+                                <option value="pendum">Pendum</option>
                                 <option value="circular">Circular</option>
                             </select>
                         </div>
@@ -1605,6 +1529,47 @@
                             </svg>
                             <span class="font-medium">Export Scene to Image</span>
                         </button>
+                    </div>
+                </div>
+                <!-- About & Licenses -->
+                <div class="section-header">
+                    <button class="accordion-button w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="false">
+                        <span class="flex items-center">About & Licenses</span>
+                        <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                </div>
+                <div class="accordion-content section-content p-3" style="max-height: 0">
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <p class="text-slate-400">This section lists the font licenses and attributions for typefaces used in this app. Each font is provided under its respective license—follow the links for full terms.</p>
+                        <div>
+                            <p class="font-semibold">Luciole</p>
+                            <ul class="list-disc pl-5 text-slate-400">
+                                <li>License: <a class="about-link" href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></li>
+                                <li>Site: <a class="about-link" href="https://www.luciole-vision.com/" target="_blank" rel="noopener">luciole-vision.com</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Atkinson Hyperlegible</p>
+                            <ul class="list-disc pl-5 text-slate-400">
+                                <li>License: <a class="about-link" href="https://scripts.sil.org/OFL" target="_blank" rel="noopener">SIL Open Font License (OFL 1.1)</a> — <a class="about-link" href="./licenses/OFL-1.1-Atkinson.txt" target="_blank" rel="noopener">Local copy</a></li>
+                                <li>Site: <a class="about-link" href="https://www.brailleinstitute.org/freefont/" target="_blank" rel="noopener">brailleinstitute.org/freefont</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Andika (Printed a)</p>
+                            <ul class="list-disc pl-5 text-slate-400">
+                                <li>License: <a class="about-link" href="https://scripts.sil.org/OFL" target="_blank" rel="noopener">SIL Open Font License (OFL 1.1)</a></li>
+                                <li>Site: <a class="about-link" href="https://software.sil.org/andika/" target="_blank" rel="noopener">software.sil.org/andika</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="font-semibold">Noto Serif</p>
+                            <ul class="list-disc pl-5 text-slate-400">
+                                <li>License: <a class="about-link" href="https://scripts.sil.org/OFL" target="_blank" rel="noopener">SIL Open Font License (OFL 1.1)</a></li>
+                                <li>Site: <a class="about-link" href="https://fonts.google.com/noto/specimen/Noto+Serif" target="_blank" rel="noopener">fonts.google.com/noto/specimen/Noto Serif</a></li>
+                            </ul>
+                        </div>
+                        
                     </div>
                 </div>
                 </div>
@@ -1768,6 +1733,12 @@
             </div>
             <div id="progress-detail" class="progress-detail">0 of 0 files processed</div>
         </div>
+        <div id="fullscreen-toast" role="status" aria-live="polite">
+            <span>File picker may exit fullscreen.</span>
+            <span class="toast-actions">
+                <button id="return-fullscreen-btn">Return to Fullscreen</button>
+            </span>
+        </div>
 
         <!-- Context Menu -->
         <div id="context-menu" class="context-menu">
@@ -1804,8 +1775,10 @@
             <div id="animation-triggers" class="flex items-center space-x-1"></div>
         </div>
 
+    <!-- About section (moved into left drawer bottom) -->
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
             // --- Splash Screen ---
             const splashScreen = document.getElementById('splash-screen');
             
@@ -1853,6 +1826,70 @@
             const fgImageInput = document.getElementById('fg-image-input');
             const deleteFgBtn = document.getElementById('delete-fg-btn');
 
+            // Preserve fullscreen around file pickers
+            let shouldReenterFullscreenAfterPicker = false;
+            const imageUploadLabel = document.querySelector('label[for="image-upload"]');
+            const folderUploadLabel = document.querySelector('label[for="folder-upload"]');
+            const bgImageLabel = document.querySelector('label[for="bg-image-input"]');
+            const fgImageLabel = document.querySelector('label[for="fg-image-input"]');
+            [imageUploadLabel, folderUploadLabel, bgImageLabel, fgImageLabel].forEach(lbl => {
+                if (lbl) {
+                    lbl.addEventListener('click', () => {
+                        shouldReenterFullscreenAfterPicker = !!document.fullscreenElement;
+                    });
+                }
+            });
+
+            // Try FS Access API for main imports to reduce fullscreen exits
+            if (imageUploadLabel) {
+                imageUploadLabel.addEventListener('click', async (e) => {
+                    if (window.showOpenFilePicker) {
+                        e.preventDefault();
+                        try {
+                            const handles = await window.showOpenFilePicker({ multiple: true, types: [
+                                { description: 'Images', accept: { 'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp'] } },
+                                { description: 'Videos', accept: { 'video/*': ['.mp4', '.webm', '.mov', '.avi', '.mkv'] } }
+                            ] });
+                            const files = await Promise.all(handles.map(h => h.getFile()));
+                            if (files && files.length) {
+                                await handleFiles(files);
+                                return;
+                            }
+                        } catch (err) {
+                            // user cancelled, fallback to native input
+                        }
+                        document.getElementById('image-upload').click();
+                    }
+                }, { capture: true });
+            }
+            if (folderUploadLabel && window.showDirectoryPicker) {
+                folderUploadLabel.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    try {
+                        const dir = await window.showDirectoryPicker();
+                        async function getFilesFromDirectory(dirHandle) {
+                            const collected = [];
+                            for await (const [name, handle] of dirHandle.entries()) {
+                                if (handle.kind === 'file') {
+                                    collected.push(await handle.getFile());
+                                } else if (handle.kind === 'directory') {
+                                    collected.push(...await getFilesFromDirectory(handle));
+                                }
+                            }
+                            return collected;
+                        }
+                        const files = await getFilesFromDirectory(dir);
+                        if (files && files.length) {
+                            await handleFiles(files);
+                            return;
+                        }
+                    } catch (err) {
+                        // user cancelled, fallback
+                    }
+                    document.getElementById('folder-upload').click();
+                }, { capture: true });
+            }
+
             const layerList = document.getElementById('layer-list');
             const layersEmptyState = document.getElementById('layers-empty-state');
             const contextMenu = document.getElementById('context-menu');
@@ -1862,6 +1899,8 @@
             const progressContainer = document.getElementById('progress-container');
             const progressFill = document.getElementById('progress-fill');
             const progressDetail = document.getElementById('progress-detail');
+            const fullscreenToast = document.getElementById('fullscreen-toast');
+            const returnFullscreenBtn = document.getElementById('return-fullscreen-btn');
 
             // Properties Panel Elements
             const propertiesPanel = document.getElementById('properties-panel-content');
@@ -1873,6 +1912,9 @@
             const textContentInput = document.getElementById('text-content-input');
             const textColorInput = document.getElementById('text-color-input');
             const textSizeInput = document.getElementById('text-size-input');
+            const textFontSelect = document.getElementById('text-font-select');
+            const textBoldToggle = document.getElementById('text-bold-toggle');
+            const textItalicToggle = document.getElementById('text-italic-toggle');
             const shapeColorInput = document.getElementById('shape-color-input');
             const flipHorizontalBtn = document.getElementById('flip-horizontal-btn');
             const flipVerticalBtn = document.getElementById('flip-vertical-btn');
@@ -2241,17 +2283,15 @@
                             const shakeX = Math.sin(t * 4) * intensity;
                             ctx.translate(shakeX, 0);
                             break;
-                        case 'swing':
-                            // Use a pendulum-like motion with proper damping
-                            const frequency = 2; // Slower swing frequency
-                            const amplitude = (intensity * 0.8) * Math.PI / 180; // Convert to radians
-                            const swingAngle = Math.sin(t * frequency) * amplitude;
-                            
-                            // Apply rotation around the object's top center point for natural swing
-                            const pivotY = -this.height / 2;
-                            ctx.translate(0, pivotY);
-                            ctx.rotate(swingAngle);
-                            ctx.translate(0, -pivotY);
+                        case 'pendum':
+                            // Pendulum-like motion around top-center pivot
+                            const baseFreq = 2; // Hz-like factor for feel
+                            const amplitudeRad = (intensity) * Math.PI / 180; // intensity in degrees → radians
+                            const angle = Math.sin(t * baseFreq) * amplitudeRad;
+                            const pivotTopY = -this.height / 2;
+                            ctx.translate(0, pivotTopY);
+                            ctx.rotate(angle);
+                            ctx.translate(0, -pivotTopY);
                             break;
                         case 'circular':
                             const circularRadius = intensity * 2;
@@ -2300,13 +2340,16 @@
                     ctx.drawImage(this.video, this.x, this.y, this.width, this.height); 
                 } 
             }
-            class TextObject extends CanvasObject { 
+    class TextObject extends CanvasObject { 
                 constructor(text, x, y, zIndex) { 
                     super(x, y, 0, 0, zIndex, 'text'); 
                     this.text = text; 
                     this.color = '#FFFFFF'; 
                     this.size = 40; 
-                    this.name = `Text: "${text.substring(0, 15)}..."`; 
+            this.fontFamily = 'Luciole, "Atkinson Hyperlegible", Inter, system-ui, sans-serif';
+        this.fontWeight = 400;
+        this.fontStyle = 'normal';
+            this.name = `Text: "${text.substring(0, 15)}..."`; 
                     this.initialX = x;
                     this.initialY = y;
                     this.hasBeenPositioned = false; // Track if text has been initially positioned
@@ -2314,14 +2357,14 @@
                 } 
                 drawContent(ctx) { 
                     ctx.fillStyle = this.color; 
-                    ctx.font = `${this.size}px Inter`; 
+            ctx.font = `${this.fontStyle} ${this.fontWeight} ${this.size}px ${this.fontFamily}`; 
                     ctx.textBaseline = 'top'; 
                     ctx.fillText(this.text, this.x, this.y); 
                 } 
                 updateMetrics() { 
                     const tempCanvas = document.createElement('canvas');
                     const tempCtx = tempCanvas.getContext('2d');
-                    tempCtx.font = `${this.size}px Inter`; 
+            tempCtx.font = `${this.fontStyle} ${this.fontWeight} ${this.size}px ${this.fontFamily}`; 
                     const metrics = tempCtx.measureText(this.text); 
                     
                     // Store old dimensions
@@ -2459,6 +2502,18 @@
                         textContentInput.value = selectedObject.text; 
                         textColorInput.value = selectedObject.color; 
                         textSizeInput.value = selectedObject.size; 
+                        // Set font dropdown based on current family
+                        if (selectedObject.fontFamily?.includes('Atkinson')) textFontSelect.value = 'atkinson';
+                        else if (selectedObject.fontFamily?.includes('Andika')) textFontSelect.value = 'andika';
+                        else if (selectedObject.fontFamily?.includes('Noto Serif')) textFontSelect.value = 'serif';
+                        else if (selectedObject.fontFamily?.startsWith('Inter')) textFontSelect.value = 'inter';
+                        else if (selectedObject.fontFamily?.startsWith('system-ui')) textFontSelect.value = 'system';
+                        else textFontSelect.value = 'luciole';
+                        // Sync style toggles
+                        textBoldToggle.classList.toggle('active', (selectedObject.fontWeight || 400) >= 600);
+                        textBoldToggle.setAttribute('aria-pressed', ((selectedObject.fontWeight || 400) >= 600).toString());
+                        textItalicToggle.classList.toggle('active', (selectedObject.fontStyle || 'normal') === 'italic');
+                        textItalicToggle.setAttribute('aria-pressed', ((selectedObject.fontStyle || 'normal') === 'italic').toString());
                     } else if (selectedObject.type === 'shape') { 
                         shapeProperties.style.display = 'block'; 
                         shapeColorInput.value = selectedObject.color; 
@@ -2681,6 +2736,36 @@
             mediaLibrary.addEventListener('click', e => e.stopPropagation());
 
             // --- Media Handling ---
+            async function showFullscreenToastTemporarily() {
+                if (!fullscreenToast) return;
+                fullscreenToast.style.display = 'inline-flex';
+                setTimeout(() => { fullscreenToast.style.display = 'none'; }, 3500);
+            }
+
+            if (returnFullscreenBtn) {
+                returnFullscreenBtn.addEventListener('click', async () => {
+                    try { await document.documentElement.requestFullscreen(); } catch {}
+                    fullscreenToast.style.display = 'none';
+                });
+            }
+
+            // Prefer File System Access API when available to avoid some fullscreen exits (Chromium)
+            async function openFilesWithPickerMultiple(accept) {
+                if (window.showOpenFilePicker) {
+                    try {
+                        const handles = await window.showOpenFilePicker({
+                            multiple: true,
+                            types: accept ? [{ description: 'Media', accept }] : undefined
+                        });
+                        const files = await Promise.all(handles.map(h => h.getFile()));
+                        return files;
+                    } catch (err) {
+                        // user cancelled or not allowed
+                        return null;
+                    }
+                }
+                return null;
+            }
             function showProgress() {
                 progressContainer.style.display = 'block';
             }
@@ -3041,8 +3126,22 @@
                     }
                 });
             }
-            imageUpload.addEventListener('change', (e) => handleFiles(e.target.files));
-            folderUpload.addEventListener('change', (e) => handleFiles(e.target.files));
+            imageUpload.addEventListener('change', async (e) => {
+                try {
+                    if (shouldReenterFullscreenAfterPicker && !document.fullscreenElement) {
+                        await document.documentElement.requestFullscreen();
+                    }
+                } catch (err) { console.log('Fullscreen restore skipped:', err); }
+                handleFiles(e.target.files);
+            });
+            folderUpload.addEventListener('change', async (e) => {
+                try {
+                    if (shouldReenterFullscreenAfterPicker && !document.fullscreenElement) {
+                        await document.documentElement.requestFullscreen();
+                    }
+                } catch (err) { console.log('Fullscreen restore skipped:', err); }
+                handleFiles(e.target.files);
+            });
 
             // --- Canvas Drag & Drop ---
             function addImageToCanvas(imgSrc, name, x, y) { const img = new Image(); img.src = imgSrc; img.dataset.name = name; img.onload = () => { const w = 150; const h = (img.height / img.width) * w; const finalX = (x === undefined) ? (canvas.width / 2) - (w / 2) : x - (w/2); const finalY = (y === undefined) ? (canvas.height / 2) - (h / 2) : y - (h/2); const newObj = new ImageObject(img, finalX, finalY, w, h, getNextZIndex()); objects.push(newObj); setSelectedObject(newObj); updateAnimationTriggerPanel(); }; }
@@ -3177,6 +3276,33 @@
                     draw(); 
                 } 
             });
+            // Style toggles
+            textBoldToggle.addEventListener('click', () => {
+                if (selectedObject?.type === 'text') {
+                    const isBold = (selectedObject.fontWeight || 400) >= 600;
+                    selectedObject.fontWeight = isBold ? 400 : 700;
+                    textBoldToggle.classList.toggle('active', !isBold);
+                    textBoldToggle.setAttribute('aria-pressed', (!isBold).toString());
+                    selectedObject.updateMetrics();
+                    draw();
+                } else {
+                    textBoldToggle.style.animation = 'shake 0.3s ease-in-out';
+                    setTimeout(() => textBoldToggle.style.animation = '', 300);
+                }
+            });
+            textItalicToggle.addEventListener('click', () => {
+                if (selectedObject?.type === 'text') {
+                    const isItalic = (selectedObject.fontStyle || 'normal') === 'italic';
+                    selectedObject.fontStyle = isItalic ? 'normal' : 'italic';
+                    textItalicToggle.classList.toggle('active', !isItalic);
+                    textItalicToggle.setAttribute('aria-pressed', (!isItalic).toString());
+                    selectedObject.updateMetrics();
+                    draw();
+                } else {
+                    textItalicToggle.style.animation = 'shake 0.3s ease-in-out';
+                    setTimeout(() => textItalicToggle.style.animation = '', 300);
+                }
+            });
             shapeColorInput.addEventListener('input', (e) => { 
                 if(selectedObject?.type === 'shape') { 
                     selectedObject.color = e.target.value; 
@@ -3267,7 +3393,12 @@
                     draw(); 
                 }); 
             });
-            bgImageInput.addEventListener('change', (e) => { 
+            bgImageInput.addEventListener('change', async (e) => { 
+                try {
+                    if (shouldReenterFullscreenAfterPicker && !document.fullscreenElement) {
+                        await document.documentElement.requestFullscreen();
+                    }
+                } catch (err) { console.log('Fullscreen restore skipped:', err); }
                 const file = e.target.files[0]; 
                 if (file) { 
                     // Store fullscreen state before loading
@@ -3307,7 +3438,12 @@
                 draw(); 
             });
             
-            fgImageInput.addEventListener('change', (e) => { 
+            fgImageInput.addEventListener('change', async (e) => { 
+                try {
+                    if (shouldReenterFullscreenAfterPicker && !document.fullscreenElement) {
+                        await document.documentElement.requestFullscreen();
+                    }
+                } catch (err) { console.log('Fullscreen restore skipped:', err); }
                 const file = e.target.files[0]; 
                 if (file) { 
                     // Store fullscreen state before loading
@@ -3513,8 +3649,8 @@
             document.getElementById('ctx-animate').addEventListener('click', () => { 
                 if (!selectedObject) return; 
                 // Use the modern animation system instead of the legacy one
-                const animType = prompt("Choose animation:\n1. gentle-shake\n2. swing\n3. circular\n(or leave empty for no animation)")?.toLowerCase(); 
-                if (['gentle-shake', 'swing', 'circular'].includes(animType)) { 
+                const animType = prompt("Choose animation:\n1. gentle-shake\n2. pendum\n3. circular\n(or leave empty for no animation)")?.toLowerCase(); 
+                if (['gentle-shake', 'pendum', 'circular'].includes(animType)) { 
                     selectedObject.animationType = animType;
                     // Ensure animation properties are set
                     if (typeof selectedObject.animationDuration === 'undefined') {
@@ -3558,6 +3694,24 @@
                 if (selectedObject) {
                     selectedObject.animationDuration = parseFloat(e.target.value);
                     durationValue.textContent = parseFloat(e.target.value).toFixed(1) + 's';
+                }
+            });
+
+            // Font selection for text objects
+        textFontSelect.addEventListener('change', (e) => {
+                e.stopPropagation();
+                if (selectedObject && selectedObject.type === 'text') {
+                    const val = e.target.value;
+                    let ff = 'Luciole, "Atkinson Hyperlegible", Inter, system-ui, sans-serif';
+                    if (val === 'atkinson') ff = '"Atkinson Hyperlegible", Luciole, Inter, system-ui, sans-serif';
+            else if (val === 'andika') ff = 'Andika, Inter, system-ui, sans-serif';
+                    else if (val === 'serif') ff = '"Noto Serif", Georgia, serif';
+                    else if (val === 'inter') ff = 'Inter, system-ui, sans-serif';
+                    else if (val === 'system') ff = 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+                    selectedObject.fontFamily = ff;
+                    // Recalculate metrics and redraw
+                    selectedObject.updateMetrics();
+                    draw();
                 }
             });
             
@@ -3736,6 +3890,8 @@
                     }
                 });
             }
+
+            // About section is inline within the left drawer; no modal wiring required.
 
             function showUpdatePrompt(newWorker) {
                 const updateNotification = document.createElement('div');
