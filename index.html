@@ -312,6 +312,25 @@
             transform: scale(1.1);
         }
 
+        /* Enhanced styling for shape tool icons */
+        .tool-button svg defs {
+            pointer-events: none;
+        }
+        
+        .tool-button:hover svg stop[offset="0%"] {
+            stop-opacity: 0.9;
+        }
+        
+        .tool-button.active svg stop[offset="0%"] {
+            stop-color: white;
+            stop-opacity: 1;
+        }
+        
+        .tool-button.active svg stop[offset="100%"] {
+            stop-color: white;
+            stop-opacity: 0.7;
+        }
+
         /* Accessible focus states */
         .tool-button:focus-visible,
         .upload-button:focus-visible,
@@ -345,6 +364,7 @@
             border-radius: 0;
             position: relative;
             z-index: 2;
+            touch-action: none; /* Enable custom gesture handling for touch */
         }
         
         .context-menu {
@@ -552,27 +572,37 @@
         }
         
         .delete-button {
-            background: var(--md-error);
-            color: var(--md-on-error);
-            border: none;
-            border-radius: 10px;
-            padding: 8px 12px;
+            background: var(--bg-secondary);
+            color: var(--md-error);
+            border: 1px solid var(--md-error);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: var(--shadow-md);
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
             position: relative;
             overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            min-height: 42px; /* approximate height of upload-button */
         }
-        
     .delete-button::before { content: none; }
-        
         .delete-button:hover {
-            background: #dc2626;
-            box-shadow: var(--shadow-lg);
+            background: var(--md-error);
+            color: var(--md-on-error);
         }
-        
-        .delete-button:hover::before {
-            opacity: 1;
+        .delete-button.inactive {
+            opacity: 0.45;
+            cursor: default;
+            background: var(--bg-secondary);
+            color: var(--text-muted);
+            border-color: var(--md-outline-variant);
+        }
+        .delete-button.inactive:hover {
+            background: var(--bg-secondary);
+            color: var(--text-muted);
         }
         
         .preset-color {
@@ -625,6 +655,49 @@
         .preset-color-bg:hover {
             transform: scale(1.08);
             box-shadow: var(--shadow-xl);
+        }
+
+        /* Grid Button Styles */
+        .grid-button {
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        
+        .grid-button.selected {
+            border-color: var(--primary-color) !important;
+            background-color: rgb(30, 58, 138) !important;
+            box-shadow: 0 0 0 2px var(--primary-color), 0 4px 12px rgba(59, 130, 246, 0.3);
+            transform: scale(1.02);
+        }
+
+        .grid-button:hover:not(.selected) {
+            border-color: rgba(148, 163, 184, 0.6);
+            background-color: rgb(51, 65, 85);
+            transform: translateY(-1px);
+        }
+
+        .grid-button:active {
+            transform: scale(0.98);
+        }
+        
+        .grid-preview div {
+            background: #94a3b8 !important;
+            border-radius: 1px;
+        }
+        
+        .grid-button.selected .grid-preview div {
+            background: #e2e8f0 !important;
+        }
+        
+        /* Grid overlay visuals */
+        @keyframes gridPulse {
+            0% { transform: scale(0.9); opacity: .7; }
+            70% { transform: scale(1.15); opacity: .2; }
+            100% { transform: scale(1.25); opacity: 0; }
+        }
+        .grid-legend {
+            position: absolute; right: 10px; top: 10px; color: #a3e635; font-size: 11px; background: rgba(2,6,23,.6);
+            padding: 4px 8px; border: 1px solid rgba(163,230,53,.35); border-radius: 8px; backdrop-filter: blur(6px);
         }
         
         .form-input {
@@ -763,6 +836,36 @@
             border-color: var(--primary-color);
             box-shadow: var(--shadow-xl);
             transform: scale(1.02);
+        }
+
+        .media-item .remove-media-btn {
+            position:absolute;
+            top:4px;
+            right:4px;
+            width:22px;
+            height:22px;
+            background:rgba(220,53,69,0.9);
+            border:none;
+            color:#fff;
+            font-weight:700;
+            font-size:12px;
+            line-height:1;
+            border-radius:50%;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            opacity:0;
+            transition:opacity .2s ease, transform .2s ease, background .2s ease;
+            z-index:5;
+        }
+        .media-item:hover .remove-media-btn,
+        .media-item:focus-within .remove-media-btn {
+            opacity:1;
+        }
+        .media-item .remove-media-btn:hover {
+            background:rgba(200,40,55,1);
+            transform:scale(1.08);
         }
         
         .media-item img {
@@ -904,31 +1007,265 @@
             }
         }
         
-        /* Splash Screen - Material flat */
-        #splash-screen {
+        /* Splash Screen - Enhanced Modern Design */
+        #splash-screen-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: var(--bg-primary);
-            backdrop-filter: none;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1)), rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px) saturate(1.2);
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             z-index: 9999;
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #splash-screen-overlay.fade-out { opacity: 0; pointer-events: none; transform: scale(0.95); }
+        #splash-screen {
+            width: min(420px, 85vw);
+            max-width: 420px;
+            background: linear-gradient(145deg, var(--md-surface), var(--md-surface-variant));
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 24px;
+            padding: 36px 32px 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 32px rgba(59, 130, 246, 0.15), var(--md-elev-3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
             overflow: hidden;
+            animation: splashIn 0.8s cubic-bezier(.4,0,.2,1);
+        }
+        #splash-screen::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.03) 0%, transparent 70%);
+            animation: glow 4s ease-in-out infinite alternate;
+        }
+        #splash-screen .logo {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.2));
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+        #splash-screen .title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            background: linear-gradient(135deg, var(--text-primary), var(--md-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        #splash-screen .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 3px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+        #splash-screen .author {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            font-weight: 400;
+            letter-spacing: 0.01em;
+        }
+        #splash-screen .start-btn {
+            background: linear-gradient(135deg, var(--md-primary), var(--primary-hover));
+            color: var(--md-on-primary);
+            border: none;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: .4px;
+            padding: 12px 28px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        #splash-screen .start-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        #splash-screen .start-btn:hover::before {
+            left: 100%;
+        }
+        #splash-screen .start-btn:focus-visible { 
+            outline: 3px solid var(--md-primary); 
+            outline-offset: 4px; 
+        }
+        #splash-screen .start-btn:hover { 
+            background: linear-gradient(135deg, var(--primary-hover), var(--md-primary));
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4), 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+        #splash-screen .start-btn:active { 
+            transform: translateY(0) scale(0.98); 
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        #splash-screen .about-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--md-outline);
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: .2px;
+            padding: 10px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        #splash-screen .about-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-color: var(--md-outline-variant);
+            transform: translateY(-1px);
+        }
+        #splash-screen .about-btn:active {
+            transform: translateY(0);
+        }
+        @keyframes splashIn { 
+            from { 
+                transform: translateY(32px) scale(.92); 
+                opacity: 0;
+                filter: blur(4px);
+            } 
+            to { 
+                transform: translateY(0) scale(1); 
+                opacity: 1;
+                filter: blur(0);
+            } 
+        }
+        @keyframes glow {
+            from { opacity: 0.3; }
+            to { opacity: 0.7; }
+        }
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* Export Info Dialog */
+        #export-info-dialog-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+        #export-info-dialog-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        #export-info-dialog {
+            width: min(520px, 92vw);
+            max-width: 520px;
+            max-height: 85vh;
+            background: var(--md-surface);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 20px;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4), var(--md-elev-3);
+            overflow: hidden;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #export-info-dialog-overlay.show #export-info-dialog {
+            transform: scale(1) translateY(0);
+        }
+        #export-info-dialog-header {
+            padding: 24px 28px 20px;
+            border-bottom: 1px solid var(--md-outline-variant);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(145deg, var(--md-surface), var(--md-surface-variant));
+        }
+        #export-info-dialog-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        #export-info-dialog-close {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        #export-info-dialog-close:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        #export-info-dialog-content {
+            padding: 28px;
+            overflow-y: auto;
+            max-height: calc(85vh - 100px);
+        }
+        .export-info-section {
+            text-align: center;
+        }
+        .export-info-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 16px;
+            margin: 0 auto 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--md-outline-variant);
+        }
+        .export-info-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin: 0;
+            text-align: left;
+            padding: 20px 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--md-outline-variant);
         }
         
     #splash-screen::before { content: none; }
         
-        #splash-screen.fade-out {
-            opacity: 0;
-            visibility: hidden;
-            transform: scale(0.98);
-        }
+    #splash-screen.fade-out { opacity: 0; }
         
         #splash-screen .logo {
             width: 80px;
@@ -1066,34 +1403,6 @@
             color: var(--text-secondary);
             font-size: 12px;
         }
-
-        /* Fullscreen return toast */
-        #fullscreen-toast {
-            position: fixed;
-            left: 50%;
-            bottom: 16px;
-            transform: translateX(-50%);
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            border: 1px solid var(--md-outline-variant);
-            border-radius: 8px;
-            padding: 10px 14px;
-            box-shadow: var(--shadow-xl);
-            display: none;
-            z-index: 10001;
-            gap: 12px;
-            align-items: center;
-        }
-        #fullscreen-toast .toast-actions { display: inline-flex; gap: 8px; }
-        #return-fullscreen-btn {
-            background: var(--md-primary);
-            color: var(--md-on-primary);
-            border: none;
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-weight: 600;
-            cursor: pointer;
-        }
         
         /* Empty States */
         .empty-state {
@@ -1119,16 +1428,7 @@
             line-height: 1.4;
         }
         
-        /* Media Grid Improvements */
-        .media-item {
-            background: var(--bg-primary);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-sm);
-            overflow: hidden;
-            aspect-ratio: 1;
-        }
+    /* Media Grid Improvements: unified styling now defined earlier; duplicate removed */
         
         
         
@@ -1269,16 +1569,171 @@
     .btn-toggle { display: inline-flex; align-items: center; justify-content: center; padding: 6px 10px; border-radius: 8px; border: 1px solid rgba(148,163,184,0.25); background: rgba(255,255,255,0.04); color: #e2e8f0; font-weight: 600; min-width: 36px; }
     .btn-toggle:hover { background: rgba(255,255,255,0.08); }
     .btn-toggle.active { background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.45); color: #bfdbfe; }
+    
+    /* Animation type buttons */
+    .animation-type-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 10px;
+        border: 1px solid rgba(148,163,184,0.25);
+        border-radius: 10px;
+        background: rgba(255,255,255,0.04);
+        color: #e2e8f0;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    .animation-type-btn:hover {
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(148,163,184,0.4);
+    }
+    .animation-type-btn.active {
+        background: linear-gradient(135deg, rgba(79, 70, 229, 0.25), rgba(99, 102, 241, 0.15));
+        border-color: rgba(99, 102, 241, 0.7);
+        color: #e0e7ff;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+    .animation-type-btn.active .anim-label {
+        color: #f0f4ff;
+        font-weight: 600;
+    }
+    .animation-type-btn.active .anim-preview {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(79, 70, 229, 0.15));
+        border-color: rgba(129, 140, 248, 0.4);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 8px rgba(79, 70, 229, 0.2);
+    }
+    
+    /* Enhanced preview visuals */
+    .anim-preview { position: relative; width: 56px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, rgba(148,163,184,0.08), rgba(100,116,139,0.12)); overflow: hidden; border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
+    .animation-type-btn:hover .anim-preview { background: linear-gradient(135deg, rgba(148,163,184,0.15), rgba(100,116,139,0.18)); transform: scale(1.05); }
+    .anim-label { font-size: 12px; color: #94a3b8; transition: all 0.2s; font-weight: 500; }
+    
+    /* Static "No Motion" preview */
+    .preview-none .no-motion-icon { 
+        position: absolute; top: 50%; left: 50%; 
+        width: 16px; height: 16px; 
+        border: 2px solid rgba(203,213,225,0.6); 
+        border-radius: 3px; 
+        transform: translate(-50%, -50%); 
+        background: rgba(203,213,225,0.1);
+    }
+    
+    /* Wiggle: Simple left-right shake */
+    .preview-wiggle .dot { 
+        width: 10px; height: 10px; 
+        background: linear-gradient(135deg, #f1f5f9, #cbd5e1); 
+        border-radius: 50%; 
+        position: absolute; top: 50%; left: 50%; 
+        transform: translate(-50%, -50%); 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.2);
+        animation: preview-wiggle 0.6s ease-in-out infinite; 
+    }
+    @keyframes preview-wiggle {
+        0%, 100% { transform: translate(-50%, -50%); }
+        50% { transform: translate(calc(-50% - 8px), -50%); }
+    }
+    
+    /* Pendum: Pivot swing from top */
+    .preview-pendum .arm { 
+        position: absolute; top: 6px; left: 50%; 
+        width: 1px; height: 24px; 
+        transform-origin: top center; 
+        animation: preview-pendum 1.2s ease-in-out infinite; 
+    }
+    .preview-pendum .rod { 
+        position: absolute; top: 0; left: -0.5px; 
+        width: 1px; height: 18px; 
+        background: linear-gradient(to bottom, rgba(229,231,235,0.8), rgba(203,213,225,0.6)); 
+        border-radius: 0.5px; 
+    }
+    .preview-pendum .bob { 
+        position: absolute; bottom: 0; left: -5px; 
+        width: 10px; height: 10px; 
+        background: radial-gradient(circle at 30% 30%, #f1f5f9, #cbd5e1); 
+        border-radius: 50%; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.3);
+    }
+    @keyframes preview-pendum {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-15deg); }
+        75% { transform: rotate(15deg); }
+    }
+    
+    /* Circular: Simple circular orbit */
+    .preview-circular .bob { 
+        position: absolute; top: 50%; left: 50%; 
+        width: 10px; height: 10px; 
+        background: radial-gradient(circle at 30% 30%, #f1f5f9, #cbd5e1); 
+        border-radius: 50%; 
+        transform-origin: -12px 0px;
+        animation: preview-circle 1.5s linear infinite; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.3);
+    }
+    @keyframes preview-circle {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Remove duplicated legacy previews */
+    .wiggle-preview, .sway-preview, .circle-preview { animation: none; }
+    @keyframes wiggle-preview {}
+    @keyframes sway-preview {}
+    @keyframes circle-preview {}
     </style>
 </head>
 <body class="overflow-hidden">
 
     <!-- Splash Screen -->
-    <div id="splash-screen">
-        <img src="gazetracker.svg" alt="Gaze Tracker Logo" class="logo">
-        <h1 class="title">Gaze Tracking Canvas</h1>
-        <p class="subtitle">Visual Target Management System</p>
-        <p class="author">by Niall Brown - Early Childhood Vision Consultant (ECVC)</p>
+    <div id="splash-screen-overlay">
+        <div id="splash-screen">
+            <img src="gazetracker.svg" alt="Gaze Tracker Logo" class="logo">
+            <h1 class="title">Gaze Tracking Canvas</h1>
+            <p class="subtitle">Visual Target Management System</p>
+            <p class="author">by Niall Brown - Early Childhood Vision Consultant (ECVC)</p>
+            <div class="flex gap-3 mt-4">
+                <button id="splash-close-btn" class="start-btn" type="button" aria-label="Start using the application">
+                    <span>Start</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+                </button>
+                <button id="about-btn" class="about-btn" type="button" aria-label="About and licensing information">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+                    <span>About & Licensing</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Info Dialog -->
+    <div id="export-info-dialog-overlay">
+        <div id="export-info-dialog">
+            <div id="export-info-dialog-header">
+                <div id="export-info-dialog-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <circle cx="12" cy="8" r="0.5" fill="currentColor"/>
+                    </svg>
+                    Export Information
+                </div>
+                <button id="export-info-dialog-close" onclick="hideExportInfoDialog()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="export-info-dialog-content">
+                <div class="export-info-section">
+                    <img src="complexitypicture.png" alt="Complexity Scene Example" class="export-info-image">
+                    <p class="export-info-description">
+                        This tool allows you to create and export complex visual scenes for 2D image assessment. Combine various visual targets, backgrounds, and foregrounds to create scenes for 2D image assessment.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Main Content -->
@@ -1341,15 +1796,72 @@
                             <span class="font-medium">Text</span>
                         </button>
                     </div>
-                    <div class="grid grid-cols-3 gap-3">
+                    <div id="shape-tools" class="grid grid-cols-3 gap-3 mt-2">
                         <button id="rect-tool" class="tool-button flex items-center justify-center p-3 rounded-md" title="Rectangle">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <linearGradient id="rect-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:currentColor;stop-opacity:0.8" />
+                                        <stop offset="100%" style="stop-color:currentColor;stop-opacity:0.4" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="4" y="6" width="16" height="12" rx="2" fill="url(#rect-gradient)" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </button>
+                        <button id="square-tool" class="tool-button flex items-center justify-center p-3 rounded-md" title="Square">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <linearGradient id="square-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:currentColor;stop-opacity:0.8" />
+                                        <stop offset="100%" style="stop-color:currentColor;stop-opacity:0.4" />
+                                    </linearGradient>
+                                </defs>
+                                <rect x="6" y="6" width="12" height="12" rx="2" fill="url(#square-gradient)" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
                         </button>
                         <button id="circle-tool" class="tool-button flex items-center justify-center p-3 rounded-md" title="Circle">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <radialGradient id="circle-gradient" cx="30%" cy="30%">
+                                        <stop offset="0%" style="stop-color:currentColor;stop-opacity:0.8" />
+                                        <stop offset="100%" style="stop-color:currentColor;stop-opacity:0.3" />
+                                    </radialGradient>
+                                </defs>
+                                <circle cx="12" cy="12" r="8" fill="url(#circle-gradient)" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
                         </button>
                         <button id="triangle-tool" class="tool-button flex items-center justify-center p-3 rounded-md" title="Triangle">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 L2 22 L22 22 Z"></path></svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <linearGradient id="triangle-gradient" x1="50%" y1="0%" x2="50%" y2="100%">
+                                        <stop offset="0%" style="stop-color:currentColor;stop-opacity:0.8" />
+                                        <stop offset="100%" style="stop-color:currentColor;stop-opacity:0.4" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M12 4 L20 18 L4 18 Z" fill="url(#triangle-gradient)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button id="star-tool" class="tool-button flex items-center justify-center p-3 rounded-md" title="Star">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <linearGradient id="star-gradient" x1="50%" y1="0%" x2="50%" y2="100%">
+                                        <stop offset="0%" style="stop-color:currentColor;stop-opacity:0.8" />
+                                        <stop offset="100%" style="stop-color:currentColor;stop-opacity:0.4" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="url(#star-gradient)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button id="octagon-tool" class="tool-button flex items-center justify-center p-3 rounded-md" title="Octagon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <defs>
+                                    <linearGradient id="octagon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:currentColor;stop-opacity:0.8" />
+                                        <stop offset="100%" style="stop-color:currentColor;stop-opacity:0.4" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M7.86 2h8.28l5.86 5.86v8.28l-5.86 5.86H7.86L2 16.14V7.86L7.86 2z" fill="url(#octagon-gradient)" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -1385,6 +1897,7 @@
                                 <option value="system">System UI</option>
                             </select>
                             <div class="text-xs text-slate-400 mt-1">Printed 'a' example: <span style="font-family: Andika, Inter, system-ui, sans-serif; font-size: 1.1em;">a</span></div>
+                            <!-- Large resize handles are now always enabled for better touch usability -->
                         </div>
                         <div>
                             <label class="form-label block mb-2">Style</label>
@@ -1406,11 +1919,23 @@
                         </div>
                     </div>
                     
-                    <!-- Image Properties -->
-                    <div id="image-properties" class="hidden space-y-4">
+                    <!-- Transform Properties (for all objects) -->
+                    <div id="transform-properties" class="hidden space-y-4">
                         <div>
                             <label class="form-label block mb-2">Transform</label>
                             <div class="flex space-x-2">
+                                <button id="rotate-90-btn" class="upload-button w-full py-2 px-3 text-sm">
+                                    Rotate 90°
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Image Properties -->
+                    <div id="image-properties" class="hidden space-y-4">
+                        <div>
+                            <label class="form-label block mb-2">Image Transform</label>
+                            <div class="flex space-x-2 mb-3">
                                 <button id="flip-horizontal-btn" class="upload-button flex-1 py-2 px-3 text-sm">
                                     <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
@@ -1429,31 +1954,76 @@
                     
                     <!-- Animation Properties -->
                     <div id="animation-properties" class="space-y-4 hidden">
-                        <div>
-                            <label class="form-label block mb-2">Animation</label>
-                            <select id="animation-select" class="form-input w-full">
-                                <option value="">No Animation</option>
-                                <option value="gentle-shake">Gentle Shake</option>
-                                <option value="pendum">Pendum</option>
-                                <option value="circular">Circular</option>
-                            </select>
+                        <div class="group-block">
+                            <label class="form-label block mb-3">Motion Type</label>
+                            <div id="animation-buttons" class="grid grid-cols-2 gap-2">
+                                <button type="button" class="animation-type-btn" data-animation="" aria-label="No motion">
+                                    <div class="anim-preview preview-none">
+                                        <div class="no-motion-icon"></div>
+                                    </div>
+                                    <span class="anim-label">No Motion</span>
+                                </button>
+                                <button type="button" class="animation-type-btn" data-animation="gentle-shake" aria-label="Wiggle motion">
+                                    <div class="anim-preview preview-wiggle">
+                                        <div class="dot"></div>
+                                    </div>
+                                    <span class="anim-label">Wiggle</span>
+                                </button>
+                                <button type="button" class="animation-type-btn" data-animation="pendum" aria-label="Sway motion">
+                                    <div class="anim-preview preview-pendum">
+                                        <div class="arm">
+                                            <div class="rod"></div>
+                                            <div class="bob"></div>
+                                        </div>
+                                    </div>
+                                    <span class="anim-label">Sway</span>
+                                </button>
+                                <button type="button" class="animation-type-btn" data-animation="circular" aria-label="Circle motion">
+                                    <div class="anim-preview preview-circular">
+                                        <div class="bob"></div>
+                                    </div>
+                                    <span class="anim-label">Circle</span>
+                                </button>
+                            </div>
                         </div>
                         <div id="animation-settings" class="hidden space-y-3">
                             <div>
-                                <label for="animation-duration" class="form-label block mb-2">Duration (seconds)</label>
-                                <input type="range" id="animation-duration" min="0.5" max="3" step="0.1" value="1" class="w-full">
-                                <span id="duration-value" class="text-xs text-slate-400">1.0s</span>
+                                <label for="animation-cycles" class="form-label block mb-2 flex items-center justify-between">
+                                    <span>Number of Cycles</span>
+                                    <span id="cycles-value" class="text-[11px] text-slate-400">5 cycles</span>
+                                </label>
+                                <input type="range" id="animation-cycles" min="1" max="20" step="1" value="5" class="w-full" aria-label="Number of animation cycles">
+                                <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                                    <span>1 cycle</span>
+                                    <span>20 cycles</span>
+                                </div>
                             </div>
                             <div>
-                                <label for="animation-intensity" class="form-label block mb-2">Intensity</label>
-                                <input type="range" id="animation-intensity" min="1" max="10" value="5" class="w-full">
-                                <span id="intensity-value" class="text-xs text-slate-400">5</span>
+                                <label for="animation-intensity" class="form-label block mb-2 flex items-center justify-between">
+                                    <span>Movement Size</span>
+                                    <span id="intensity-value" class="text-[11px] text-slate-400">Medium</span>
+                                </label>
+                                <input type="range" id="animation-intensity" min="1" max="10" value="5" class="w-full" aria-label="Movement size">
+                                <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                                    <span>Small</span>
+                                    <span>Large</span>
+                                </div>
                             </div>
-                            <button id="preview-animation" class="upload-button w-full py-2 px-3 text-sm">
-                                <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                Preview Animation
+                            <div>
+                                <label for="animation-duration" class="form-label block mb-2 flex items-center justify-between">
+                                    <span>Cycle Speed</span>
+                                    <span id="duration-value" class="text-[11px] text-slate-400">Medium</span>
+                                </label>
+                                <input type="range" id="animation-duration" min="0.5" max="3" step="0.1" value="1" class="w-full" aria-label="Animation cycle speed">
+                                <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                                    <span>Fast</span>
+                                    <span>Slow</span>
+                                </div>
+                            </div>
+                            <button id="animation-control-btn" class="upload-button w-full py-2 px-3 text-sm" title="Start or stop the animation">
+                                <svg id="play-icon" class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <svg id="stop-icon" class="w-4 h-4 inline-block mr-2 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z M9 10h6v4H9z"/></svg>
+                                <span id="control-text">Start Motion</span>
                             </button>
                         </div>
                     </div>
@@ -1523,56 +2093,25 @@
                         <div class="subtitle">Add text, shapes, or images to see them appear here as layers</div>
                     </div>
                     <div class="pt-2 mt-2 border-t border-slate-600/40">
-                        <button id="save-image-btn" class="tool-button w-full flex items-center justify-center space-x-2 p-2 rounded-md text-sm" title="Export Scene to Image (PNG)">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3 3-3m2 8H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z" />
-                            </svg>
-                            <span class="font-medium">Export Scene to Image</span>
-                        </button>
-                    </div>
-                </div>
-                <!-- About & Licenses -->
-                <div class="section-header">
-                    <button class="accordion-button w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="false">
-                        <span class="flex items-center">About & Licenses</span>
-                        <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                </div>
-                <div class="accordion-content section-content p-3" style="max-height: 0">
-                    <div class="space-y-3 text-sm text-slate-300">
-                        <p class="text-slate-400">This section lists the font licenses and attributions for typefaces used in this app. Each font is provided under its respective license—follow the links for full terms.</p>
-                        <div>
-                            <p class="font-semibold">Luciole</p>
-                            <ul class="list-disc pl-5 text-slate-400">
-                                <li>License: <a class="about-link" href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></li>
-                                <li>Site: <a class="about-link" href="https://www.luciole-vision.com/" target="_blank" rel="noopener">luciole-vision.com</a></li>
-                            </ul>
+                        <div class="flex gap-2">
+                            <button id="save-image-btn" class="tool-button flex-1 flex items-center justify-center space-x-2 p-2 rounded-md text-sm" title="Export Scene to Image (PNG)">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3 3-3m2 8H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z" />
+                                </svg>
+                                <span class="font-medium">Export Scene to Image</span>
+                            </button>
+                            <button id="export-info-btn" class="tool-button p-2 rounded-md text-sm" title="Information about exporting scenes">
+                                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="16" x2="12" y2="12"/>
+                                    <circle cx="12" cy="8" r="0.5" fill="currentColor"/>
+                                </svg>
+                            </button>
                         </div>
-                        <div>
-                            <p class="font-semibold">Atkinson Hyperlegible</p>
-                            <ul class="list-disc pl-5 text-slate-400">
-                                <li>License: <a class="about-link" href="https://scripts.sil.org/OFL" target="_blank" rel="noopener">SIL Open Font License (OFL 1.1)</a> — <a class="about-link" href="./licenses/OFL-1.1-Atkinson.txt" target="_blank" rel="noopener">Local copy</a></li>
-                                <li>Site: <a class="about-link" href="https://www.brailleinstitute.org/freefont/" target="_blank" rel="noopener">brailleinstitute.org/freefont</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <p class="font-semibold">Andika (Printed a)</p>
-                            <ul class="list-disc pl-5 text-slate-400">
-                                <li>License: <a class="about-link" href="https://scripts.sil.org/OFL" target="_blank" rel="noopener">SIL Open Font License (OFL 1.1)</a></li>
-                                <li>Site: <a class="about-link" href="https://software.sil.org/andika/" target="_blank" rel="noopener">software.sil.org/andika</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <p class="font-semibold">Noto Serif</p>
-                            <ul class="list-disc pl-5 text-slate-400">
-                                <li>License: <a class="about-link" href="https://scripts.sil.org/OFL" target="_blank" rel="noopener">SIL Open Font License (OFL 1.1)</a></li>
-                                <li>Site: <a class="about-link" href="https://fonts.google.com/noto/specimen/Noto+Serif" target="_blank" rel="noopener">fonts.google.com/noto/specimen/Noto Serif</a></li>
-                            </ul>
-                        </div>
-                        
                     </div>
                 </div>
                 </div>
+                <!-- Removed misplaced settings panel (now inside media library) -->
             </div>
         </aside>
 
@@ -1587,6 +2126,7 @@
             
             <div class="flex-1 overflow-y-auto px-3 pb-3">
                 <div id="media-library-accordion" class="space-y-2">
+                    <!-- Settings panel relocated to bottom for better grouping -->
                     <!-- Visual Targets Section -->
                     <div class="section-header">
                         <button class="accordion-button w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="true">
@@ -1642,15 +2182,22 @@
                     </div>
                     <div class="accordion-content section-content p-3">
                         <div class="space-y-3">
-                            <div class="flex items-center space-x-2">
-                                <label for="bg-image-input" class="upload-button flex-grow text-center py-2 px-3 rounded-md cursor-pointer">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <label for="bg-image-input" class="upload-button flex-grow text-center py-2 px-3 rounded-md cursor-pointer order-1">
                                     <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                                     </svg>
                                     Upload Background
                                 </label>
                                 <input type="file" id="bg-image-input" class="hidden" accept="image/*">
-                                <button id="delete-bg-btn" class="delete-button hidden p-2 rounded-md" title="Remove Background Image">
+                                <label for="bg-folder-upload" class="upload-button text-center py-2 px-3 rounded-md cursor-pointer order-2" title="Add Backgrounds Folder">
+                                    <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                                    </svg>
+                                    Folder
+                                </label>
+                                <input type="file" id="bg-folder-upload" webkitdirectory directory multiple class="hidden" accept="image/*,video/*">
+                                <button id="delete-bg-btn" class="delete-button hidden p-2 rounded-md order-3" title="Clear Current Background">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
@@ -1683,15 +2230,22 @@
                     </div>
                     <div class="accordion-content section-content p-3">
                         <div class="space-y-3">
-                            <div class="flex items-center space-x-2">
-                                <label for="fg-image-input" class="upload-button flex-grow text-center py-2 px-3 rounded-md cursor-pointer">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <label for="fg-image-input" class="upload-button flex-grow text-center py-2 px-3 rounded-md cursor-pointer order-1">
                                     <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                                     </svg>
                                     Upload Foreground
                                 </label>
                                 <input type="file" id="fg-image-input" class="hidden" accept="image/*">
-                                <button id="delete-fg-btn" class="delete-button hidden p-2 rounded-md" title="Remove Foreground Image">
+                                <label for="fg-folder-upload" class="upload-button text-center py-2 px-3 rounded-md cursor-pointer order-2" title="Add Foregrounds Folder">
+                                    <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                                    </svg>
+                                    Folder
+                                </label>
+                                <input type="file" id="fg-folder-upload" webkitdirectory directory multiple class="hidden" accept="image/*,video/*">
+                                <button id="delete-fg-btn" class="delete-button hidden p-2 rounded-md order-3" title="Clear Current Foreground">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                     </svg>
@@ -1706,6 +2260,174 @@
                                 </svg>
                                 <div class="title">No Foregrounds</div>
                                 <div class="subtitle">Upload images to use as foregrounds. These images will always be the top layer and need to have transparent areas to show images behind them.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Import From Saved Folders Button -->
+                    
+
+                    <!-- Auto-Load Settings Section (restored) -->
+                    <div class="section-header mt-4">
+                        <button id="media-settings-toggle" class="w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="false">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                Auto-Load Settings
+                            </span>
+                            <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                    </div>
+                    <div id="media-settings-panel" class="accordion-content section-content p-3" style="max-height:0; overflow:hidden;">
+                        <div class="text-[10px] text-slate-500 leading-snug mb-2">
+                            Select folders to load automatically. You may see up to 3 permission prompts (one each for Targets, Backgrounds, Foregrounds).
+                        </div>
+                        <div class="space-y-2">
+                            <!-- Visual Targets Row -->
+                            <div class="flex items-center gap-2 p-2 rounded border border-slate-700/60 bg-slate-800/30 text-[11px]">
+                                <input type="checkbox" id="auto-load-visual-targets" class="cursor-pointer" aria-label="Enable auto-load Targets">
+                                <span class="font-medium whitespace-nowrap w-24">Targets</span>
+                                <div id="vt-folder-label" class="flex-1 truncate text-slate-400" title="Targets folder">No folder</div>
+                                <button id="pick-vt-folder" class="upload-button py-1 px-2 rounded text-[11px]" aria-label="Pick Targets folder">Pick</button>
+                                <button id="clear-vt-folder" class="delete-button inactive py-1 px-2 rounded text-[11px]" title="Clear Targets folder" aria-label="Clear Targets folder">×</button>
+                            </div>
+                            <!-- Backgrounds Row -->
+                            <div class="flex items-center gap-2 p-2 rounded border border-slate-700/60 bg-slate-800/30 text-[11px]">
+                                <input type="checkbox" id="auto-load-backgrounds" class="cursor-pointer" aria-label="Enable auto-load Backgrounds">
+                                <span class="font-medium whitespace-nowrap w-24">Backgrounds</span>
+                                <div id="bg-folder-label" class="flex-1 truncate text-slate-400" title="Backgrounds folder">No folder</div>
+                                <button id="pick-bg-folder" class="upload-button py-1 px-2 rounded text-[11px]" aria-label="Pick Backgrounds folder">Pick</button>
+                                <button id="clear-bg-folder" class="delete-button inactive py-1 px-2 rounded text-[11px]" title="Clear Backgrounds folder" aria-label="Clear Backgrounds folder">×</button>
+                            </div>
+                            <!-- Foregrounds Row -->
+                            <div class="flex items-center gap-2 p-2 rounded border border-slate-700/60 bg-slate-800/30 text-[11px]">
+                                <input type="checkbox" id="auto-load-foregrounds" class="cursor-pointer" aria-label="Enable auto-load Foregrounds">
+                                <span class="font-medium whitespace-nowrap w-24">Foregrounds</span>
+                                <div id="fg-folder-label" class="flex-1 truncate text-slate-400" title="Foregrounds folder">No folder</div>
+                                <button id="pick-fg-folder" class="upload-button py-1 px-2 rounded text-[11px]" aria-label="Pick Foregrounds folder">Pick</button>
+                                <button id="clear-fg-folder" class="delete-button inactive py-1 px-2 rounded text-[11px]" title="Clear Foregrounds folder" aria-label="Clear Foregrounds folder">×</button>
+                            </div>
+                        </div>
+                        <button id="run-auto-load-now" class="upload-button w-full py-2 px-3 rounded-md mt-4 text-sm">Run Auto-Load</button>
+                    </div>
+
+                    <!-- Grids Section -->
+                    <div class="section-header mt-4">
+                        <button id="grids-toggle" class="w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="false">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                </svg>
+                                Grids
+                            </span>
+                            <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                    </div>
+                    <div id="grids-panel" class="accordion-content section-content p-3" style="max-height:0; overflow:hidden;">
+                        <div class="text-xs text-slate-300 mb-3 p-2 bg-slate-800/30 rounded border border-slate-700/40">
+                            <div class="font-semibold text-emerald-400 mb-1">📍 Position Guides</div>
+                            <div class="text-[10px] text-slate-400 leading-relaxed">
+                                Choose how many positions you want for your targets. They'll snap smoothly into place as you drag them.
+                            </div>
+                        </div>
+                        
+                        <div class="group-block">
+                            <div class="group-label">Choose Positions</div>
+                            <div class="grid grid-cols-5 gap-2">
+                                <!-- 2 Frame Grid -->
+                                <button id="grid-2" class="grid-button flex flex-col items-center justify-center p-2 rounded border-2 border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-500 transition-colors" data-frames="2">
+                                    <div class="grid-preview mb-1" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; width: 20px; height: 10px;">
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                    </div>
+                                    <span class="text-[10px] text-slate-300">2</span>
+                                </button>
+                                
+                                <!-- 4 Frame Grid -->
+                                <button id="grid-4" class="grid-button flex flex-col items-center justify-center p-2 rounded border-2 border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-500 transition-colors" data-frames="4">
+                                    <div class="grid-preview mb-1" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; width: 20px; height: 20px;">
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                    </div>
+                                    <span class="text-[10px] text-slate-300">4</span>
+                                </button>
+                                
+                                <!-- 6 Frame Grid -->
+                                <button id="grid-6" class="grid-button flex flex-col items-center justify-center p-2 rounded border-2 border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-500 transition-colors" data-frames="6">
+                                    <div class="grid-preview mb-1" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; width: 24px; height: 16px;">
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                    </div>
+                                    <span class="text-[10px] text-slate-300">6</span>
+                                </button>
+                                
+                                <!-- 9 Frame Grid -->
+                                <button id="grid-9" class="grid-button flex flex-col items-center justify-center p-2 rounded border-2 border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-500 transition-colors" data-frames="9">
+                                    <div class="grid-preview mb-1" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; width: 24px; height: 24px;">
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                    </div>
+                                    <span class="text-[10px] text-slate-300">9</span>
+                                </button>
+                                
+                                <!-- 12 Frame Grid -->
+                                <button id="grid-12" class="grid-button flex flex-col items-center justify-center p-2 rounded border-2 border-slate-600 bg-slate-800 hover:bg-slate-700 hover:border-slate-500 transition-colors" data-frames="12">
+                                    <div class="grid-preview mb-1" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1px; width: 28px; height: 21px;">
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                        <div class="bg-slate-400 rounded-sm"></div>
+                                    </div>
+                                    <span class="text-[10px] text-slate-300">12</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="group-block">
+                            <div class="group-label">Display Options</div>
+                            <div class="space-y-3">
+                                <!-- Simple toggle controls -->
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" id="show-position-guides" class="cursor-pointer" checked>
+                                    <span class="text-sm text-slate-200">Show position guides</span>
+                                </label>
+                                <label class="flex items-center gap-3 cursor-pointer">
+                                    <input type="checkbox" id="enable-auto-snap" class="cursor-pointer" checked>
+                                    <span class="text-sm text-slate-200">Snap targets to positions</span>
+                                </label>
+                                
+                                <!-- Quick Actions -->
+                                <div class="space-y-2 pt-2 border-t border-slate-700">
+                                    <div class="text-xs text-slate-400 font-medium mb-2">Quick Actions</div>
+                                    <button id="arrange-all-targets" class="w-full py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-sm font-medium transition-colors">
+                                        Arrange All Targets
+                                    </button>
+                                    <button id="turn-off-grid" class="w-full py-2 px-3 bg-slate-600 hover:bg-slate-500 text-slate-200 rounded-md text-sm transition-colors" style="display: none;">
+                                        Turn Off Grid
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1732,12 +2454,6 @@
                 <div id="progress-fill" class="progress-fill"></div>
             </div>
             <div id="progress-detail" class="progress-detail">0 of 0 files processed</div>
-        </div>
-        <div id="fullscreen-toast" role="status" aria-live="polite">
-            <span>File picker may exit fullscreen.</span>
-            <span class="toast-actions">
-                <button id="return-fullscreen-btn">Return to Fullscreen</button>
-            </span>
         </div>
 
         <!-- Context Menu -->
@@ -1781,14 +2497,78 @@
     document.addEventListener('DOMContentLoaded', () => {
             // --- Splash Screen ---
             const splashScreen = document.getElementById('splash-screen');
+            const splashOverlay = document.getElementById('splash-screen-overlay');
             
-            // Hide splash screen after 2 seconds
-            setTimeout(() => {
+            const splashCloseBtn = document.getElementById('splash-close-btn');
+            function hideSplash() {
+                if (!splashOverlay) return;
                 splashScreen.classList.add('fade-out');
+                splashOverlay.classList.add('fade-out');
                 setTimeout(() => {
-                    splashScreen.style.display = 'none';
-                }, 500);
-            }, 2000);
+                    splashOverlay.remove();
+                }, 600);
+            }
+            splashCloseBtn.addEventListener('click', hideSplash);
+            // Allow Enter / Space to trigger while focused
+            splashCloseBtn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hideSplash(); }
+            });
+            // Give initial focus for accessibility
+            setTimeout(() => { splashCloseBtn.focus(); }, 50);
+
+            // About button - simple alert instead of complex dialog
+            const aboutBtn = document.getElementById('about-btn');
+            aboutBtn.addEventListener('click', () => {
+                alert(`Gaze Tracking Canvas - Visual Target Management System
+
+Developed by Niall Brown, Early Childhood Vision Consultant (ECVC)
+
+This application streamlines the process of managing visual targets, backgrounds, and foregrounds for vision assessment and eye gaze tracking applications.
+
+MIT License - Copyright © 2024 Niall Brown (ECVC)
+This software is provided "as is" without warranty of any kind.`);
+            });
+
+            // Export Info Dialog functionality
+            const exportInfoBtn = document.getElementById('export-info-btn');
+            const exportInfoDialogOverlay = document.getElementById('export-info-dialog-overlay');
+            const exportInfoDialogClose = document.getElementById('export-info-dialog-close');
+
+            function showExportInfoDialog() {
+                exportInfoDialogOverlay.classList.add('show');
+                setTimeout(() => exportInfoDialogClose.focus(), 100);
+            }
+
+            function hideExportInfoDialog() {
+                exportInfoDialogOverlay.classList.remove('show');
+                setTimeout(() => exportInfoBtn.focus(), 300);
+            }
+
+            exportInfoBtn.addEventListener('click', showExportInfoDialog);
+            exportInfoDialogClose.addEventListener('click', hideExportInfoDialog);
+
+            // Close dialog with Escape key
+            exportInfoDialogOverlay.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    hideExportInfoDialog();
+                }
+            });
+
+            // Close dialog when clicking outside
+            exportInfoDialogOverlay.addEventListener('click', (e) => {
+                if (e.target === exportInfoDialogOverlay) {
+                    hideExportInfoDialog();
+                }
+            });
+
+            // Allow Enter/Space on close button
+            exportInfoDialogClose.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    hideExportInfoDialog();
+                }
+            });
             
             // --- DOM Elements ---
             const canvas = document.getElementById('main-canvas');
@@ -1816,8 +2596,11 @@
             const selectTool = document.getElementById('select-tool');
             const textTool = document.getElementById('text-tool');
             const rectTool = document.getElementById('rect-tool');
+            const squareTool = document.getElementById('square-tool');
             const circleTool = document.getElementById('circle-tool');
             const triangleTool = document.getElementById('triangle-tool');
+            const starTool = document.getElementById('star-tool');
+            const octagonTool = document.getElementById('octagon-tool');
 
             const bgColorSlider = document.getElementById('bg-color-slider');
             const presetColorBtns = document.querySelectorAll('.preset-color-bg');
@@ -1825,70 +2608,6 @@
             const deleteBgBtn = document.getElementById('delete-bg-btn');
             const fgImageInput = document.getElementById('fg-image-input');
             const deleteFgBtn = document.getElementById('delete-fg-btn');
-
-            // Preserve fullscreen around file pickers
-            let shouldReenterFullscreenAfterPicker = false;
-            const imageUploadLabel = document.querySelector('label[for="image-upload"]');
-            const folderUploadLabel = document.querySelector('label[for="folder-upload"]');
-            const bgImageLabel = document.querySelector('label[for="bg-image-input"]');
-            const fgImageLabel = document.querySelector('label[for="fg-image-input"]');
-            [imageUploadLabel, folderUploadLabel, bgImageLabel, fgImageLabel].forEach(lbl => {
-                if (lbl) {
-                    lbl.addEventListener('click', () => {
-                        shouldReenterFullscreenAfterPicker = !!document.fullscreenElement;
-                    });
-                }
-            });
-
-            // Try FS Access API for main imports to reduce fullscreen exits
-            if (imageUploadLabel) {
-                imageUploadLabel.addEventListener('click', async (e) => {
-                    if (window.showOpenFilePicker) {
-                        e.preventDefault();
-                        try {
-                            const handles = await window.showOpenFilePicker({ multiple: true, types: [
-                                { description: 'Images', accept: { 'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp'] } },
-                                { description: 'Videos', accept: { 'video/*': ['.mp4', '.webm', '.mov', '.avi', '.mkv'] } }
-                            ] });
-                            const files = await Promise.all(handles.map(h => h.getFile()));
-                            if (files && files.length) {
-                                await handleFiles(files);
-                                return;
-                            }
-                        } catch (err) {
-                            // user cancelled, fallback to native input
-                        }
-                        document.getElementById('image-upload').click();
-                    }
-                }, { capture: true });
-            }
-            if (folderUploadLabel && window.showDirectoryPicker) {
-                folderUploadLabel.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    try {
-                        const dir = await window.showDirectoryPicker();
-                        async function getFilesFromDirectory(dirHandle) {
-                            const collected = [];
-                            for await (const [name, handle] of dirHandle.entries()) {
-                                if (handle.kind === 'file') {
-                                    collected.push(await handle.getFile());
-                                } else if (handle.kind === 'directory') {
-                                    collected.push(...await getFilesFromDirectory(handle));
-                                }
-                            }
-                            return collected;
-                        }
-                        const files = await getFilesFromDirectory(dir);
-                        if (files && files.length) {
-                            await handleFiles(files);
-                            return;
-                        }
-                    } catch (err) {
-                        // user cancelled, fallback
-                    }
-                    document.getElementById('folder-upload').click();
-                }, { capture: true });
-            }
 
             const layerList = document.getElementById('layer-list');
             const layersEmptyState = document.getElementById('layers-empty-state');
@@ -1899,13 +2618,12 @@
             const progressContainer = document.getElementById('progress-container');
             const progressFill = document.getElementById('progress-fill');
             const progressDetail = document.getElementById('progress-detail');
-            const fullscreenToast = document.getElementById('fullscreen-toast');
-            const returnFullscreenBtn = document.getElementById('return-fullscreen-btn');
 
             // Properties Panel Elements
             const propertiesPanel = document.getElementById('properties-panel-content');
             const textProperties = document.getElementById('text-properties');
             const shapeProperties = document.getElementById('shape-properties');
+            const transformProperties = document.getElementById('transform-properties');
             const imageProperties = document.getElementById('image-properties');
             const animationProperties = document.getElementById('animation-properties');
             const noSelectionProperties = document.getElementById('no-selection-properties');
@@ -1913,22 +2631,43 @@
             const textColorInput = document.getElementById('text-color-input');
             const textSizeInput = document.getElementById('text-size-input');
             const textFontSelect = document.getElementById('text-font-select');
+            // Large handles: always enabled (removed toggle)
+            // --- Touch / Pointer Capability Flags ---
+            const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+            // Base handle size (will be user-adjustable)
+            let handleSize = 24; // Moderate circular handles for better aesthetics & touch
+            let largeHandlesForced = true; // kept for minimal code changes
+            let activePointers = new Map();
+            let pinchStartInfo = null; // { distance, objOrig }
+            let longPressTimer = null;
+            const LONG_PRESS_MS = 550;
+            let longPressStart = null; // {x,y}
+            let lastTapTime = 0; let lastTapPos = null; const DOUBLE_TAP_MS = 350; const DOUBLE_TAP_DIST = 30;
             const textBoldToggle = document.getElementById('text-bold-toggle');
             const textItalicToggle = document.getElementById('text-italic-toggle');
             const shapeColorInput = document.getElementById('shape-color-input');
             const flipHorizontalBtn = document.getElementById('flip-horizontal-btn');
             const flipVerticalBtn = document.getElementById('flip-vertical-btn');
+            const rotate90Btn = document.getElementById('rotate-90-btn');
             
             // Animation Elements
             const animationSelect = document.getElementById('animation-select');
             const animationSettings = document.getElementById('animation-settings');
             const animationDuration = document.getElementById('animation-duration');
+            const animationCycles = document.getElementById('animation-cycles');
             const animationIntensity = document.getElementById('animation-intensity');
             const durationValue = document.getElementById('duration-value');
+            const cyclesValue = document.getElementById('cycles-value');
             const intensityValue = document.getElementById('intensity-value');
-            const previewAnimationBtn = document.getElementById('preview-animation');
+            const animationControlBtn = document.getElementById('animation-control-btn');
+            const playIcon = document.getElementById('play-icon');
+            const stopIcon = document.getElementById('stop-icon');
+            const controlText = document.getElementById('control-text');
             const animationPanel = document.getElementById('animation-panel');
             const animationTriggers = document.getElementById('animation-triggers');
+            const animationEasing = document.getElementById('animation-easing');
+            const animationIteration = document.getElementById('animation-iteration');
+            const livePreviewToggle = document.getElementById('live-preview-toggle');
 
             // --- State ---
             let objects = [];
@@ -1943,6 +2682,16 @@
             let foregroundImage = null;
             let animationLoopRunning = false;
             let lastTime = 0;
+            let pingPongDirection = 1; // used for ping-pong loop style
+            
+            // Grid State
+            let currentGrid = null; // null, 2, 4, 6, 9, or 12
+            let gridFrames = [];
+            let showGuides = true; // Show position guides
+            let enableAutoSnap = true; // Enable automatic snapping
+            let snapStrength = 80; // Increased for easier snapping
+            let isSnapping = false;
+            let snapAnimation = null;
             
             // Shape Creation State
             // Color harmony palettes - each palette contains harmonious colors
@@ -2004,12 +2753,24 @@
             let shapeOffsetX = 0;
             let shapeOffsetY = 0;
             
-            // Media Library State
-            let mediaAssets = {
-                backgrounds: [],
-                foregrounds: [],
-                visualTargets: []
-            };
+            // Media Library State (encapsulated via MediaLibrary object)
+            const MediaLibrary = (() => {
+                const assets = {
+                    backgrounds: [],
+                    foregrounds: [],
+                    visualTargets: []
+                };
+                return {
+                    assets,
+                    add(category, el){ assets[category].push(el); },
+                    remove(category, el){ const i = assets[category].indexOf(el); if(i>-1) assets[category].splice(i,1); },
+                    move(from,to,el){ this.remove(from,el); this.add(to,el); },
+                    list(category){ return assets[category]; },
+                    isEmpty(category){ return assets[category].length===0; }
+                };
+            })();
+            // Backwards compatibility alias
+            const mediaAssets = MediaLibrary.assets;
             
             // Animation State
             let animatedObjects = [];
@@ -2017,7 +2778,8 @@
 
             // Animation Panel Management
             function updateAnimationTriggerPanel() {
-                const animatedObjs = objects.filter(obj => obj.animationType);
+                // Show any object that has an animation type configured (running or not)
+                const animatedObjs = objects.filter(obj => !!obj.animationType);
                 animationTriggers.innerHTML = '';
                 
                 if (animatedObjs.length === 0) {
@@ -2040,6 +2802,7 @@
                     
                     triggerBtn.addEventListener('click', () => {
                         triggerAnimation(obj);
+                        if(obj === selectedObject) updateAnimationControlButton();
                     });
                     
                     animationTriggers.appendChild(triggerBtn);
@@ -2068,18 +2831,12 @@
                     return false;
                 }
                 
-                // Stop any current animation first
-                obj.isAnimating = false;
-                
-                // Ensure animation properties are properly set
-                if (typeof obj.animationDuration === 'undefined') {
-                    obj.animationDuration = 1.0;
-                }
-                if (typeof obj.animationIntensity === 'undefined') {
-                    obj.animationIntensity = 5;
-                }
-                
-                if (obj.startAnimation()) {
+                // Restart animation from beginning
+                obj.isAnimating = true;
+                obj.animationStartTime = performance.now();
+                obj.cycleCount = 0;
+
+                if (obj.animationType) {
                     // Visual feedback on trigger button
                     const triggerBtn = document.querySelector(`[data-object-id="${obj.id}"]`);
                     if (triggerBtn) {
@@ -2088,11 +2845,15 @@
                             triggerBtn.classList.remove('triggering');
                         }, 500);
                     }
+                    if(selectedObject === obj) {
+                        updateAnimationControlButton();
+                    }
                     
                     // Start animation loop if not already running
                     if (!animationLoopRunning) {
                         startAnimationLoop();
                     }
+                    ensureRenderLoop();
                     return true;
                 }
                 return false;
@@ -2117,6 +2878,12 @@
                     } else {
                         animationLoopRunning = false;
                         lastTime = 0;
+                        // All animations finished — reset preview button UI
+                        try {
+                            if (typeof updateAnimationControlButton === 'function') {
+                                updateAnimationControlButton();
+                            }
+                        } catch {}
                     }
                 }
                 
@@ -2128,8 +2895,20 @@
                 const rect = canvasContainer.getBoundingClientRect();
                 canvas.width = rect.width;
                 canvas.height = rect.height;
+                
+                // Recalculate grid frames if a grid is active
+                if (currentGrid) {
+                    gridFrames = calculateGridFrames(currentGrid);
+                    if (typeof recomputeGridOccupancy === 'function') recomputeGridOccupancy();
+                }
+                
                 draw();
             }
+            // Initialize large handles preference
+            (function initHandlePreference(){
+                applyHandleSize();
+            })();
+            function applyHandleSize(){ handleSize = 24; }
             window.addEventListener('resize', resizeCanvas);
             resizeCanvas();
             
@@ -2163,9 +2942,32 @@
                     drawCoverImage(foregroundImage.img);
                 }
 
+                // Draw grid overlay
+                drawGridOverlay();
+
                 if (selectedObject && currentTool === 'select') {
                     drawSelectionHandles(selectedObject);
                 }
+            }
+
+            // Continuous render loop to keep video frames updating
+            let continuousLoop = false;
+            function ensureRenderLoop() {
+                if (continuousLoop) return;
+                continuousLoop = true;
+                function loop() {
+                    const hasVideo = objects.some(o => o.type === 'video');
+                    const dragging = isDragging || isResizing;
+                    const animating = objects.some(o => o.isAnimating);
+                    const snapping = isSnapping;
+                    if (hasVideo || dragging || animating || snapping) {
+                        draw();
+                        requestAnimationFrame(loop);
+                    } else {
+                        continuousLoop = false; // allow restart when needed
+                    }
+                }
+                requestAnimationFrame(loop);
             }
             
             function drawCoverImage(img) {
@@ -2205,11 +3007,17 @@
                 ctx.setLineDash([]);
                 
                 getResizeHandles(obj).forEach(handle => {
-                    ctx.fillStyle = 'white';
+                    ctx.fillStyle = '#ffffff';
                     ctx.strokeStyle = '#4f46e5';
-                    ctx.lineWidth = 1.5;
-                    ctx.fillRect(handle.x, handle.y, handle.size, handle.size);
-                    ctx.strokeRect(handle.x, handle.y, handle.size, handle.size);
+                    ctx.lineWidth = 2;
+                    const radius = (handle.size / 2);
+                    const cx = handle.x + handle.size / 2;
+                    const cy = handle.y + handle.size / 2;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
                 });
                 ctx.restore();
             }
@@ -2234,9 +3042,14 @@
                     // Animation properties
                     this.animationType = null;
                     this.animationDuration = 1.0;
+                    this.animationCycles = 1; // Default to a single cycle
                     this.animationIntensity = 5;
+                    this.cycleCount = 0;
+                    this.animationEasing = 'ease-in-out';
+                    this.animationIteration = 'infinite'; // 'infinite' | '1' | 'yoyo'
                     this.isAnimating = false;
                     this.animationStartTime = 0;
+                    this.animationCycleTime = 0; // accumulative for smooth looping
                 } 
                 
                 isPointInside(px, py) { 
@@ -2258,14 +3071,59 @@
                         this.scale * (this.flipVertical ? -1 : 1)
                     ); 
                     
-                    // Apply animation transform
-                    if (this.isAnimating) {
-                        const elapsed = (Date.now() - this.animationStartTime) / 1000;
-                        const progress = Math.min(elapsed / this.animationDuration, 1);
-                        this.applyAnimationTransform(ctx, progress);
+                    // Apply animation transform only while actively animating
+                    if (this.animationType && this.isAnimating) {
+                        // Cycle-based animation
+                        const now = performance.now();
+                        if(!this.animationStartTime) this.animationStartTime = now;
+                        const elapsed = (now - this.animationStartTime) / 1000; // seconds
+                        const cycle = this.animationDuration || 1;
+                        const maxCycles = this.animationCycles || 5;
                         
-                        if (progress >= 1) {
-                            this.isAnimating = false;
+                        // Calculate current cycle and progress within cycle
+                        const totalCyclesFloat = elapsed / cycle;
+                        const currentCycle = Math.floor(totalCyclesFloat);
+                        let rawProgress = totalCyclesFloat - currentCycle; // 0..1 within current cycle
+                        
+                        // Check if we've completed all cycles
+                        if (currentCycle >= maxCycles) {
+                            // Smooth conclusion - gradually reduce intensity in final portion
+                            const fadeTime = 1.0; // 1 second fade out for smooth ending
+                            const finalCycleProgress = (totalCyclesFloat - maxCycles) / fadeTime;
+                            
+                            if (finalCycleProgress >= 1) {
+                                // Animation completely finished - keep type so user can restart
+                                this.isAnimating = false;
+                                this.animationStartTime = 0;
+                                this.cycleCount = 0;
+                                // If this was the selected object, revert the play/stop UI
+                                try {
+                                    if (typeof updateAnimationControlButton === 'function' && typeof selectedObject !== 'undefined' && selectedObject === this) {
+                                        updateAnimationControlButton();
+                                    }
+                                } catch {}
+                            } else {
+                                // Continue motion while smoothly fading intensity to zero
+                                const fadeMultiplier = Math.cos((finalCycleProgress * Math.PI) / 2); // Smooth fade using cosine
+                                this.tempFadeMultiplier = fadeMultiplier;
+                                this.applyAnimationTransform(ctx, rawProgress);
+                                this.tempFadeMultiplier = 1; // Reset
+                            }
+                        } else {
+                            // Normal animation with smooth start
+                            this.cycleCount = currentCycle;
+                            
+                            // Apply smooth start-up for first cycle
+                            let startupMultiplier = 1;
+                            if (currentCycle === 0 && rawProgress < 0.3) {
+                                // Smooth ease-in during first 30% of first cycle
+                                const startupProgress = rawProgress / 0.3;
+                                startupMultiplier = Math.sin((startupProgress * Math.PI) / 2); // Smooth start using sine
+                            }
+                            
+                            this.tempStartupMultiplier = startupMultiplier;
+                            this.applyAnimationTransform(ctx, rawProgress);
+                            this.tempStartupMultiplier = 1; // Reset
                         }
                     }
                     
@@ -2275,40 +3133,52 @@
                 } 
                 
                 applyAnimationTransform(ctx, progress) {
-                    const t = progress * Math.PI * 2; // Full cycle
-                    const intensity = this.animationIntensity;
+                    const baseIntensity = this.animationIntensity;
+                    const fadeMultiplier = this.tempFadeMultiplier || 1;
+                    const startupMultiplier = this.tempStartupMultiplier || 1;
+                    const intensity = baseIntensity * fadeMultiplier * startupMultiplier;
+                    
+                    // Clamp progress to prevent overshooting
+                    const clampedProgress = Math.max(0, Math.min(1, progress));
                     
                     switch (this.animationType) {
-                        case 'gentle-shake':
-                            const shakeX = Math.sin(t * 4) * intensity;
+                        case 'gentle-shake': {
+                            // Smooth sinusoidal shake - starts and ends at center
+                            const angle = clampedProgress * Math.PI * 2;
+                            const shakeX = Math.sin(angle) * intensity;
                             ctx.translate(shakeX, 0);
-                            break;
-                        case 'pendum':
-                            // Pendulum-like motion around top-center pivot
-                            const baseFreq = 2; // Hz-like factor for feel
-                            const amplitudeRad = (intensity) * Math.PI / 180; // intensity in degrees → radians
-                            const angle = Math.sin(t * baseFreq) * amplitudeRad;
+                            break; 
+                        }
+                        case 'pendum': {
+                            // Smooth pendulum swing - starts and ends at center (equilibrium)
+                            const amplitudeRad = (intensity * 3) * Math.PI / 180;
+                            const angle = clampedProgress * Math.PI * 2;
+                            // Use sine for pendulum to start/end at center position
+                            const pendulumAngle = Math.sin(angle) * amplitudeRad;
                             const pivotTopY = -this.height / 2;
                             ctx.translate(0, pivotTopY);
-                            ctx.rotate(angle);
+                            ctx.rotate(pendulumAngle);
                             ctx.translate(0, -pivotTopY);
-                            break;
-                        case 'circular':
-                            const circularRadius = intensity * 2;
-                            const circularX = Math.cos(t) * circularRadius;
-                            const circularY = Math.sin(t) * circularRadius;
+                            break; 
+                        }
+                        case 'circular': {
+                            // Smooth circular orbit - continuous motion
+                            const radius = intensity * 2;
+                            const angle = clampedProgress * Math.PI * 2;
+                            const circularX = Math.cos(angle) * radius;
+                            const circularY = Math.sin(angle) * radius;
                             ctx.translate(circularX, circularY);
-                            break;
+                            break; 
+                        }
                     }
                 }
                 
                 startAnimation() {
-                    if (this.animationType) {
-                        this.isAnimating = true;
-                        this.animationStartTime = Date.now();
-                        return true;
-                    }
-                    return false;
+                    if(!this.animationType) return false;
+                    this.isAnimating = true;
+                    this.animationStartTime = performance.now();
+                    this.cycleCount = 0;
+                    return true;
                 }
                 
                 drawContent(ctx) { } 
@@ -2387,32 +3257,197 @@
             }
             class ShapeObject extends CanvasObject { 
                 constructor(shapeType, x, y, zIndex, color = '#FF5733') { 
-                    const size = 100; 
-                    super(x - size/2, y - size/2, size, size, zIndex, 'shape'); 
+                    // Set initial dimensions; make rectangles slightly wider than tall for recognizability
+                    let initWidth = 100;
+                    let initHeight = 100;
+                    if (shapeType === 'rect') {
+                        initWidth = 120; // slightly longer on X axis
+                        initHeight = 100;
+                    }
+                    super(x - initWidth/2, y - initHeight/2, initWidth, initHeight, zIndex, 'shape'); 
                     this.shapeType = shapeType; 
                     this.color = color; 
                     this.name = `Shape: ${shapeType}`; 
                 } 
                 drawContent(ctx) { 
-                    ctx.fillStyle = this.color; 
+                    // Save the current context state
+                    ctx.save();
+                    
+                    // Add subtle shadow for depth
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+                    ctx.shadowBlur = 4;
+                    ctx.shadowOffsetX = 1;
+                    ctx.shadowOffsetY = 2;
+                    
                     switch(this.shapeType) { 
                         case 'rect': 
-                            ctx.fillRect(this.x, this.y, this.width, this.height); 
+                            // Create gradient for rectangle
+                            const rectGradient = ctx.createLinearGradient(this.x, this.y, this.x + this.width, this.y + this.height);
+                            rectGradient.addColorStop(0, this.color);
+                            rectGradient.addColorStop(1, this.adjustColorBrightness(this.color, -20));
+                            
+                            ctx.fillStyle = rectGradient;
+                            
+                            // Draw rounded rectangle
+                            const rectRadius = Math.min(8, Math.min(this.width, this.height) / 4);
+                            ctx.beginPath();
+                            ctx.roundRect(this.x, this.y, this.width, this.height, rectRadius);
+                            ctx.fill();
+                            
+                            // Add subtle border
+                            ctx.shadowColor = 'transparent';
+                            ctx.strokeStyle = this.adjustColorBrightness(this.color, -30);
+                            ctx.lineWidth = 1;
+                            ctx.stroke();
                             break; 
+                        case 'square':
+                            // Render a square (same as rect, but the size is enforced elsewhere)
+                            const sqGradient = ctx.createLinearGradient(this.x, this.y, this.x + this.width, this.y + this.height);
+                            sqGradient.addColorStop(0, this.color);
+                            sqGradient.addColorStop(1, this.adjustColorBrightness(this.color, -20));
+                            ctx.fillStyle = sqGradient;
+                            const sqRadius = Math.min(8, Math.min(this.width, this.height) / 4);
+                            ctx.beginPath();
+                            ctx.roundRect(this.x, this.y, this.width, this.height, sqRadius);
+                            ctx.fill();
+                            ctx.shadowColor = 'transparent';
+                            ctx.strokeStyle = this.adjustColorBrightness(this.color, -30);
+                            ctx.lineWidth = 1;
+                            ctx.stroke();
+                            break;
+                            
                         case 'circle': 
+                            // Create radial gradient for circle
+                            const centerX = this.x + this.width / 2;
+                            const centerY = this.y + this.height / 2;
+                            const radius = this.width / 2;
+                            
+                            const circleGradient = ctx.createRadialGradient(
+                                centerX - radius * 0.3, centerY - radius * 0.3, 0,
+                                centerX, centerY, radius
+                            );
+                            circleGradient.addColorStop(0, this.adjustColorBrightness(this.color, 30));
+                            circleGradient.addColorStop(0.7, this.color);
+                            circleGradient.addColorStop(1, this.adjustColorBrightness(this.color, -25));
+                            
+                            ctx.fillStyle = circleGradient;
                             ctx.beginPath(); 
-                            ctx.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, Math.PI * 2); 
-                            ctx.fill(); 
+                            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2); 
+                            ctx.fill();
+                            
+                            // Add subtle border
+                            ctx.shadowColor = 'transparent';
+                            ctx.strokeStyle = this.adjustColorBrightness(this.color, -30);
+                            ctx.lineWidth = 1;
+                            ctx.stroke();
                             break; 
+                            
                         case 'triangle': 
+                            // Create linear gradient for triangle
+                            const triangleGradient = ctx.createLinearGradient(this.x, this.y, this.x, this.y + this.height);
+                            triangleGradient.addColorStop(0, this.adjustColorBrightness(this.color, 20));
+                            triangleGradient.addColorStop(1, this.adjustColorBrightness(this.color, -20));
+                            
+                            ctx.fillStyle = triangleGradient;
                             ctx.beginPath(); 
                             ctx.moveTo(this.x + this.width / 2, this.y); 
                             ctx.lineTo(this.x + this.width, this.y + this.height); 
                             ctx.lineTo(this.x, this.y + this.height); 
                             ctx.closePath(); 
-                            ctx.fill(); 
-                            break; 
-                    } 
+                            ctx.fill();
+                            
+                            // Add subtle border
+                            ctx.shadowColor = 'transparent';
+                            ctx.strokeStyle = this.adjustColorBrightness(this.color, -30);
+                            ctx.lineWidth = 1;
+                            ctx.lineJoin = 'round';
+                            ctx.stroke();
+                            break;
+                        case 'star':
+                            const starGradient = ctx.createLinearGradient(this.x, this.y, this.x + this.width, this.y + this.height);
+                            starGradient.addColorStop(0, this.adjustColorBrightness(this.color, 20));
+                            starGradient.addColorStop(1, this.adjustColorBrightness(this.color, -20));
+                            ctx.fillStyle = starGradient;
+                            ctx.beginPath();
+                            this.drawStar(ctx, this.x + this.width / 2, this.y + this.height / 2, 5, this.width / 2, this.width / 4);
+                            ctx.closePath();
+                            ctx.fill();
+                            ctx.shadowColor = 'transparent';
+                            ctx.strokeStyle = this.adjustColorBrightness(this.color, -30);
+                            ctx.lineWidth = 1;
+                            ctx.lineJoin = 'round';
+                            ctx.stroke();
+                            break;
+                        case 'octagon':
+                            const octagonGradient = ctx.createLinearGradient(this.x, this.y, this.x + this.width, this.y + this.height);
+                            octagonGradient.addColorStop(0, this.adjustColorBrightness(this.color, 20));
+                            octagonGradient.addColorStop(1, this.adjustColorBrightness(this.color, -20));
+                            ctx.fillStyle = octagonGradient;
+                            ctx.beginPath();
+                            this.drawPolygon(ctx, this.x + this.width / 2, this.y + this.height / 2, 8, this.width / 2);
+                            ctx.closePath();
+                            ctx.fill();
+                            ctx.shadowColor = 'transparent';
+                            ctx.strokeStyle = this.adjustColorBrightness(this.color, -30);
+                            ctx.lineWidth = 1;
+                            ctx.lineJoin = 'round';
+                            ctx.stroke();
+                            break;
+                    }
+                    
+                    // Restore the context state
+                    ctx.restore();
+                }
+
+                drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+                    let rot = Math.PI / 2 * 3;
+                    let x = cx;
+                    let y = cy;
+                    let step = Math.PI / spikes;
+
+                    ctx.moveTo(cx, cy - outerRadius);
+                    for (let i = 0; i < spikes; i++) {
+                        x = cx + Math.cos(rot) * outerRadius;
+                        y = cy + Math.sin(rot) * outerRadius;
+                        ctx.lineTo(x, y);
+                        rot += step;
+
+                        x = cx + Math.cos(rot) * innerRadius;
+                        y = cy + Math.sin(rot) * innerRadius;
+                        ctx.lineTo(x, y);
+                        rot += step;
+                    }
+                    ctx.lineTo(cx, cy - outerRadius);
+                }
+
+                drawPolygon(ctx, cx, cy, sides, radius) {
+                    const angle = 2 * Math.PI / sides;
+                    ctx.moveTo(cx + radius * Math.cos(0), cy + radius * Math.sin(0));
+                    for (let i = 1; i <= sides; i++) {
+                        ctx.lineTo(cx + radius * Math.cos(i * angle), cy + radius * Math.sin(i * angle));
+                    }
+                }
+                
+                // Helper method to adjust color brightness
+                adjustColorBrightness(color, amount) {
+                    // Convert hex to RGB
+                    const hex = color.replace('#', '');
+                    const r = parseInt(hex.substr(0, 2), 16);
+                    const g = parseInt(hex.substr(2, 2), 16);
+                    const b = parseInt(hex.substr(4, 2), 16);
+                    
+                    // Adjust brightness
+                    const newR = Math.max(0, Math.min(255, r + amount));
+                    const newG = Math.max(0, Math.min(255, g + amount));
+                    const newB = Math.max(0, Math.min(255, b + amount));
+                    
+                    // Convert back to hex
+                    const toHex = (c) => {
+                        const hex = c.toString(16);
+                        return hex.length === 1 ? "0" + hex : hex;
+                    };
+                    
+                    return `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
                 } 
             }
             
@@ -2490,6 +3525,7 @@
                 noSelectionProperties.style.display = 'none'; 
                 textProperties.style.display = 'none'; 
                 shapeProperties.style.display = 'none'; 
+                transformProperties.style.display = 'none';
                 imageProperties.style.display = 'none';
                 const animationProperties = document.getElementById('animation-properties');
                 const noSelectionMsg = document.getElementById('no-selection-message');
@@ -2497,6 +3533,15 @@
                 animationProperties.style.display = 'none';
                 
                 if (selectedObject) { 
+                    // Show transform properties for all objects
+                    transformProperties.style.display = 'block';
+                    // Do not offer rotation for text objects
+                    if (selectedObject.type === 'text') {
+                        rotate90Btn.style.display = 'none';
+                    } else {
+                        rotate90Btn.style.display = '';
+                    }
+                    
                     if (selectedObject.type === 'text') { 
                         textProperties.style.display = 'block'; 
                         textContentInput.value = selectedObject.text; 
@@ -2539,7 +3584,7 @@
                     animationProperties.style.display = 'none';
                 } 
                 
-                // Update animation properties
+                // Update animation properties at the end to ensure proper sync
                 updateAnimationProperties();
             }
             
@@ -2563,27 +3608,45 @@
                             selectedObject.animationIntensity = 5;
                         }
                         
-                        animationSelect.value = selectedObject.animationType || '';
-                        animationDuration.value = selectedObject.animationDuration;
-                        animationIntensity.value = selectedObject.animationIntensity;
-                        durationValue.textContent = selectedObject.animationDuration.toFixed(1) + 's';
-                        intensityValue.textContent = selectedObject.animationIntensity;
+                        // Update animation button selection
+                        const animationButtons = document.querySelectorAll('.animation-type-btn');
+                        animationButtons.forEach(btn => {
+                            btn.classList.toggle('active', btn.dataset.animation === (selectedObject.animationType || ''));
+                        });
                         
-                        // Show/hide animation settings
-                        if (selectedObject.animationType) {
-                            animationSettings.classList.remove('hidden');
-                        } else {
-                            animationSettings.classList.add('hidden');
-                        }
+                        animationDuration.value = selectedObject.animationDuration;
+                        animationCycles.value = selectedObject.animationCycles || 1;
+                        animationIntensity.value = selectedObject.animationIntensity;
+                        
+                        // Update text displays
+                        const durVal = parseFloat(selectedObject.animationDuration);
+                        durationValue.textContent = durVal <= 0.7 ? 'Fast' : durVal >= 2 ? 'Slow' : 'Medium';
+                        const cyclesVal = parseInt(selectedObject.animationCycles || 1);
+                        cyclesValue.textContent = cyclesVal + ' cycle' + (cyclesVal === 1 ? '' : 's');
+                        const intVal = parseInt(selectedObject.animationIntensity);
+                        intensityValue.textContent = intVal <= 3 ? 'Small' : intVal >= 7 ? 'Large' : 'Medium';
+                        
+                        // Show/hide animation settings based on selection
+                        updateAnimationUIVisibility();
+                        updateAnimationControlButton();
                     } else {
-                        animationSelect.value = '';
+                        // Clear all animation button selections when no object selected
+                        const animationButtons = document.querySelectorAll('.animation-type-btn');
+                        animationButtons.forEach(btn => btn.classList.remove('active'));
                         animationSettings.classList.add('hidden');
                     }
                     animationUpdateTimeout = null;
                 }, 50); // 50ms debounce
             }
             
-            function setSelectedObject(obj) { selectedObject = obj; draw(); updateLayerList(); updatePropertiesPanel(); }
+            function setSelectedObject(obj) { 
+                selectedObject = obj; 
+                draw(); 
+                updateLayerList(); 
+                updatePropertiesPanel(); 
+                updateAnimationControlButton();
+                updateAnimationTriggerPanel();
+            }
 
             // --- UI Interaction ---
             function updateStatusIndicators() {
@@ -2735,37 +3798,720 @@
             controlsDrawer.addEventListener('click', e => e.stopPropagation());
             mediaLibrary.addEventListener('click', e => e.stopPropagation());
 
-            // --- Media Handling ---
-            async function showFullscreenToastTemporarily() {
-                if (!fullscreenToast) return;
-                fullscreenToast.style.display = 'inline-flex';
-                setTimeout(() => { fullscreenToast.style.display = 'none'; }, 3500);
+            // --- Auto Load Settings Panel Logic ---
+            const mediaSettingsToggle = document.getElementById('media-settings-toggle');
+            const mediaSettingsPanel = document.getElementById('media-settings-panel');
+            const autoLoadVisualTargetsChk = document.getElementById('auto-load-visual-targets');
+            const autoLoadBackgroundsChk = document.getElementById('auto-load-backgrounds');
+            const autoLoadForegroundsChk = document.getElementById('auto-load-foregrounds');
+            const pickVTBtn = document.getElementById('pick-vt-folder');
+            const pickBGBtn = document.getElementById('pick-bg-folder');
+            const pickFGBtn = document.getElementById('pick-fg-folder');
+            const clearVTBtn = document.getElementById('clear-vt-folder');
+            const clearBGBtn = document.getElementById('clear-bg-folder');
+            const clearFGBtn = document.getElementById('clear-fg-folder');
+            const vtFolderLabel = document.getElementById('vt-folder-label');
+            const bgFolderLabel = document.getElementById('bg-folder-label');
+            const fgFolderLabel = document.getElementById('fg-folder-label');
+            const runAutoLoadNowBtn = document.getElementById('run-auto-load-now');
+            
+
+            const AUTO_LOAD_KEY = 'autoLoadFolders.v1';
+            let autoLoadConfig = { visualTargets: null, backgrounds: null, foregrounds: null, enabled: { visualTargets:false, backgrounds:false, foregrounds:false } };
+
+            // Persistent Directory Handle Storage via IndexedDB -----------------
+            const supportsFSAccess = 'showDirectoryPicker' in window && 'indexedDB' in window;
+            let handlesDBPromise = null;
+            function getHandlesDB(){
+                if(!supportsFSAccess) return Promise.resolve(null);
+                if(handlesDBPromise) return handlesDBPromise;
+                handlesDBPromise = new Promise((resolve, reject)=>{
+                    const req = indexedDB.open('autoLoadHandlesDB',1);
+                    req.onupgradeneeded = e => {
+                        const db = req.result;
+                        if(!db.objectStoreNames.contains('handles')) db.createObjectStore('handles');
+                    };
+                    req.onsuccess = ()=> resolve(req.result);
+                    req.onerror = ()=> reject(req.error);
+                });
+                return handlesDBPromise;
+            }
+            async function saveHandlePersistent(key, handle){
+                const db = await getHandlesDB(); if(!db) return;
+                return new Promise((resolve,reject)=>{
+                    const tx = db.transaction('handles','readwrite');
+                    tx.objectStore('handles').put(handle, key);
+                    tx.oncomplete = ()=> resolve();
+                    tx.onerror = ()=> reject(tx.error);
+                });
+            }
+            async function deleteHandlePersistent(key){
+                const db = await getHandlesDB(); if(!db) return;
+                return new Promise((resolve,reject)=>{
+                    const tx = db.transaction('handles','readwrite');
+                    tx.objectStore('handles').delete(key);
+                    tx.oncomplete = ()=> resolve();
+                    tx.onerror = ()=> reject(tx.error);
+                });
+            }
+            async function loadPersistentHandles(){
+                const db = await getHandlesDB(); if(!db) return;
+                await Promise.all(['visualTargets','backgrounds','foregrounds'].map(key => new Promise((resolve)=>{
+                    const tx = db.transaction('handles','readonly');
+                    const req = tx.objectStore('handles').get(key);
+                    req.onsuccess = ()=> {
+                        const handle = req.result;
+                        if(handle){
+                            if(!autoLoadConfig[key]) autoLoadConfig[key] = { name: handle.name || (autoLoadConfig[key]?.name)|| 'Folder', handle };
+                            else autoLoadConfig[key].handle = handle;
+                        }
+                        resolve();
+                    };
+                    req.onerror = ()=> resolve();
+                })));
+            }
+            async function ensurePermission(dirHandle){
+                if(!dirHandle) return false;
+                try {
+                    let perm = await dirHandle.queryPermission({mode:'read'});
+                    if(perm === 'granted') return true;
+                    if(perm === 'prompt') {
+                        perm = await dirHandle.requestPermission({mode:'read'});
+                        return perm === 'granted';
+                    }
+                } catch(e){ console.warn('Permission check failed', e); }
+                return false;
             }
 
-            if (returnFullscreenBtn) {
-                returnFullscreenBtn.addEventListener('click', async () => {
-                    try { await document.documentElement.requestFullscreen(); } catch {}
-                    fullscreenToast.style.display = 'none';
+            function loadAutoLoadConfig() {
+                try {
+                    const raw = localStorage.getItem(AUTO_LOAD_KEY);
+                    if (raw) {
+                        const parsed = JSON.parse(raw);
+                        if (parsed && parsed.enabled) autoLoadConfig = parsed;
+                    }
+                } catch(e) { console.warn('Failed to parse auto load config', e); }
+            }
+            function saveAutoLoadConfig() {
+                localStorage.setItem(AUTO_LOAD_KEY, JSON.stringify(autoLoadConfig));
+            }
+            function updateAutoLoadUI() {
+                autoLoadVisualTargetsChk.checked = !!autoLoadConfig.enabled.visualTargets && !!autoLoadConfig.visualTargets;
+                autoLoadBackgroundsChk.checked = !!autoLoadConfig.enabled.backgrounds && !!autoLoadConfig.backgrounds;
+                autoLoadForegroundsChk.checked = !!autoLoadConfig.enabled.foregrounds && !!autoLoadConfig.foregrounds;
+                vtFolderLabel.textContent = autoLoadConfig.visualTargets ? (autoLoadConfig.visualTargets.name || 'Folder Selected') : 'No folder selected';
+                bgFolderLabel.textContent = autoLoadConfig.backgrounds ? (autoLoadConfig.backgrounds.name || 'Folder Selected') : 'No folder selected';
+                fgFolderLabel.textContent = autoLoadConfig.foregrounds ? (autoLoadConfig.foregrounds.name || 'Folder Selected') : 'No folder selected';
+                clearVTBtn.classList.toggle('inactive', !autoLoadConfig.visualTargets);
+                clearBGBtn.classList.toggle('inactive', !autoLoadConfig.backgrounds);
+                clearFGBtn.classList.toggle('inactive', !autoLoadConfig.foregrounds);
+            }
+            async function refreshPermissionStates(){
+                // Update labels if permission missing, but do NOT flip user-enabled flags
+                for (const key of ['visualTargets','backgrounds','foregrounds']){
+                    const entry = autoLoadConfig[key];
+                    if(entry && entry.handle){
+                        const granted = await ensurePermission(entry.handle);
+                        if(!granted){
+                            const labelEl = key==='visualTargets'? vtFolderLabel : key==='backgrounds'? bgFolderLabel : fgFolderLabel;
+                            labelEl.textContent = (entry.name || 'Folder') + ' (permission needed)';
+                        }
+                    }
+                }
+                updateAutoLoadUI();
+            }
+            async function pickDirectoryFor(key) {
+                if (!window.showDirectoryPicker) {
+                    alert('Your browser does not support directory access API. Use a Chromium-based browser.');
+                    return;
+                }
+                try {
+                    const dirHandle = await window.showDirectoryPicker();
+                    autoLoadConfig[key] = { name: dirHandle.name, handle: dirHandle }; // Persist handle in IndexedDB
+                    autoLoadConfig.enabled[key] = true; // Always enable when user picks a folder
+                    saveHandlePersistent(key, dirHandle).catch(()=>{});
+                    saveAutoLoadConfig();
+                    updateAutoLoadUI();
+                } catch(e) { if (e.name !== 'AbortError') console.warn('Folder pick cancelled/failed', e); }
+            }
+            // Legacy placeholder retained (no-op)
+            function saveHandlesTransient(){ }
+
+            async function loadDirectoryEntries(dirHandle, filters) {
+                if (!dirHandle) return [];
+                const entries = [];
+                try {
+                    for await (const [name, handle] of dirHandle.entries()) {
+                        if (handle.kind === 'file') {
+                            const lower = name.toLowerCase();
+                            if (filters.some(f=> lower.endsWith(f))) {
+                                const file = await handle.getFile();
+                                entries.push(file);
+                            }
+                        }
+                    }
+                } catch(e) { console.warn('Directory read failed', e); }
+                return entries;
+            }
+            async function runAutoLoad(isUserInitiated = false) {
+                const categories = [
+                    { key: 'visualTargets', handle: autoLoadConfig.visualTargets?.handle, enabled: autoLoadConfig.enabled.visualTargets, extensions: ['.png','.jpg','.jpeg','.gif','.webp','.mp4','.mov','.avi','.mkv','.webm','.3gp','.wmv','.flv','.m4v'] },
+                    { key: 'backgrounds', handle: autoLoadConfig.backgrounds?.handle, enabled: autoLoadConfig.enabled.backgrounds, extensions: ['.png','.jpg','.jpeg','.gif','.webp'] },
+                    { key: 'foregrounds', handle: autoLoadConfig.foregrounds?.handle, enabled: autoLoadConfig.enabled.foregrounds, extensions: ['.png','.jpg','.jpeg','.gif','.webp'] }
+                ];
+
+                const enabledCategories = categories.filter(cat => cat.enabled && cat.handle);
+                if (enabledCategories.length === 0) {
+                    if (isUserInitiated) alert('No folders selected for import. Please select folders first.');
+                    return;
+                }
+
+                // Check for permissions and request if necessary
+                for (const cat of enabledCategories) {
+                    const hasPermission = await ensurePermission(cat.handle);
+                    if (!hasPermission) {
+                        if (isUserInitiated) {
+                            alert(`Permission for "${cat.key}" folder is needed. Please click "View files" in the next dialog.`);
+                            try {
+                                await cat.handle.requestPermission({ mode: 'read' });
+                            } catch (e) {
+                                alert(`Permission denied for "${cat.key}". This folder will be skipped.`);
+                            }
+                        }
+                    }
+                }
+
+                let totalLoaded = 0;
+                for (const cat of enabledCategories) {
+                    try {
+                        // Final check, in case permission was just denied
+                        if (await ensurePermission(cat.handle)) {
+                            const files = await loadDirectoryEntries(cat.handle, cat.extensions);
+                            if (files.length > 0) {
+                                await handleFiles(files, cat.key);
+                                totalLoaded += files.length;
+                            }
+                        }
+                    } catch (e) {
+                        console.warn(`Failed to load ${cat.key}:`, e);
+                    }
+                }
+
+                if (isUserInitiated) {
+                    if (totalLoaded > 0) {
+                        alert(`Loaded ${totalLoaded} files successfully!`);
+                    } else {
+                        alert('No files were loaded. Make sure folders contain supported files and permissions are granted.');
+                    }
+                }
+            }
+
+            mediaSettingsToggle?.addEventListener('click', () => {
+                const expanded = mediaSettingsToggle.getAttribute('aria-expanded') === 'true';
+                mediaSettingsToggle.setAttribute('aria-expanded', !expanded);
+                if (expanded) {
+                    mediaSettingsPanel.style.maxHeight = '0px';
+                } else {
+                    mediaSettingsPanel.style.maxHeight = '1000px';
+                }
+            });
+            autoLoadVisualTargetsChk?.addEventListener('change', e => { autoLoadConfig.enabled.visualTargets = e.target.checked; saveAutoLoadConfig(); });
+            autoLoadBackgroundsChk?.addEventListener('change', e => { autoLoadConfig.enabled.backgrounds = e.target.checked; saveAutoLoadConfig(); });
+            autoLoadForegroundsChk?.addEventListener('change', e => { autoLoadConfig.enabled.foregrounds = e.target.checked; saveAutoLoadConfig(); });
+            pickVTBtn?.addEventListener('click', () => pickDirectoryFor('visualTargets'));
+            pickBGBtn?.addEventListener('click', () => pickDirectoryFor('backgrounds'));
+            pickFGBtn?.addEventListener('click', () => pickDirectoryFor('foregrounds'));
+            clearVTBtn?.addEventListener('click', () => { 
+                autoLoadConfig.visualTargets=null; 
+                autoLoadConfig.enabled.visualTargets=false; 
+                deleteHandlePersistent('visualTargets').catch(()=>{}); 
+                saveAutoLoadConfig(); 
+                updateAutoLoadUI(); 
+            });
+            clearBGBtn?.addEventListener('click', () => { 
+                autoLoadConfig.backgrounds=null; 
+                autoLoadConfig.enabled.backgrounds=false; 
+                deleteHandlePersistent('backgrounds').catch(()=>{}); 
+                saveAutoLoadConfig(); 
+                updateAutoLoadUI(); 
+            });
+            clearFGBtn?.addEventListener('click', () => { 
+                autoLoadConfig.foregrounds=null; 
+                autoLoadConfig.enabled.foregrounds=false; 
+                deleteHandlePersistent('foregrounds').catch(()=>{}); 
+                saveAutoLoadConfig(); 
+                updateAutoLoadUI(); 
+            });
+            runAutoLoadNowBtn?.addEventListener('click', () => runAutoLoad(true));
+
+            function updateImportButtonVisibility(){
+                // This function is no longer needed but kept to avoid breaking other parts of the code
+            }
+
+            loadAutoLoadConfig();
+            updateAutoLoadUI();
+            // Load any persisted handles and update UI, then auto-run if enabled
+            loadPersistentHandles().then(()=> {
+                refreshPermissionStates();
+                const needAuto = ['visualTargets','backgrounds','foregrounds'].some(k => autoLoadConfig.enabled[k] && autoLoadConfig[k]?.handle);
+                if(needAuto) runAutoLoad(false); // Pass false for startup auto-load
+            });
+
+            // --- Grid System ---
+            const gridsToggle = document.getElementById('grids-toggle');
+            const gridsPanel = document.getElementById('grids-panel');
+            const showGuidesChk = document.getElementById('show-position-guides');
+            const enableAutoSnapChk = document.getElementById('enable-auto-snap');
+            const arrangeTargetsBtn = document.getElementById('arrange-all-targets');
+            const turnOffGridBtn = document.getElementById('turn-off-grid');
+            
+            // Grid calculation functions
+            function calculateGridFrames(frameCount) {
+                if (!frameCount) return [];
+                
+                const frames = [];
+                let cols, rows;
+                
+                // Determine grid layout
+                switch (frameCount) {
+                    case 2:
+                        cols = 2; rows = 1;
+                        break;
+                    case 4:
+                        cols = 2; rows = 2;
+                        break;
+                    case 6:
+                        cols = 3; rows = 2;
+                        break;
+                    case 9:
+                        cols = 3; rows = 3;
+                        break;
+                    case 12:
+                        cols = 4; rows = 3;
+                        break;
+                    default:
+                        return [];
+                }
+                
+                const frameWidth = canvas.width / cols;
+                const frameHeight = canvas.height / rows;
+                
+                for (let row = 0; row < rows; row++) {
+                    for (let col = 0; col < cols; col++) {
+                        frames.push({
+                            x: col * frameWidth + frameWidth / 2,
+                            y: row * frameHeight + frameHeight / 2,
+                            width: frameWidth,
+                            height: frameHeight,
+                            col,
+                            row,
+                            occupied: false // Simplified occupancy tracking
+                        });
+                    }
+                }
+                
+                return frames;
+            }
+            
+        function findNearestGridFrame(x, y) {
+                if (!currentGrid || gridFrames.length === 0) return null;
+                
+                let nearestFrame = null;
+                let minDistance = snapStrength;
+                
+                gridFrames.forEach(frame => {
+                    const distance = Math.sqrt((x - frame.x) ** 2 + (y - frame.y) ** 2);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        nearestFrame = frame;
+                    }
+                });
+                
+                return nearestFrame;
+            }
+            
+            function snapToGrid(x, y, isShiftHeld = false) {
+                if (!currentGrid || !enableAutoSnap || isShiftHeld) return { x, y };
+                
+                // Ensure grid frames are calculated for current canvas size
+                if (gridFrames.length === 0 && currentGrid) {
+                    gridFrames = calculateGridFrames(currentGrid);
+                }
+                
+                const nearestFrame = findNearestGridFrame(x, y);
+                if (nearestFrame) {
+                    const dx = nearestFrame.x - x;
+                    const dy = nearestFrame.y - y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance <= snapStrength) {
+                        // Always use smooth magnetic falloff for natural feel
+                        const normalizedDist = distance / snapStrength; // 0 to 1
+                        const strength = Math.max(0.3, 1 - (normalizedDist * normalizedDist)); // Quadratic falloff with minimum
+                        const snapX = x + dx * strength;
+                        const snapY = y + dy * strength;
+                        return { x: snapX, y: snapY };
+                    }
+                }
+                
+                return { x, y };
+            }
+            
+            // Helper functions to get object center and convert between center and position
+            function getObjectCenter(obj) {
+                if (!obj) return { x: 0, y: 0 };
+                
+                let centerX, centerY;
+                
+                if (obj.type === 'circle') {
+                    centerX = obj.x;
+                    centerY = obj.y;
+                } else if (obj.type === 'text') {
+                    // For text, x,y is top-left; compute center from width/height
+                    centerX = obj.x + (obj.width || 0) / 2;
+                    centerY = obj.y + (obj.height || 0) / 2;
+                } else {
+                    // For rectangles, images, videos - position is top-left, so calculate center
+                    centerX = obj.x + obj.width / 2;
+                    centerY = obj.y + obj.height / 2;
+                }
+                
+                return { x: centerX, y: centerY };
+            }
+            
+            function setObjectCenterPosition(obj, centerX, centerY) {
+                if (!obj) return;
+                
+                if (obj.type === 'circle') {
+                    obj.x = centerX;
+                    obj.y = centerY;
+                } else if (obj.type === 'text') {
+                    // Place top-left so the visual center aligns with the target
+                    obj.x = centerX - (obj.width || 0) / 2;
+                    obj.y = centerY - (obj.height || 0) / 2;
+                } else {
+                    // For rectangles, images, videos - set position so center is at target
+                    obj.x = centerX - obj.width / 2;
+                    obj.y = centerY - obj.height / 2;
+                }
+            }
+            
+            function snapObjectCenterToGrid(obj, isShiftHeld = false) {
+                if (!obj || !currentGrid || isShiftHeld) return;
+                
+                const center = getObjectCenter(obj);
+                const snappedCenter = snapToGrid(center.x, center.y, isShiftHeld);
+                
+                // Only update if snapping actually occurred
+                if (snappedCenter.x !== center.x || snappedCenter.y !== center.y) {
+                    setObjectCenterPosition(obj, snappedCenter.x, snappedCenter.y);
+                    return true;
+                }
+                return false;
+            }
+            
+            function animateSnapToGrid(object, targetCenterX, targetCenterY, startCenterX, startCenterY, duration = 200) {
+                if (isSnapping) return; // Prevent multiple animations
+                
+                isSnapping = true;
+                const startTime = performance.now();
+                
+                // If no start center provided, get current center
+                if (startCenterX === undefined || startCenterY === undefined) {
+                    const currentCenter = getObjectCenter(object);
+                    startCenterX = currentCenter.x;
+                    startCenterY = currentCenter.y;
+                }
+                
+                // Ensure render loop is active
+                ensureRenderLoop();
+                
+                function animate(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // Smooth easing function (ease-out)
+                    const easeOut = 1 - Math.pow(1 - progress, 3);
+                    
+                    const currentCenterX = startCenterX + (targetCenterX - startCenterX) * easeOut;
+                    const currentCenterY = startCenterY + (targetCenterY - startCenterY) * easeOut;
+                    
+                    setObjectCenterPosition(object, currentCenterX, currentCenterY);
+                    
+                    draw();
+                    
+                    if (progress < 1) {
+                        snapAnimation = requestAnimationFrame(animate);
+                    } else {
+                        isSnapping = false;
+                        snapAnimation = null;
+                    }
+                }
+                
+                snapAnimation = requestAnimationFrame(animate);
+            }
+            
+            function drawGridOverlay() {
+                if (!currentGrid || !showGuides || gridFrames.length === 0) return;
+                
+                ctx.save();
+                
+                // Draw position guides with elegant styling
+                gridFrames.forEach((frame, index) => {
+                    // Draw beautiful frame outline with premium styling
+                    ctx.strokeStyle = 'rgba(129, 140, 248, 0.25)'; // Soft indigo with more opacity
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([]); // Solid lines
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    
+                    const left = frame.x - frame.width / 2 + 30;
+                    const top = frame.y - frame.height / 2 + 30;
+                    const width = frame.width - 60;
+                    const height = frame.height - 60;
+                    
+                    // Create smooth rounded rectangle with subtle shadow
+                    const radius = 16;
+                    
+                    // Subtle shadow/glow effect
+                    ctx.shadowColor = 'rgba(129, 140, 248, 0.15)';
+                    ctx.shadowBlur = 6;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 2;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(left + radius, top);
+                    ctx.lineTo(left + width - radius, top);
+                    ctx.quadraticCurveTo(left + width, top, left + width, top + radius);
+                    ctx.lineTo(left + width, top + height - radius);
+                    ctx.quadraticCurveTo(left + width, top + height, left + width - radius, top + height);
+                    ctx.lineTo(left + radius, top + height);
+                    ctx.quadraticCurveTo(left, top + height, left, top + height - radius);
+                    ctx.lineTo(left, top + radius);
+                    ctx.quadraticCurveTo(left, top, left + radius, top);
+                    ctx.stroke();
+                    
+                    // Reset shadow
+                    ctx.shadowColor = 'transparent';
+                    ctx.shadowBlur = 0;
+                    ctx.shadowOffsetX = 0;
+                    ctx.shadowOffsetY = 0;
+                    
+                    // Add subtle corner accents
+                    ctx.setLineDash([]);
+                    ctx.strokeStyle = 'rgba(129, 140, 248, 0.4)';
+                    ctx.lineWidth = 1;
+                    const accentSize = 8;
+                    
+                    // Top-left corner accent
+                    ctx.beginPath();
+                    ctx.moveTo(left, top + radius);
+                    ctx.quadraticCurveTo(left, top, left + radius, top);
+                    ctx.moveTo(left + radius - accentSize, top);
+                    ctx.lineTo(left + radius + accentSize, top);
+                    ctx.moveTo(left, top + radius - accentSize);
+                    ctx.lineTo(left, top + radius + accentSize);
+                    ctx.stroke();
+                    
+                    // Draw premium position dot
+                    ctx.setLineDash([]);
+                    
+                    // Outer glow ring with gradient
+                    const outerGradient = ctx.createRadialGradient(frame.x, frame.y, 8, frame.x, frame.y, 16);
+                    outerGradient.addColorStop(0, 'rgba(129, 140, 248, 0.3)');
+                    outerGradient.addColorStop(1, 'rgba(129, 140, 248, 0)');
+                    ctx.fillStyle = outerGradient;
+                    ctx.beginPath();
+                    ctx.arc(frame.x, frame.y, 16, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Middle ring
+                    ctx.strokeStyle = 'rgba(99, 102, 241, 0.6)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(frame.x, frame.y, 12, 0, Math.PI * 2);
+                    ctx.stroke();
+                    
+                    // Main position dot with beautiful gradient
+                    const mainGradient = ctx.createRadialGradient(
+                        frame.x - 2, frame.y - 2, 0,  // Inner highlight offset
+                        frame.x, frame.y, 10
+                    );
+                    mainGradient.addColorStop(0, 'rgba(165, 180, 252, 1)'); // Light indigo highlight
+                    mainGradient.addColorStop(0.7, 'rgba(129, 140, 248, 0.95)'); // Main indigo
+                    mainGradient.addColorStop(1, 'rgba(79, 70, 229, 0.9)'); // Darker edge
+                    
+                    ctx.fillStyle = mainGradient;
+                    ctx.shadowColor = 'rgba(129, 140, 248, 0.5)';
+                    ctx.shadowBlur = 12;
+                    ctx.beginPath();
+                    ctx.arc(frame.x, frame.y, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Reset shadow
+                    ctx.shadowColor = 'transparent';
+                    ctx.shadowBlur = 0;
+                    
+                    // Inner white highlight
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.beginPath();
+                    ctx.arc(frame.x - 1, frame.y - 1, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Position number with premium styling
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                    ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", "SF Pro Display", sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.strokeStyle = 'rgba(79, 70, 229, 0.3)';
+                    ctx.lineWidth = 3;
+                    const numberText = (index + 1).toString();
+                    ctx.strokeText(numberText, frame.x, frame.y);
+                    ctx.fillText(numberText, frame.x, frame.y);
+                });
+                
+                // Enhanced active position highlight when dragging
+                if (isDragging && selectedObject) {
+                    const center = getObjectCenter(selectedObject);
+                    const nearest = findNearestGridFrame(center.x, center.y);
+                    if (nearest) {
+                        const distance = Math.sqrt((center.x - nearest.x) ** 2 + (center.y - nearest.y) ** 2);
+                        if (distance <= snapStrength) {
+                            // Premium animated highlight rings
+                            const time = Date.now() * 0.002;
+                            const pulse1 = (Math.sin(time) * 0.4 + 0.6);
+                            const pulse2 = (Math.sin(time + Math.PI * 0.5) * 0.3 + 0.7);
+                            const pulse3 = (Math.sin(time + Math.PI) * 0.2 + 0.8);
+                            
+                            // Outer expanding ring
+                            ctx.strokeStyle = `rgba(34, 197, 94, ${pulse1 * 0.3})`;
+                            ctx.lineWidth = 3;
+                            ctx.setLineDash([]);
+                            ctx.beginPath();
+                            ctx.arc(nearest.x, nearest.y, 25 + pulse2 * 6, 0, Math.PI * 2);
+                            ctx.stroke();
+                            
+                            // Middle solid ring
+                            ctx.setLineDash([]);
+                            ctx.strokeStyle = `rgba(34, 197, 94, ${pulse2 * 0.7})`;
+                            ctx.lineWidth = 4;
+                            ctx.beginPath();
+                            ctx.arc(nearest.x, nearest.y, 18, 0, Math.PI * 2);
+                            ctx.stroke();
+                            
+                            // Inner glow
+                            const snapGradient = ctx.createRadialGradient(nearest.x, nearest.y, 0, nearest.x, nearest.y, 15);
+                            snapGradient.addColorStop(0, `rgba(34, 197, 94, ${pulse3 * 0.4})`);
+                            snapGradient.addColorStop(1, 'rgba(34, 197, 94, 0)');
+                            ctx.fillStyle = snapGradient;
+                            ctx.beginPath();
+                            ctx.arc(nearest.x, nearest.y, 15, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                }
+                
+                ctx.restore();
+            }
+            
+        function setGrid(frameCount) {
+                // Remove selection from all grid buttons
+                document.querySelectorAll('.grid-button').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                
+                if (frameCount === currentGrid) {
+                    // Deselect current grid
+                    currentGrid = null;
+            gridFrames = [];
+                    turnOffGridBtn.style.display = 'none';
+                } else {
+                    // Select new grid
+                    currentGrid = frameCount;
+            gridFrames = calculateGridFrames(frameCount);
+                    
+                    // Add selection to clicked button
+                    const button = document.getElementById(`grid-${frameCount}`);
+                    if (button) {
+                        button.classList.add('selected');
+                    }
+                    
+                    turnOffGridBtn.style.display = 'block';
+                }
+                
+                recomputeGridOccupancy?.();
+                requestAnimationFrame(draw);
+            }
+            
+            // Grid event listeners
+            gridsToggle?.addEventListener('click', () => {
+                const expanded = gridsToggle.getAttribute('aria-expanded') === 'true';
+                gridsToggle.setAttribute('aria-expanded', !expanded);
+                if (expanded) {
+                    gridsPanel.style.maxHeight = '0px';
+                } else {
+                    gridsPanel.style.maxHeight = '1000px';
+                }
+            });
+            
+            // Grid button event listeners
+            [2, 4, 6, 9, 12].forEach(count => {
+                const button = document.getElementById(`grid-${count}`);
+                button?.addEventListener('click', () => setGrid(count));
+            });
+            
+            // Simplified grid controls
+            showGuidesChk?.addEventListener('change', () => {
+                showGuides = showGuidesChk.checked;
+                requestAnimationFrame(draw);
+            });
+            
+            enableAutoSnapChk?.addEventListener('change', () => {
+                enableAutoSnap = enableAutoSnapChk.checked;
+            });
+            
+            arrangeTargetsBtn?.addEventListener('click', () => {
+                if (!currentGrid) return;
+                const visibleObjects = objects.filter(o => o.visible);
+                const availableFrames = gridFrames.slice();
+                
+                // Distribute objects evenly across available positions
+                visibleObjects.forEach((obj, i) => {
+                    const frameIndex = i % availableFrames.length;
+                    const frame = availableFrames[frameIndex];
+                    setObjectCenterPosition(obj, frame.x, frame.y);
+                });
+                
+                recomputeGridOccupancy?.();
+                requestAnimationFrame(draw);
+            });
+            
+            turnOffGridBtn?.addEventListener('click', () => {
+                setGrid(null);
+            });
+
+            // Simple grid helpers
+            function clearGridOccupancy() {
+                gridFrames.forEach(f => f.occupied = false);
+            }
+            
+            function recomputeGridOccupancy() {
+                clearGridOccupancy();
+                // Mark frames as occupied based on object proximity
+                objects.forEach(obj => {
+                    if (!obj.visible) return;
+                    const center = getObjectCenter(obj);
+                    const nearest = findNearestGridFrame(center.x, center.y);
+                    if (nearest) {
+                        const distance = Math.sqrt((center.x - nearest.x) ** 2 + (center.y - nearest.y) ** 2);
+                        if (distance <= 30) { // Close enough to consider occupied
+                            nearest.occupied = true;
+                        }
+                    }
                 });
             }
 
-            // Prefer File System Access API when available to avoid some fullscreen exits (Chromium)
-            async function openFilesWithPickerMultiple(accept) {
-                if (window.showOpenFilePicker) {
-                    try {
-                        const handles = await window.showOpenFilePicker({
-                            multiple: true,
-                            types: accept ? [{ description: 'Media', accept }] : undefined
-                        });
-                        const files = await Promise.all(handles.map(h => h.getFile()));
-                        return files;
-                    } catch (err) {
-                        // user cancelled or not allowed
-                        return null;
-                    }
-                }
-                return null;
-            }
+            // --- Media Handling ---
             function showProgress() {
                 progressContainer.style.display = 'block';
             }
@@ -2780,7 +4526,7 @@
                 progressDetail.textContent = `${current} of ${total} files processed`;
             }
             
-            async function handleFiles(files) { 
+            async function handleFiles(files, categoryOverride = 'visualTargets') { 
                 const mediaFiles = Array.from(files).filter(file => 
                     file.type.startsWith('image/') || 
                     file.type.startsWith('video/') ||
@@ -2816,7 +4562,7 @@
                                 video.muted = true;
                                 video.playsInline = true;
                                 video.onloadedmetadata = () => {
-                                    addMediaItem(video);
+                                    addMediaItem(video, categoryOverride);
                                     if (mediaFiles.length > 1) {
                                         updateProgress(i + 1, mediaFiles.length);
                                     }
@@ -2835,7 +4581,7 @@
                                 img.src = e.target.result;
                                 img.dataset.name = file.name;
                                 img.onload = () => {
-                                    addMediaItem(img);
+                                    addMediaItem(img, categoryOverride);
                                     if (mediaFiles.length > 1) {
                                         updateProgress(i + 1, mediaFiles.length);
                                     }
@@ -2873,14 +4619,14 @@
                     }
                 }
             }
-            function addMediaItem(mediaElement) { 
-                // Add to visual targets by default
-                addToMediaLibrary(mediaElement, 'visualTargets');
+            function addMediaItem(mediaElement, category = 'visualTargets') { 
+                // Add to specified category (default visual targets)
+                addToMediaLibrary(mediaElement, category);
             }
             
             function addToMediaLibrary(mediaElement, category) {
-                // Add to memory
-                mediaAssets[category].push(mediaElement);
+                // Add to memory via abstraction
+                MediaLibrary.add(category, mediaElement);
                 
                 // Add to UI
                 const targetGrid = getGridForCategory(category);
@@ -2994,6 +4740,17 @@
                 }
                 
                 div.appendChild(displayElement); 
+                // Remove button (red X)
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.setAttribute('aria-label', 'Remove asset');
+                removeBtn.className = 'remove-media-btn';
+                removeBtn.innerHTML = '&times;';
+                removeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    removeMediaItem(mediaElement, category, div);
+                });
+                div.appendChild(removeBtn);
                 div.appendChild(overlay);
                 targetGrid.appendChild(div); 
                 
@@ -3027,17 +4784,53 @@
                     showMediaContextMenu(e.clientX, e.clientY, mediaElement, category, div);
                 });
             }
+
+            function removeMediaItem(mediaElement, category, elementDiv) {
+                // Remove from data structure via abstraction
+                MediaLibrary.remove(category, mediaElement);
+                // If currently set as background or foreground, clear it
+                if (category === 'backgrounds' && backgroundImage && backgroundImage.img === mediaElement) {
+                    backgroundImage = null;
+                    // keep button visible but inactive state handled below
+                }
+                if (category === 'foregrounds' && foregroundImage && foregroundImage.img === mediaElement) {
+                    foregroundImage = null;
+                    // keep button visible but inactive state handled below
+                }
+                // Remove DOM element
+                if (elementDiv && elementDiv.parentNode) {
+                    elementDiv.parentNode.removeChild(elementDiv);
+                }
+                // Update empty state
+                updateEmptyStates();
+                // Redraw if needed
+                updateBgFgDeleteStates();
+                draw();
+            }
             
             function setBackgroundImage(img) {
                 backgroundImage = { img: img };
-                deleteBgBtn.classList.remove('hidden');
+                updateBgFgDeleteStates();
                 draw();
             }
             
             function setForegroundImage(img) {
                 foregroundImage = { img: img };
-                deleteFgBtn.classList.remove('hidden');
+                updateBgFgDeleteStates();
                 draw();
+            }
+
+            function updateBgFgDeleteStates() {
+                if (backgroundImage) {
+                    deleteBgBtn.classList.remove('inactive');
+                } else {
+                    deleteBgBtn.classList.add('inactive');
+                }
+                if (foregroundImage) {
+                    deleteFgBtn.classList.remove('inactive');
+                } else {
+                    deleteFgBtn.classList.add('inactive');
+                }
             }
             
             function showMediaContextMenu(x, y, img, currentCategory, element) {
@@ -3079,14 +4872,8 @@
             }
             
             function moveMediaItem(img, fromCategory, toCategory, element) {
-                // Remove from old category
-                const fromIndex = mediaAssets[fromCategory].findIndex(item => item.src === img.src);
-                if (fromIndex !== -1) {
-                    mediaAssets[fromCategory].splice(fromIndex, 1);
-                }
-                
-                // Add to new category
-                mediaAssets[toCategory].push(img);
+                // Move using abstraction
+                MediaLibrary.move(fromCategory, toCategory, img);
                 
                 // Remove from old grid
                 element.parentNode.removeChild(element);
@@ -3114,34 +4901,27 @@
                 Object.keys(mediaAssets).forEach(category => {
                     const grid = getGridForCategory(category);
                     const emptyState = getEmptyStateForCategory(category);
-                    
-                    if (grid && emptyState) {
-                        if (mediaAssets[category].length === 0) {
-                            emptyState.style.display = 'block';
-                            grid.style.display = 'none';
-                        } else {
-                            emptyState.style.display = 'none';
-                            grid.style.display = 'grid';
-                        }
+                    if (!grid || !emptyState) return;
+                    if (MediaLibrary.isEmpty(category)) {
+                        emptyState.style.display = 'block';
+                        grid.style.display = 'none';
+                    } else {
+                        emptyState.style.display = 'none';
+                        grid.style.display = 'grid';
                     }
                 });
             }
-            imageUpload.addEventListener('change', async (e) => {
-                try {
-                    if (shouldReenterFullscreenAfterPicker && !document.fullscreenElement) {
-                        await document.documentElement.requestFullscreen();
-                    }
-                } catch (err) { console.log('Fullscreen restore skipped:', err); }
-                handleFiles(e.target.files);
-            });
-            folderUpload.addEventListener('change', async (e) => {
-                try {
-                    if (shouldReenterFullscreenAfterPicker && !document.fullscreenElement) {
-                        await document.documentElement.requestFullscreen();
-                    }
-                } catch (err) { console.log('Fullscreen restore skipped:', err); }
-                handleFiles(e.target.files);
-            });
+            imageUpload.addEventListener('change', (e) => handleFiles(e.target.files, 'visualTargets'));
+            folderUpload.addEventListener('change', (e) => handleFiles(e.target.files, 'visualTargets'));
+
+            const bgFolderUpload = document.getElementById('bg-folder-upload');
+            if (bgFolderUpload) {
+                bgFolderUpload.addEventListener('change', (e) => handleFiles(e.target.files, 'backgrounds'));
+            }
+            const fgFolderUpload = document.getElementById('fg-folder-upload');
+            if (fgFolderUpload) {
+                fgFolderUpload.addEventListener('change', (e) => handleFiles(e.target.files, 'foregrounds'));
+            }
 
             // --- Canvas Drag & Drop ---
             function addImageToCanvas(imgSrc, name, x, y) { const img = new Image(); img.src = imgSrc; img.dataset.name = name; img.onload = () => { const w = 150; const h = (img.height / img.width) * w; const finalX = (x === undefined) ? (canvas.width / 2) - (w / 2) : x - (w/2); const finalY = (y === undefined) ? (canvas.height / 2) - (h / 2) : y - (h/2); const newObj = new ImageObject(img, finalX, finalY, w, h, getNextZIndex()); objects.push(newObj); setSelectedObject(newObj); updateAnimationTriggerPanel(); }; }
@@ -3163,6 +4943,7 @@
                     setSelectedObject(newObj); 
                     updateAnimationTriggerPanel(); 
                     video.play().catch(e => console.log('Video autoplay failed:', e));
+                    ensureRenderLoop();
                 }; 
             }
             canvas.addEventListener('dragover', (e) => e.preventDefault());
@@ -3184,6 +4965,126 @@
 
             // --- Tool Selection & Mouse Events ---
             function setActiveTool(tool) { currentTool = tool; document.querySelectorAll('.tool-button').forEach(b => b.classList.remove('active')); const activeBtn = document.getElementById(`${tool}-tool`); if(activeBtn) activeBtn.classList.add('active'); }
+
+            // --- Animation Helper Mapping ---
+            const friendlyToInternal = {
+                'gentle-shake': 'gentle-shake', // Micro Jiggle
+                'pendum': 'pendum',             // Soft Sway
+                'circular': 'circular'          // Orbit Loop
+            };
+
+            function applyAnimationSettings(obj) {
+                if(!obj) return;
+                // animationType is now set directly by button clicks, not from dropdown
+                obj.animationDuration = parseFloat(animationDuration.value) || 1;
+                obj.animationCycles = parseInt(animationCycles.value) || 1;
+                obj.animationIntensity = parseInt(animationIntensity.value) || 5;
+                obj.animationEasing = 'ease-in-out';  // Always use smooth easing
+                obj.animationIteration = 'infinite';  // Always loop
+                // NOTE: Do NOT start the animation here. Only store settings.
+                // Animation starts when user presses the Start Motion button or numeric trigger.
+            }
+
+            function updateAnimationUIVisibility() {
+                const selectedAnimation = document.querySelector('.animation-type-btn.active');
+                const animationType = selectedAnimation ? selectedAnimation.dataset.animation : '';
+                if(animationType) {
+                    animationSettings.classList.remove('hidden');
+                } else {
+                    animationSettings.classList.add('hidden');
+                }
+            }
+
+            // Animation type button handlers
+            const animationButtons = document.querySelectorAll('.animation-type-btn');
+            animationButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active from all buttons
+                    animationButtons.forEach(b => b.classList.remove('active'));
+                    // Add active to clicked button
+                    btn.classList.add('active');
+                    
+                    if(selectedObject) {
+                        selectedObject.animationType = btn.dataset.animation;
+                        applyAnimationSettings(selectedObject);
+                        updateAnimationControlButton();
+                        updateAnimationTriggerPanel();
+                    }
+                    updateAnimationUIVisibility();
+                });
+            });
+
+            // Legacy support - remove old dropdown listener
+            if(animationSelect) {
+                // Dropdown replaced with buttons - this code can be removed
+            }
+
+            [animationDuration, animationCycles, animationIntensity].forEach(ctrl => {
+                if(ctrl) ctrl.addEventListener('input', () => {
+                    if(ctrl === animationDuration) {
+                        const val = parseFloat(animationDuration.value);
+                        durationValue.textContent = val <= 0.7 ? 'Fast' : val >= 2 ? 'Slow' : 'Medium';
+                    }
+                    if(ctrl === animationCycles) {
+                        const val = parseInt(animationCycles.value) || 1;
+                        cyclesValue.textContent = val + ' cycle' + (val === 1 ? '' : 's');
+                    }
+                    if(ctrl === animationIntensity) {
+                        const val = parseInt(animationIntensity.value);
+                        intensityValue.textContent = val <= 3 ? 'Small' : val >= 7 ? 'Large' : 'Medium';
+                    }
+                    if(selectedObject) {
+                        applyAnimationSettings(selectedObject);
+                        updateAnimationControlButton();
+                        updateAnimationTriggerPanel();
+                    }
+                });
+            });
+
+            function updateAnimationControlButton() {
+                if(!selectedObject || !selectedObject.animationType) {
+                    if(animationControlBtn) {
+                        animationControlBtn.style.display = 'none';
+                    }
+                    return;
+                }
+                
+                if(animationControlBtn) {
+                    animationControlBtn.style.display = 'block';
+                    const isRunning = !!selectedObject.isAnimating;
+                    
+                    if(isRunning) {
+                        playIcon.classList.add('hidden');
+                        stopIcon.classList.remove('hidden');
+                        controlText.textContent = 'Stop Motion';
+                    } else {
+                        playIcon.classList.remove('hidden');
+                        stopIcon.classList.add('hidden');
+                        controlText.textContent = 'Start Motion';
+                    }
+                }
+            }
+
+            if(animationControlBtn) {
+                animationControlBtn.addEventListener('click', () => {
+                    if(!selectedObject) return;
+                    const isRunning = !!selectedObject.isAnimating;
+                    if(isRunning) {
+                        selectedObject.isAnimating = false;
+                        selectedObject.animationStartTime = 0;
+                        selectedObject.cycleCount = 0;
+                    } else {
+                        // Ensure settings exist then start
+                        if(!selectedObject.animationType) applyAnimationSettings(selectedObject);
+                        selectedObject.isAnimating = true;
+                        selectedObject.animationStartTime = performance.now();
+                        selectedObject.cycleCount = 0;
+                        ensureRenderLoop();
+                    }
+                    updateAnimationControlButton();
+                    draw(); // Refresh display
+                });
+            }
             function addCanvasObject(type) { 
                 const centerX = canvas.width / 2; 
                 const centerY = canvas.height / 2; 
@@ -3224,13 +5125,152 @@
             selectTool.addEventListener('click', () => setActiveTool('select'));
             textTool.addEventListener('click', () => addCanvasObject('text'));
             rectTool.addEventListener('click', () => addCanvasObject('rect'));
+            squareTool.addEventListener('click', () => addCanvasObject('square'));
             circleTool.addEventListener('click', () => addCanvasObject('circle'));
             triangleTool.addEventListener('click', () => addCanvasObject('triangle'));
+            starTool.addEventListener('click', () => addCanvasObject('star'));
+            octagonTool.addEventListener('click', () => addCanvasObject('octagon'));
             function getMousePos(e) { const rect = canvas.getBoundingClientRect(); return { x: e.clientX - rect.left, y: e.clientY - rect.top }; }
             function getObjectAt(x, y) { const sorted = [...objects].sort((a, b) => b.zIndex - a.zIndex); for (const obj of sorted) { if (obj.visible && obj.isPointInside(x, y)) { return obj; } } return null; }
-            canvas.addEventListener('mousedown', (e) => { const { x, y } = getMousePos(e); if (e.button === 2) { const obj = getObjectAt(x, y); if (obj) { setSelectedObject(obj); e.preventDefault(); showContextMenu(e.clientX, e.clientY); } return; } hideContextMenu(); if (currentTool !== 'select') return; isDragging = false; isResizing = false; const handle = getResizeHandleAt(x, y); if (handle) { isResizing = true; resizeHandle = handle.position; setSelectedObject(handle.object); selectedObject.original = { x: selectedObject.x, y: selectedObject.y, width: selectedObject.width, height: selectedObject.height, size: selectedObject.size }; } else { const obj = getObjectAt(x, y); setSelectedObject(obj); if (obj) { isDragging = true; dragStartX = x - obj.x; dragStartY = y - obj.y; } } });
-            canvas.addEventListener('mousemove', (e) => { const { x, y } = getMousePos(e); if (isResizing) { resizeObject(x, y); return; } if (isDragging && selectedObject) { selectedObject.x = x - dragStartX; selectedObject.y = y - dragStartY; draw(); return; } const handle = getResizeHandleAt(x, y); if (handle) { canvas.style.cursor = handle.cursor; } else if (getObjectAt(x, y)) { canvas.style.cursor = 'move'; } else { canvas.style.cursor = 'default'; } });
-            canvas.addEventListener('mouseup', () => { if(isResizing && selectedObject) { selectedObject.initialX = selectedObject.x; selectedObject.initialY = selectedObject.y; } isDragging = false; isResizing = false; resizeHandle = null; });
+            // Upgrade to Pointer Events (covers mouse + touch + pen)
+            canvas.addEventListener('pointerdown', (e) => { 
+                canvas.setPointerCapture(e.pointerId);
+                const { x, y } = getMousePos(e); 
+                activePointers.set(e.pointerId, { x, y });
+                // Long press detection for context menu (only primary & touch/pen)
+                if (e.isPrimary) {
+                    longPressStart = { x: e.clientX, y: e.clientY };
+                    clearTimeout(longPressTimer);
+                    longPressTimer = setTimeout(() => {
+                        if (!isDragging && !isResizing) {
+                            const obj = getObjectAt(x, y);
+                            if (obj) { setSelectedObject(obj); showContextMenu(longPressStart.x, longPressStart.y); }
+                        }
+                    }, LONG_PRESS_MS);
+                }
+                if (e.button === 2) { const obj = getObjectAt(x, y); if (obj) { setSelectedObject(obj); e.preventDefault(); showContextMenu(e.clientX, e.clientY); } return; }
+                hideContextMenu(); 
+                // Allow dragging even when not explicitly in select tool for touch convenience
+                const allowDirectDrag = currentTool === 'select' || e.pointerType !== 'mouse';
+                if (!allowDirectDrag) return; 
+                isDragging = false; isResizing = false; 
+                const handle = getResizeHandleAt(x, y); 
+                if (handle) { 
+                    isResizing = true; resizeHandle = handle.position; setSelectedObject(handle.object); 
+                    selectedObject.original = { x: selectedObject.x, y: selectedObject.y, width: selectedObject.width, height: selectedObject.height, size: selectedObject.size }; 
+                } else { 
+                    const obj = getObjectAt(x, y); setSelectedObject(obj); if (obj) { isDragging = true; dragStartX = x - obj.x; dragStartY = y - obj.y; } 
+                } 
+                startPinchIfPossible();
+            });
+            canvas.addEventListener('pointermove', (e) => { 
+                const { x, y } = getMousePos(e); 
+                if (activePointers.has(e.pointerId)) { activePointers.set(e.pointerId, { x, y }); }
+                if (activePointers.size === 2 && pinchStartInfo && selectedObject) { 
+                    // Pinch to uniformly scale (text -> size; shapes/images -> width/height)
+                    const pts = Array.from(activePointers.values()); 
+                    const dist = pointerDistance(pts[0], pts[1]); 
+                    const scale = Math.max(0.2, dist / pinchStartInfo.distance); 
+                    if (selectedObject.type === 'text') { 
+                        selectedObject.size = pinchStartInfo.objOrig.size * scale; 
+                        selectedObject.updateMetrics(); 
+                        // Keep center consistent
+                        selectedObject.x = pinchStartInfo.objOrig.x + (pinchStartInfo.objOrig.width - selectedObject.width) / 2; 
+                        selectedObject.y = pinchStartInfo.objOrig.y + (pinchStartInfo.objOrig.height - selectedObject.height) / 2; 
+                    } else { 
+                        selectedObject.width = pinchStartInfo.objOrig.width * scale; 
+                        selectedObject.height = pinchStartInfo.objOrig.height * scale; 
+                    }
+                    
+                    // Recompute grid occupancy after pinch scaling
+                    if (currentGrid && typeof recomputeGridOccupancy === 'function') {
+                        recomputeGridOccupancy();
+                    }
+                    
+                    ensureRenderLoop();
+                    draw(); 
+                    return; 
+                }
+                if (isResizing) { resizeObject(x, y); return; } 
+                if (isDragging && selectedObject) { 
+                    // First, move object to follow mouse normally
+                    const newX = x - dragStartX; 
+                    const newY = y - dragStartY;
+                    selectedObject.x = newX;
+                    selectedObject.y = newY;
+                    
+                    // Then check if center should snap to grid
+                    const center = getObjectCenter(selectedObject);
+                    const snappedCenter = snapToGrid(center.x, center.y, e.shiftKey);
+                    
+                    // If snapping occurred, adjust object position so center is at snap point
+                    if (snappedCenter.x !== center.x || snappedCenter.y !== center.y) {
+                        setObjectCenterPosition(selectedObject, snappedCenter.x, snappedCenter.y);
+                    }
+                    
+                    draw(); 
+                    return; 
+                } 
+                const handle = getResizeHandleAt(x, y); 
+                if (handle) { canvas.style.cursor = handle.cursor; } else if (getObjectAt(x, y)) { canvas.style.cursor = 'move'; } else { canvas.style.cursor = 'default'; }
+            });
+            function cancelLongPress() { clearTimeout(longPressTimer); longPressTimer = null; }
+            canvas.addEventListener('pointerup', (e) => { 
+                cancelLongPress();
+                
+                // Final snap when releasing a dragged object
+                if (isDragging && selectedObject && currentGrid && !e.shiftKey) {
+                    const center = getObjectCenter(selectedObject);
+                    const nearest = findNearestGridFrame(center.x, center.y);
+                    if (nearest) {
+                        const distance = Math.sqrt((center.x - nearest.x) ** 2 + (center.y - nearest.y) ** 2);
+                        if (distance <= snapStrength) {
+                            // Use smooth animation for final snap - animate center to grid point
+                            const currentCenter = getObjectCenter(selectedObject);
+                            animateSnapToGrid(selectedObject, nearest.x, nearest.y, currentCenter.x, currentCenter.y);
+                        }
+                    }
+                }
+                
+                if (isResizing && selectedObject) { 
+                    selectedObject.initialX = selectedObject.x; 
+                    selectedObject.initialY = selectedObject.y; 
+                    // Recompute grid occupancy after resize is complete
+                    if (currentGrid && typeof recomputeGridOccupancy === 'function') {
+                        recomputeGridOccupancy();
+                    }
+                }
+                
+                // Recompute grid occupancy after any dragging ends (in case object moved)
+                if (isDragging && currentGrid && typeof recomputeGridOccupancy === 'function') {
+                    recomputeGridOccupancy();
+                }
+                
+                activePointers.delete(e.pointerId); 
+                if (activePointers.size < 2) pinchStartInfo = null; 
+                isDragging = false; isResizing = false; resizeHandle = null; 
+                // Double-tap detection for quick select/deselect
+                if (e.pointerType !== 'mouse') {
+                    const now = performance.now();
+                    const { x, y } = getMousePos(e);
+                    if (now - lastTapTime < DOUBLE_TAP_MS && lastTapPos && Math.hypot(lastTapPos.x - x, lastTapPos.y - y) < DOUBLE_TAP_DIST) {
+                        const obj = getObjectAt(x, y);
+                        if (obj) {
+                            if (selectedObject && selectedObject.id === obj.id) {
+                                // Deselect
+                                setSelectedObject(null);
+                            } else {
+                                setSelectedObject(obj);
+                            }
+                        }
+                        lastTapTime = 0; lastTapPos = null;
+                    } else {
+                        lastTapTime = now; lastTapPos = { x, y };
+                    }
+                }
+            });
+            canvas.addEventListener('pointercancel', (e) => { activePointers.delete(e.pointerId); pinchStartInfo = null; cancelLongPress(); });
+            canvas.addEventListener('pointerleave', (e) => { if (!canvas.hasPointerCapture?.(e.pointerId)) { activePointers.delete(e.pointerId); } });
             
             // --- Properties Panel Listeners ---
             textContentInput.addEventListener('input', (e) => { 
@@ -3247,6 +5287,11 @@
                     // Restore center position after text change
                     selectedObject.x = currentCenterX - selectedObject.width / 2;
                     selectedObject.y = currentCenterY - selectedObject.height / 2;
+                    
+                    // Recompute grid occupancy after text content change
+                    if (currentGrid && typeof recomputeGridOccupancy === 'function') {
+                        recomputeGridOccupancy();
+                    }
                     
                     draw(); 
                     updateLayerList(); 
@@ -3272,6 +5317,11 @@
                     // Restore center position after size change
                     selectedObject.x = currentCenterX - selectedObject.width / 2;
                     selectedObject.y = currentCenterY - selectedObject.height / 2;
+                    
+                    // Recompute grid occupancy after size change
+                    if (currentGrid && typeof recomputeGridOccupancy === 'function') {
+                        recomputeGridOccupancy();
+                    }
                     
                     draw(); 
                 } 
@@ -3335,6 +5385,27 @@
                 }
             });
 
+            // Rotate 90 degrees functionality
+            rotate90Btn.addEventListener('click', () => {
+                if(selectedObject && selectedObject.type !== 'text') {
+                    // Initialize rotation if it doesn't exist
+                    if (!selectedObject.rotation) {
+                        selectedObject.rotation = 0;
+                    }
+                    // Add 90 degrees (converted to radians)
+                    selectedObject.rotation += (90 * Math.PI) / 180;
+                    // Keep rotation between 0-2π radians
+                    if (selectedObject.rotation >= 2 * Math.PI) {
+                        selectedObject.rotation -= 2 * Math.PI;
+                    }
+                    draw();
+                } else {
+                    // Show feedback if no object selected
+                    rotate90Btn.style.animation = 'shake 0.3s ease-in-out';
+                    setTimeout(() => rotate90Btn.style.animation = '', 300);
+                }
+            });
+
             // --- Other functions (BG/FG controls, Resizing, Animation, etc.) ---
             function moveObject(objectId, direction) { 
                 const sorted = [...objects].sort((a, b) => a.zIndex - b.zIndex); 
@@ -3393,12 +5464,7 @@
                     draw(); 
                 }); 
             });
-            bgImageInput.addEventListener('change', async (e) => { 
-                try {
-                    if (shouldReenterFullscreenAfterPicker && !document.fullscreenElement) {
-                        await document.documentElement.requestFullscreen();
-                    }
-                } catch (err) { console.log('Fullscreen restore skipped:', err); }
+            bgImageInput.addEventListener('change', (e) => { 
                 const file = e.target.files[0]; 
                 if (file) { 
                     // Store fullscreen state before loading
@@ -3410,7 +5476,7 @@
                         img.onload = async () => { 
                             img.dataset.name = file.name;
                             backgroundImage = { img: img, name: 'Background Image' }; 
-                            deleteBgBtn.classList.remove('hidden'); 
+                            updateBgFgDeleteStates(); 
                             // Add to media library
                             addToMediaLibrary(img, 'backgrounds');
                             draw(); 
@@ -3431,19 +5497,14 @@
             });
             
             deleteBgBtn.addEventListener('click', () => { 
+                if (!backgroundImage) return; 
                 backgroundImage = null; 
-                deleteBgBtn.classList.add('hidden'); 
                 bgImageInput.value = ''; 
-                // Note: Image remains in media library for reuse
+                updateBgFgDeleteStates();
                 draw(); 
             });
             
-            fgImageInput.addEventListener('change', async (e) => { 
-                try {
-                    if (shouldReenterFullscreenAfterPicker && !document.fullscreenElement) {
-                        await document.documentElement.requestFullscreen();
-                    }
-                } catch (err) { console.log('Fullscreen restore skipped:', err); }
+            fgImageInput.addEventListener('change', (e) => { 
                 const file = e.target.files[0]; 
                 if (file) { 
                     // Store fullscreen state before loading
@@ -3455,7 +5516,7 @@
                         img.onload = async () => { 
                             img.dataset.name = file.name;
                             foregroundImage = { img: img, name: 'Foreground Image' }; 
-                            deleteFgBtn.classList.remove('hidden'); 
+                            updateBgFgDeleteStates(); 
                             // Add to media library
                             addToMediaLibrary(img, 'foregrounds');
                             draw(); 
@@ -3476,22 +5537,29 @@
             });
             
             deleteFgBtn.addEventListener('click', () => { 
+                if (!foregroundImage) return; 
                 foregroundImage = null; 
-                deleteFgBtn.classList.add('hidden'); 
                 fgImageInput.value = ''; 
-                // Note: Image remains in media library for reuse
+                updateBgFgDeleteStates();
                 draw(); 
             });
             
             // --- Resize Handle Functions ---
             function getResizeHandles(obj) { 
-                const s = 10; 
+                const s = handleSize; 
                 return [ 
                     { position: 'tl', x: obj.x - s/2, y: obj.y - s/2, size: s, cursor: 'nwse-resize' }, 
                     { position: 'tr', x: obj.x + obj.width - s/2, y: obj.y - s/2, size: s, cursor: 'nesw-resize' }, 
                     { position: 'bl', x: obj.x - s/2, y: obj.y + obj.height - s/2, size: s, cursor: 'nesw-resize' }, 
                     { position: 'br', x: obj.x + obj.width - s/2, y: obj.y + obj.height - s/2, size: s, cursor: 'nwse-resize' }, 
                 ]; 
+            }
+            function pointerDistance(p1, p2) { const dx = p1.x - p2.x; const dy = p1.y - p2.y; return Math.hypot(dx, dy); }
+            function startPinchIfPossible() { 
+                if (activePointers.size === 2 && selectedObject) { 
+                    const pts = Array.from(activePointers.values()); 
+                    pinchStartInfo = { distance: pointerDistance(pts[0], pts[1]), objOrig: { x: selectedObject.x, y: selectedObject.y, width: selectedObject.width, height: selectedObject.height, size: selectedObject.size } }; 
+                } 
             }
             
             function getResizeHandleAt(x, y) { 
@@ -3586,6 +5654,11 @@
                             newWidth = avgSize;
                             newHeight = avgSize;
                         }
+                    } else if (obj.shapeType === 'square') {
+                        // Always enforce square aspect ratio
+                        const avgSize = Math.max(10, Math.min(Math.max(newWidth, 10), Math.max(newHeight, 10)));
+                        newWidth = avgSize;
+                        newHeight = avgSize;
                     } else {
                         // For other shapes (circles, triangles), maintain aspect ratio
                         newHeight = newWidth / aspectRatio;
@@ -3594,6 +5667,11 @@
                     obj.width = newWidth > 10 ? newWidth : 10; 
                     obj.height = newHeight > 10 ? newHeight : 10; 
                 } 
+                
+                // Recompute grid occupancy after resize since object center may have changed
+                if (currentGrid && typeof recomputeGridOccupancy === 'function') {
+                    recomputeGridOccupancy();
+                }
                 
                 draw(); 
             }
@@ -3646,48 +5724,7 @@
                 }
             });
             
-            document.getElementById('ctx-animate').addEventListener('click', () => { 
-                if (!selectedObject) return; 
-                // Use the modern animation system instead of the legacy one
-                const animType = prompt("Choose animation:\n1. gentle-shake\n2. pendum\n3. circular\n(or leave empty for no animation)")?.toLowerCase(); 
-                if (['gentle-shake', 'pendum', 'circular'].includes(animType)) { 
-                    selectedObject.animationType = animType;
-                    // Ensure animation properties are set
-                    if (typeof selectedObject.animationDuration === 'undefined') {
-                        selectedObject.animationDuration = 1.0;
-                    }
-                    if (typeof selectedObject.animationIntensity === 'undefined') {
-                        selectedObject.animationIntensity = 5;
-                    }
-                    updateAnimationProperties();
-                    updateAnimationTriggerPanel();
-                    hideContextMenu();
-                } else if (animType === '') {
-                    // Remove animation
-                    selectedObject.animationType = null;
-                    selectedObject.isAnimating = false;
-                    updateAnimationProperties();
-                    updateAnimationTriggerPanel();
-                    hideContextMenu();
-                } 
-            });
-            
-            // --- Animation Event Listeners ---
-            animationSelect.addEventListener('change', (e) => {
-                e.stopPropagation(); // Prevent event bubbling
-                if (selectedObject) {
-                    selectedObject.animationType = e.target.value || null;
-                    // Ensure animation properties are initialized
-                    if (selectedObject.animationType && typeof selectedObject.animationDuration === 'undefined') {
-                        selectedObject.animationDuration = 1.0;
-                    }
-                    if (selectedObject.animationType && typeof selectedObject.animationIntensity === 'undefined') {
-                        selectedObject.animationIntensity = 5;
-                    }
-                    updateAnimationProperties();
-                    updateAnimationTriggerPanel();
-                }
-            });
+            // Legacy context menu animate removed in favor of drawer controls.
             
             animationDuration.addEventListener('input', (e) => {
                 e.stopPropagation(); // Prevent event bubbling
@@ -3723,17 +5760,7 @@
                 }
             });
             
-            previewAnimationBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent event bubbling
-                if (selectedObject && selectedObject.animationType) {
-                    // Force stop any current animation first
-                    selectedObject.isAnimating = false;
-                    // Small delay to ensure clean start
-                    setTimeout(() => {
-                        triggerAnimation(selectedObject);
-                    }, 50);
-                }
-            });
+            // Preview button removed in simplified UI; retained logic not needed.
             
             // Keyboard shortcuts for animation triggers
             document.addEventListener('keydown', (e) => {
@@ -3747,9 +5774,11 @@
                 const keyNum = parseInt(e.key);
                 if (keyNum >= 1 && keyNum <= 9) {
                     const animatedObjs = objects.filter(obj => obj.animationType);
-                    if (animatedObjs[keyNum - 1]) {
+                    const target = animatedObjs[keyNum - 1];
+                    if (target) {
                         e.preventDefault();
-                        triggerAnimation(animatedObjs[keyNum - 1]);
+                        triggerAnimation(target);
+                        if(target === selectedObject) updateAnimationControlButton();
                     }
                 }
             });
@@ -3766,6 +5795,37 @@
                 if (e.ctrlKey && e.key === 'm') {
                     e.preventDefault();
                     toggleLibraryBtn.click();
+                }
+
+                // Grid shortcuts
+                if (e.key === 'g' && !e.ctrlKey && !e.altKey) {
+                    e.preventDefault();
+                    // Toggle guide visibility
+                    showGuidesChk.checked = !showGuidesChk.checked;
+                    showGuides = showGuidesChk.checked;
+                    requestAnimationFrame(draw);
+                }
+                
+                // Grid layout shortcuts (Ctrl + 2/4/6/9/1 for 2/4/6/9/12)
+                if (e.ctrlKey && ['2', '4', '6', '9', '1'].includes(e.key)) {
+                    e.preventDefault();
+                    let gridCount;
+                    switch(e.key) {
+                        case '2': gridCount = 2; break;
+                        case '4': gridCount = 4; break;
+                        case '6': gridCount = 6; break;
+                        case '9': gridCount = 9; break;
+                        case '1': gridCount = 12; break; // Ctrl+1 for 12-grid
+                    }
+                    setGrid(gridCount);
+                }
+                
+                // Arrange targets (Ctrl+Shift+G)
+                if (e.ctrlKey && e.shiftKey && e.key === 'G') {
+                    e.preventDefault();
+                    if (currentGrid && arrangeTargetsBtn) {
+                        arrangeTargetsBtn.click();
+                    }
                 }
 
                 if (e.key === 'v') setActiveTool('select'); 
