@@ -2267,61 +2267,125 @@
                     <!-- Import From Saved Folders Button -->
                     
 
-                    <!-- Auto-Load Settings Section (restored) -->
+                    <!-- Auto-Load Settings Section -->
                     <div class="section-header mt-4">
-                        <button id="media-settings-toggle" class="w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="false">
+                        <button id="media-settings-toggle" class="w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700 transition-colors" aria-expanded="false">
                             <span class="flex items-center">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z" />
                                 </svg>
-                                Auto-Load Settings
+                                Auto-Load Folders
                             </span>
-                            <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <svg class="arrow-icon w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                     </div>
                     <div id="media-settings-panel" class="accordion-content section-content p-3" style="max-height:0; overflow:hidden;">
-                        <div class="text-[10px] text-slate-500 leading-snug mb-2">
-                            Select folders to load automatically. You may see up to 3 permission prompts (one each for Targets, Backgrounds, Foregrounds).
+                        <div class="text-[10px] text-slate-500 leading-snug mb-3">
+                            Save up to 3 directories to automatically load content in future sessions. When loading, you'll need to authorize each folder by clicking "Accept" to grant access permissions.
                         </div>
-                        <div class="space-y-2">
-                            <!-- Visual Targets Row -->
-                            <div class="flex items-center gap-2 p-2 rounded border border-slate-700/60 bg-slate-800/30 text-[11px]">
-                                <input type="checkbox" id="auto-load-visual-targets" class="cursor-pointer" aria-label="Enable auto-load Targets">
-                                <span class="font-medium whitespace-nowrap w-24">Targets</span>
-                                <div id="vt-folder-label" class="flex-1 truncate text-slate-400" title="Targets folder">No folder</div>
-                                <button id="pick-vt-folder" class="upload-button py-1 px-2 rounded text-[11px]" aria-label="Pick Targets folder">Pick</button>
-                                <button id="clear-vt-folder" class="delete-button inactive py-1 px-2 rounded text-[11px]" title="Clear Targets folder" aria-label="Clear Targets folder">×</button>
+
+                        <div class="space-y-3">
+                            <!-- Visual Targets Card -->
+                            <div id="vt-card" class="auto-load-card border border-slate-600/50 rounded-lg p-3 bg-gradient-to-r from-slate-800/40 to-slate-700/20">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <div id="vt-status-indicator" class="w-3 h-3 rounded-full bg-slate-500"></div>
+                                        <h4 class="font-medium text-slate-200 text-sm">Visual Targets</h4>
+                                        <div id="vt-file-count" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full text-slate-300 hidden">0 files</div>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="auto-load-visual-targets" class="sr-only peer">
+                                        <div class="w-9 h-5 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                                    </label>
+                                </div>
+                                <div id="vt-folder-info" class="text-xs text-slate-400 mb-2">No folder selected</div>
+                                <div class="flex gap-2">
+                                    <button id="pick-vt-folder" class="flex-1 upload-button py-1.5 px-3 rounded text-xs">Select Folder</button>
+                                    <button id="clear-vt-folder" class="delete-button inactive py-1.5 px-2 rounded text-xs" title="Clear folder">×</button>
+                                </div>
                             </div>
-                            <!-- Backgrounds Row -->
-                            <div class="flex items-center gap-2 p-2 rounded border border-slate-700/60 bg-slate-800/30 text-[11px]">
-                                <input type="checkbox" id="auto-load-backgrounds" class="cursor-pointer" aria-label="Enable auto-load Backgrounds">
-                                <span class="font-medium whitespace-nowrap w-24">Backgrounds</span>
-                                <div id="bg-folder-label" class="flex-1 truncate text-slate-400" title="Backgrounds folder">No folder</div>
-                                <button id="pick-bg-folder" class="upload-button py-1 px-2 rounded text-[11px]" aria-label="Pick Backgrounds folder">Pick</button>
-                                <button id="clear-bg-folder" class="delete-button inactive py-1 px-2 rounded text-[11px]" title="Clear Backgrounds folder" aria-label="Clear Backgrounds folder">×</button>
+
+                            <!-- Backgrounds Card -->
+                            <div id="bg-card" class="auto-load-card border border-slate-600/50 rounded-lg p-3 bg-gradient-to-r from-slate-800/40 to-slate-700/20">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <div id="bg-status-indicator" class="w-3 h-3 rounded-full bg-slate-500"></div>
+                                        <h4 class="font-medium text-slate-200 text-sm">Backgrounds</h4>
+                                        <div id="bg-file-count" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full text-slate-300 hidden">0 files</div>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="auto-load-backgrounds" class="sr-only peer">
+                                        <div class="w-9 h-5 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                                    </label>
+                                </div>
+                                <div id="bg-folder-info" class="text-xs text-slate-400 mb-2">No folder selected</div>
+                                <div class="flex gap-2">
+                                    <button id="pick-bg-folder" class="flex-1 upload-button py-1.5 px-3 rounded text-xs">Select Folder</button>
+                                    <button id="clear-bg-folder" class="delete-button inactive py-1.5 px-2 rounded text-xs" title="Clear folder">×</button>
+                                </div>
                             </div>
-                            <!-- Foregrounds Row -->
-                            <div class="flex items-center gap-2 p-2 rounded border border-slate-700/60 bg-slate-800/30 text-[11px]">
-                                <input type="checkbox" id="auto-load-foregrounds" class="cursor-pointer" aria-label="Enable auto-load Foregrounds">
-                                <span class="font-medium whitespace-nowrap w-24">Foregrounds</span>
-                                <div id="fg-folder-label" class="flex-1 truncate text-slate-400" title="Foregrounds folder">No folder</div>
-                                <button id="pick-fg-folder" class="upload-button py-1 px-2 rounded text-[11px]" aria-label="Pick Foregrounds folder">Pick</button>
-                                <button id="clear-fg-folder" class="delete-button inactive py-1 px-2 rounded text-[11px]" title="Clear Foregrounds folder" aria-label="Clear Foregrounds folder">×</button>
+
+                            <!-- Foregrounds Card -->
+                            <div id="fg-card" class="auto-load-card border border-slate-600/50 rounded-lg p-3 bg-gradient-to-r from-slate-800/40 to-slate-700/20">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <div id="fg-status-indicator" class="w-3 h-3 rounded-full bg-slate-500"></div>
+                                        <h4 class="font-medium text-slate-200 text-sm">Foregrounds</h4>
+                                        <div id="fg-file-count" class="text-xs bg-slate-700 px-2 py-0.5 rounded-full text-slate-300 hidden">0 files</div>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" id="auto-load-foregrounds" class="sr-only peer">
+                                        <div class="w-9 h-5 bg-slate-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                                    </label>
+                                </div>
+                                <div id="fg-folder-info" class="text-xs text-slate-400 mb-2">No folder selected</div>
+                                <div class="flex gap-2">
+                                    <button id="pick-fg-folder" class="flex-1 upload-button py-1.5 px-3 rounded text-xs">Select Folder</button>
+                                    <button id="clear-fg-folder" class="delete-button inactive py-1.5 px-2 rounded text-xs" title="Clear folder">×</button>
+                                </div>
                             </div>
                         </div>
-                        <button id="run-auto-load-now" class="upload-button w-full py-2 px-3 rounded-md mt-4 text-sm">Run Auto-Load</button>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-2 mt-4">
+                            <button id="run-auto-load-now" class="w-full upload-button py-2 px-3 rounded-md text-sm">Load All Files</button>
+                        </div>
+                        
+                        <!-- File Management Section -->
+                        <div class="mt-4 p-3 border border-slate-600/50 rounded-lg bg-slate-800/20">
+                            <h4 class="text-sm font-medium text-slate-200 mb-2">Auto-Loaded File Management</h4>
+                            <div class="flex gap-2 text-xs">
+                                <button id="view-auto-loaded-files" class="upload-button px-3 py-1.5 rounded text-xs">View Auto-Loaded Files</button>
+                                <button id="clear-all-auto-loaded" class="delete-button px-3 py-1.5 rounded text-xs">Clear All Auto-Loaded</button>
+                            </div>
+                            <div id="auto-loaded-info" class="mt-2 text-xs text-slate-400 hidden"></div>
+                        </div>
+                        
+                        <!-- Cache Management Section -->
+                        <div class="mt-4 p-3 border border-slate-600/50 rounded-lg bg-slate-800/20">
+                            <h4 class="text-sm font-medium text-slate-200 mb-2">App Cache Management</h4>
+                            <div class="text-xs text-slate-400 mb-3">
+                                If you're seeing an old version after updates, clear the app cache to force a fresh reload.
+                            </div>
+                            <div class="flex gap-2 text-xs">
+                                <button id="clear-app-cache" class="upload-button px-3 py-1.5 rounded text-xs">Clear Cache & Reload</button>
+                                <button id="check-app-version" class="tool-button px-3 py-1.5 rounded text-xs border border-slate-600 text-slate-300">Check Version</button>
+                            </div>
+                            <div id="version-info" class="mt-2 text-xs text-slate-400 hidden p-2 bg-slate-700/30 rounded border border-slate-600/30 max-h-32 overflow-y-auto"></div>
+                        </div>
                     </div>
 
-                    <!-- Grids Section -->
+                    <!-- Position Grids Section -->
                     <div class="section-header mt-4">
-                        <button id="grids-toggle" class="w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700" aria-expanded="false">
+                        <button id="grids-toggle" class="w-full flex justify-between items-center p-2 font-semibold text-slate-200 rounded-md hover:bg-slate-700 transition-colors" aria-expanded="false">
                             <span class="flex items-center">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                                 </svg>
-                                Grids
+                                Position Grids
                             </span>
-                            <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <svg class="arrow-icon w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                     </div>
                     <div id="grids-panel" class="accordion-content section-content p-3" style="max-height:0; overflow:hidden;">
@@ -2329,6 +2393,10 @@
                             <div class="font-semibold text-emerald-400 mb-1">📍 Position Guides</div>
                             <div class="text-[10px] text-slate-400 leading-relaxed">
                                 Choose how many positions you want for your targets. They'll snap smoothly into place as you drag them.
+                            </div>
+                            <div class="text-[10px] text-blue-400 mt-1 flex items-center gap-1">
+                                <span class="bg-slate-700 px-1.5 py-0.5 rounded text-[9px] font-mono">G</span>
+                                <span>Toggle grid visibility</span>
                             </div>
                         </div>
                         
@@ -2421,10 +2489,10 @@
                                 <!-- Quick Actions -->
                                 <div class="space-y-2 pt-2 border-t border-slate-700">
                                     <div class="text-xs text-slate-400 font-medium mb-2">Quick Actions</div>
-                                    <button id="arrange-all-targets" class="w-full py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md text-sm font-medium transition-colors">
+                                    <button id="arrange-all-targets" class="upload-button w-full py-2 px-3 rounded-md text-sm font-medium">
                                         Arrange All Targets
                                     </button>
-                                    <button id="turn-off-grid" class="w-full py-2 px-3 bg-slate-600 hover:bg-slate-500 text-slate-200 rounded-md text-sm transition-colors" style="display: none;">
+                                    <button id="turn-off-grid" class="delete-button w-full py-2 px-3 rounded-md text-sm" style="display: none;">
                                         Turn Off Grid
                                     </button>
                                 </div>
@@ -2491,10 +2559,295 @@
             <div id="animation-triggers" class="flex items-center space-x-1"></div>
         </div>
 
+        <!-- Toast Notification Container -->
+        <div id="auto-load-toast" class="hidden fixed top-4 right-4 z-50 bg-slate-800 border border-slate-600 rounded-lg p-4 shadow-lg min-w-[300px] max-w-[400px]">
+            <div class="flex items-start gap-3">
+                <div id="toast-icon" class="w-5 h-5 mt-0.5 flex-shrink-0"></div>
+                <div class="flex-1">
+                    <div id="toast-title" class="font-medium text-slate-200 text-sm"></div>
+                    <div id="toast-message" class="text-slate-400 text-xs mt-1"></div>
+                    <div id="toast-progress-container" class="hidden mt-2">
+                        <div class="bg-slate-700 rounded-full h-2">
+                            <div id="toast-progress-bar" class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <div id="toast-progress-text" class="text-xs text-slate-400 mt-1"></div>
+                    </div>
+                </div>
+                <button id="toast-close" class="text-slate-400 hover:text-slate-200 text-lg leading-none">&times;</button>
+            </div>
+        </div>
+
     <!-- About section (moved into left drawer bottom) -->
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
+            // --- Version Management & Cache Busting ---
+            const APP_VERSION = '2024.09.14.001'; // Update this when deploying new versions
+            const VERSION_KEY = 'eyeTrackingAppVersion';
+            const SETTINGS_BACKUP_KEY = 'eyeTrackingAppSettingsBackup';
+            
+            function checkVersionAndManageCache() {
+                const storedVersion = localStorage.getItem(VERSION_KEY);
+                const currentVersion = APP_VERSION;
+                
+                if (storedVersion !== currentVersion) {
+                    console.log(`Version update detected: ${storedVersion || 'none'} -> ${currentVersion}`);
+                    
+                    // Backup current settings before any potential cache clearing
+                    backupUserSettings();
+                    
+                    // Show update notification to user
+                    showUpdateNotification(storedVersion, currentVersion);
+                    
+                    // Update stored version
+                    localStorage.setItem(VERSION_KEY, currentVersion);
+                    
+                    // Optional: Clear specific caches while preserving user data
+                    clearApplicationCache();
+                }
+            }
+            
+            function backupUserSettings() {
+                try {
+                    const settingsToBackup = {
+                        autoLoadFolders: localStorage.getItem('autoLoadFolders.v1'),
+                        timestamp: Date.now()
+                    };
+                    localStorage.setItem(SETTINGS_BACKUP_KEY, JSON.stringify(settingsToBackup));
+                } catch (e) {
+                    console.warn('Could not backup settings:', e);
+                }
+            }
+            
+            function showUpdateNotification(oldVersion, newVersion) {
+                // Create a subtle notification that doesn't interrupt workflow
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    font-size: 14px;
+                    max-width: 300px;
+                    animation: slideInRight 0.3s ease-out;
+                `;
+                
+                notification.innerHTML = `
+                    <div style="font-weight: bold; margin-bottom: 4px;">✨ App Updated!</div>
+                    <div style="opacity: 0.9; font-size: 12px;">
+                        Version ${newVersion} loaded successfully.<br>
+                        Your settings and folders are preserved.
+                    </div>
+                `;
+                
+                // Add slide-in animation
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes slideInRight {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                document.body.appendChild(notification);
+                
+                // Auto-remove after 4 seconds
+                setTimeout(() => {
+                    notification.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => notification.remove(), 300);
+                }, 4000);
+            }
+            
+            function clearApplicationCache() {
+                // Clear browser cache programmatically where possible
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => {
+                            caches.delete(name);
+                        });
+                    });
+                }
+                
+                // Add cache-busting to future requests
+                addCacheBustingToResources();
+            }
+            
+            function addCacheBustingToResources() {
+                // Add cache-busting parameters to dynamically loaded resources
+                const timestamp = Date.now();
+                
+                // Bust cache for any dynamically loaded images/videos
+                const originalCreateObjectURL = URL.createObjectURL;
+                URL.createObjectURL = function(blob) {
+                    const url = originalCreateObjectURL.call(this, blob);
+                    return url + '?cb=' + timestamp;
+                };
+            }
+            
+            // Force reload if severe cache issues detected
+            function forceReloadIfNeeded() {
+                const lastReloadTime = localStorage.getItem('lastForceReload');
+                const now = Date.now();
+                const oneHour = 60 * 60 * 1000;
+                
+                // Only allow force reload once per hour to prevent reload loops
+                if (!lastReloadTime || (now - parseInt(lastReloadTime)) > oneHour) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (!urlParams.has('nocache')) {
+                        localStorage.setItem('lastForceReload', now.toString());
+                        window.location.href = window.location.href + '?nocache=' + now;
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            // Add meta tag to prevent caching of the main HTML file
+            function addCacheControlMeta() {
+                const metaNoCache = document.createElement('meta');
+                metaNoCache.httpEquiv = 'Cache-Control';
+                metaNoCache.content = 'no-cache, no-store, must-revalidate';
+                document.head.appendChild(metaNoCache);
+                
+                const metaPragma = document.createElement('meta');
+                metaPragma.httpEquiv = 'Pragma';
+                metaPragma.content = 'no-cache';
+                document.head.appendChild(metaPragma);
+                
+                const metaExpires = document.createElement('meta');
+                metaExpires.httpEquiv = 'Expires';
+                metaExpires.content = '0';
+                document.head.appendChild(metaExpires);
+            }
+            
+            // Initialize version management
+            addCacheControlMeta();
+            
+            // Check for updates but don't force reload on first load
+            const urlParams = new URLSearchParams(window.location.search);
+            if (!urlParams.has('nocache')) {
+                checkVersionAndManageCache();
+            }
+            
+            // Add keyboard shortcut for manual refresh (Ctrl+Shift+R)
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.shiftKey && e.key === 'R') {
+                    e.preventDefault();
+                    if (!forceReloadIfNeeded()) {
+                        // If reload was prevented, clear caches and refresh normally
+                        if ('caches' in window) {
+                            caches.keys().then(names => {
+                                Promise.all(names.map(name => caches.delete(name)))
+                                    .then(() => window.location.reload(true));
+                            });
+                        } else {
+                            window.location.reload(true);
+                        }
+                    }
+                }
+            });
+            
+            // --- Service Worker for Cache Management ---
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    // Update existing service worker if present
+                    registrations.forEach(registration => {
+                        registration.update();
+                    });
+                });
+                
+                // Register service worker if sw.js exists
+                navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+                    .then(registration => {
+                        // Check for updates every 30 seconds
+                        setInterval(() => {
+                            registration.update();
+                        }, 30000);
+                        
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New version available
+                                    showUpdateAvailablePrompt();
+                                }
+                            });
+                        });
+                    })
+                    .catch(err => {
+                        // Service worker not available or failed - not critical
+                        console.log('Service worker not available:', err.message);
+                    });
+            }
+            
+            function showUpdateAvailablePrompt() {
+                const prompt = document.createElement('div');
+                prompt.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: #2563eb;
+                    color: white;
+                    padding: 16px 20px;
+                    border-radius: 12px;
+                    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+                    z-index: 10001;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                    font-size: 14px;
+                    max-width: 320px;
+                    animation: slideInUp 0.3s ease-out;
+                `;
+                
+                prompt.innerHTML = `
+                    <div style="font-weight: bold; margin-bottom: 8px;">🚀 New Version Available!</div>
+                    <div style="opacity: 0.9; font-size: 13px; margin-bottom: 12px;">
+                        A newer version is ready. Your settings will be preserved.
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="this.parentElement.parentElement.remove()" style="
+                            background: rgba(255,255,255,0.2);
+                            color: white;
+                            border: none;
+                            padding: 6px 12px;
+                            border-radius: 6px;
+                            font-size: 12px;
+                            cursor: pointer;
+                        ">Later</button>
+                        <button onclick="window.location.reload()" style="
+                            background: white;
+                            color: #2563eb;
+                            border: none;
+                            padding: 6px 12px;
+                            border-radius: 6px;
+                            font-size: 12px;
+                            font-weight: bold;
+                            cursor: pointer;
+                        ">Update Now</button>
+                    </div>
+                `;
+                
+                // Add slide-in animation
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes slideInUp {
+                        from { transform: translateY(100%); opacity: 0; }
+                        to { transform: translateY(0); opacity: 1; }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                document.body.appendChild(prompt);
+            }
+            
             // --- Splash Screen ---
             const splashScreen = document.getElementById('splash-screen');
             const splashOverlay = document.getElementById('splash-screen-overlay');
@@ -2692,6 +3045,7 @@ This software is provided "as is" without warranty of any kind.`);
             let snapStrength = 80; // Increased for easier snapping
             let isSnapping = false;
             let snapAnimation = null;
+            let tempGridVisibility = false; // Track if grid was temporarily shown during drag
             
             // Shape Creation State
             // Color harmony palettes - each palette contains harmonious colors
@@ -2762,11 +3116,43 @@ This software is provided "as is" without warranty of any kind.`);
                 };
                 return {
                     assets,
-                    add(category, el){ assets[category].push(el); },
+                    add(category, el, metadata = {}){ 
+                        // Add auto-load metadata to the element
+                        if (metadata.autoLoaded) {
+                            el.dataset.autoLoaded = 'true';
+                            el.dataset.autoLoadSource = metadata.sourceFolderName || 'Auto-loaded';
+                            el.dataset.autoLoadCategory = metadata.category || category;
+                            el.dataset.loadedAt = new Date().toISOString();
+                        }
+                        assets[category].push(el); 
+                    },
                     remove(category, el){ const i = assets[category].indexOf(el); if(i>-1) assets[category].splice(i,1); },
                     move(from,to,el){ this.remove(from,el); this.add(to,el); },
                     list(category){ return assets[category]; },
-                    isEmpty(category){ return assets[category].length===0; }
+                    isEmpty(category){ return assets[category].length===0; },
+                    getAutoLoadedFiles(category){ 
+                        return assets[category].filter(el => el.dataset.autoLoaded === 'true'); 
+                    },
+                    clearAutoLoadedFiles(category){ 
+                        const autoLoadedFiles = this.getAutoLoadedFiles(category);
+                        autoLoadedFiles.forEach(el => this.remove(category, el));
+                        return autoLoadedFiles.length;
+                    },
+                    getAllAutoLoadedFiles(){
+                        const allAutoLoaded = [];
+                        Object.keys(assets).forEach(category => {
+                            const autoFiles = this.getAutoLoadedFiles(category);
+                            autoFiles.forEach(file => {
+                                allAutoLoaded.push({
+                                    file,
+                                    category,
+                                    sourceFolderName: file.dataset.autoLoadSource,
+                                    loadedAt: file.dataset.loadedAt
+                                });
+                            });
+                        });
+                        return allAutoLoaded;
+                    }
                 };
             })();
             // Backwards compatibility alias
@@ -2891,10 +3277,25 @@ This software is provided "as is" without warranty of any kind.`);
             }
 
             // --- Canvas Setup ---
+            function getCanvasDimensions() {
+                const rect = canvasContainer.getBoundingClientRect();
+                return { width: rect.width, height: rect.height };
+            }
+            
             function resizeCanvas() {
                 const rect = canvasContainer.getBoundingClientRect();
-                canvas.width = rect.width;
-                canvas.height = rect.height;
+                const dpr = window.devicePixelRatio || 1;
+                
+                // Set the canvas internal size accounting for device pixel ratio
+                canvas.width = rect.width * dpr;
+                canvas.height = rect.height * dpr;
+                
+                // Set the canvas CSS size to the display size
+                canvas.style.width = rect.width + 'px';
+                canvas.style.height = rect.height + 'px';
+                
+                // Scale the context to match device pixel ratio
+                ctx.scale(dpr, dpr);
                 
                 // Recalculate grid frames if a grid is active
                 if (currentGrid) {
@@ -2921,15 +3322,25 @@ This software is provided "as is" without warranty of any kind.`);
 
             // --- Drawing Engine ---
             function draw() {
+                const dpr = window.devicePixelRatio || 1;
+                const { width: canvasWidth, height: canvasHeight } = getCanvasDimensions();
+                
+                // Reset transform to clear any previous scaling
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                
+                // Apply device pixel ratio scaling
+                ctx.scale(dpr, dpr);
+                
+                // Configure image smoothing for crisp rendering
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = 'high';
 
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
                 ctx.fillStyle = backgroundColor;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
                 if (backgroundImage) {
-                    drawCoverImage(backgroundImage.img);
+                    drawCoverImage(backgroundImage.img, canvasWidth, canvasHeight);
                 }
 
                 objects.sort((a, b) => a.zIndex - b.zIndex).forEach(obj => {
@@ -2939,7 +3350,7 @@ This software is provided "as is" without warranty of any kind.`);
                 });
                 
                 if (foregroundImage) {
-                    drawCoverImage(foregroundImage.img);
+                    drawCoverImage(foregroundImage.img, canvasWidth, canvasHeight);
                 }
 
                 // Draw grid overlay
@@ -2970,24 +3381,24 @@ This software is provided "as is" without warranty of any kind.`);
                 requestAnimationFrame(loop);
             }
             
-            function drawCoverImage(img) {
-                const canvasRatio = canvas.width / canvas.height;
+            function drawCoverImage(img, canvasWidth, canvasHeight) {
+                const canvasRatio = canvasWidth / canvasHeight;
                 const imgRatio = img.width / img.height;
                 
                 let drawWidth, drawHeight, drawX, drawY;
                 
                 if (imgRatio > canvasRatio) {
                     // Image is wider than canvas
-                    drawHeight = canvas.height;
+                    drawHeight = canvasHeight;
                     drawWidth = drawHeight * imgRatio;
-                    drawX = (canvas.width - drawWidth) / 2;
+                    drawX = (canvasWidth - drawWidth) / 2;
                     drawY = 0;
                 } else {
                     // Image is taller than canvas
-                    drawWidth = canvas.width;
+                    drawWidth = canvasWidth;
                     drawHeight = drawWidth / imgRatio;
                     drawX = 0;
-                    drawY = (canvas.height - drawHeight) / 2;
+                    drawY = (canvasHeight - drawHeight) / 2;
                 }
                 
                 ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
@@ -3810,10 +4221,24 @@ This software is provided "as is" without warranty of any kind.`);
             const clearVTBtn = document.getElementById('clear-vt-folder');
             const clearBGBtn = document.getElementById('clear-bg-folder');
             const clearFGBtn = document.getElementById('clear-fg-folder');
-            const vtFolderLabel = document.getElementById('vt-folder-label');
-            const bgFolderLabel = document.getElementById('bg-folder-label');
-            const fgFolderLabel = document.getElementById('fg-folder-label');
             const runAutoLoadNowBtn = document.getElementById('run-auto-load-now');
+            
+            // New UI elements (keeping only essential ones)
+            
+            // File management elements
+            const viewAutoLoadedBtn = document.getElementById('view-auto-loaded-files');
+            const clearAllAutoLoadedBtn = document.getElementById('clear-all-auto-loaded');
+            const autoLoadedInfo = document.getElementById('auto-loaded-info');
+            
+            // Toast notification elements
+            const autoLoadToast = document.getElementById('auto-load-toast');
+            const toastIcon = document.getElementById('toast-icon');
+            const toastTitle = document.getElementById('toast-title');
+            const toastMessage = document.getElementById('toast-message');
+            const toastProgressContainer = document.getElementById('toast-progress-container');
+            const toastProgressBar = document.getElementById('toast-progress-bar');
+            const toastProgressText = document.getElementById('toast-progress-text');
+            const toastClose = document.getElementById('toast-close');
             
 
             const AUTO_LOAD_KEY = 'autoLoadFolders.v1';
@@ -3895,26 +4320,271 @@ This software is provided "as is" without warranty of any kind.`);
             function saveAutoLoadConfig() {
                 localStorage.setItem(AUTO_LOAD_KEY, JSON.stringify(autoLoadConfig));
             }
-            function updateAutoLoadUI() {
-                autoLoadVisualTargetsChk.checked = !!autoLoadConfig.enabled.visualTargets && !!autoLoadConfig.visualTargets;
-                autoLoadBackgroundsChk.checked = !!autoLoadConfig.enabled.backgrounds && !!autoLoadConfig.backgrounds;
-                autoLoadForegroundsChk.checked = !!autoLoadConfig.enabled.foregrounds && !!autoLoadConfig.foregrounds;
-                vtFolderLabel.textContent = autoLoadConfig.visualTargets ? (autoLoadConfig.visualTargets.name || 'Folder Selected') : 'No folder selected';
-                bgFolderLabel.textContent = autoLoadConfig.backgrounds ? (autoLoadConfig.backgrounds.name || 'Folder Selected') : 'No folder selected';
-                fgFolderLabel.textContent = autoLoadConfig.foregrounds ? (autoLoadConfig.foregrounds.name || 'Folder Selected') : 'No folder selected';
-                clearVTBtn.classList.toggle('inactive', !autoLoadConfig.visualTargets);
-                clearBGBtn.classList.toggle('inactive', !autoLoadConfig.backgrounds);
-                clearFGBtn.classList.toggle('inactive', !autoLoadConfig.foregrounds);
+            function updateAutoLoadUI(skipPermissionChecks = false) {
+                const categories = ['visualTargets', 'backgrounds', 'foregrounds'];
+                
+                categories.forEach(key => {
+                    const prefix = key === 'visualTargets' ? 'vt' : key === 'backgrounds' ? 'bg' : 'fg';
+                    const checkbox = document.getElementById(`auto-load-${key.replace('Targets', '-targets')}`);
+                    const indicator = document.getElementById(`${prefix}-status-indicator`);
+                    const fileCount = document.getElementById(`${prefix}-file-count`);
+                    const folderInfo = document.getElementById(`${prefix}-folder-info`);
+                    const clearBtn = document.getElementById(`clear-${prefix}-folder`);
+                    
+                    const config = autoLoadConfig[key];
+                    const enabled = autoLoadConfig.enabled[key];
+                    
+                    // Update checkbox
+                    if (checkbox) checkbox.checked = enabled && !!config;
+                    
+                    // Update status indicator
+                    if (indicator) {
+                        indicator.className = 'w-3 h-3 rounded-full';
+                        if (config && config.handle) {
+                            indicator.classList.add('bg-green-500');
+                            indicator.title = 'Folder connected';
+                        } else {
+                            indicator.classList.add('bg-slate-500');
+                            indicator.title = 'No folder selected';
+                        }
+                    }
+                    
+                    // Update folder info
+                    if (folderInfo) {
+                        if (config && config.name) {
+                            folderInfo.textContent = `📁 ${config.name}`;
+                            folderInfo.classList.remove('text-slate-400');
+                            folderInfo.classList.add('text-slate-300');
+                        } else {
+                            folderInfo.textContent = 'No folder selected';
+                            folderInfo.classList.remove('text-slate-300');
+                            folderInfo.classList.add('text-slate-400');
+                        }
+                    }
+                    
+                    // Show/hide file count
+                    if (fileCount) {
+                        if (config && config.handle) {
+                            // Update file counts, optionally skipping permission checks
+                            updateFileCount(key, prefix, skipPermissionChecks);
+                        } else {
+                            fileCount.classList.add('hidden');
+                        }
+                    }
+                    
+                    // Update clear button
+                    if (clearBtn) {
+                        clearBtn.classList.toggle('inactive', !config);
+                    }
+                });
+            }
+            
+            async function updateFileCount(key, prefix, skipPermissionCheck = false) {
+                const config = autoLoadConfig[key];
+                const fileCountEl = document.getElementById(`${prefix}-file-count`);
+                const indicator = document.getElementById(`${prefix}-status-indicator`);
+                
+                if (!config || !config.handle || !fileCountEl) return;
+                
+                try {
+                    // Skip permission checks on startup to avoid prompts
+                    if (!skipPermissionCheck) {
+                        const hasPermission = await ensurePermission(config.handle);
+                        if (!hasPermission) {
+                            // Update indicator to show permission needed
+                            if (indicator) {
+                                indicator.className = 'w-3 h-3 rounded-full bg-yellow-500';
+                                indicator.title = 'Permission needed - click to load files';
+                            }
+                            const folderInfo = document.getElementById(`${prefix}-folder-info`);
+                            if (folderInfo) {
+                                folderInfo.textContent = `📁 ${config.name} (click to grant permission)`;
+                                folderInfo.classList.remove('text-slate-300');
+                                folderInfo.classList.add('text-yellow-400');
+                            }
+                            return;
+                        }
+                    }
+                    
+                    // If skipping permission check, just show folder as connected
+                    if (skipPermissionCheck) {
+                        if (indicator) {
+                            indicator.className = 'w-3 h-3 rounded-full bg-green-500';
+                            indicator.title = 'Folder connected';
+                        }
+                        fileCountEl.textContent = 'Ready to load';
+                        fileCountEl.classList.remove('hidden');
+                        return;
+                    }
+                    
+                    // Get file extensions for this category
+                    const extensions = getExtensionsForCategory(key);
+                    const files = await loadDirectoryEntries(config.handle, extensions);
+                    
+                    // Update file count
+                    fileCountEl.textContent = `${files.length} file${files.length !== 1 ? 's' : ''}`;
+                    fileCountEl.classList.remove('hidden');
+                    
+                    // Update indicator color based on file count
+                    if (indicator) {
+                        if (files.length > 0) {
+                            indicator.className = 'w-3 h-3 rounded-full bg-green-500';
+                            indicator.title = `${files.length} files ready`;
+                        } else {
+                            indicator.className = 'w-3 h-3 rounded-full bg-orange-500';
+                            indicator.title = 'No supported files found';
+                        }
+                    }
+                } catch (error) {
+                    console.warn(`Failed to count files for ${key}:`, error);
+                    if (indicator) {
+                        indicator.className = 'w-3 h-3 rounded-full bg-red-500';
+                        indicator.title = 'Error accessing folder';
+                    }
+                }
+            }
+            
+            function getExtensionsForCategory(key) {
+                switch (key) {
+                    case 'visualTargets':
+                        return ['.png','.jpg','.jpeg','.gif','.webp','.mp4','.mov','.avi','.mkv','.webm','.3gp','.wmv','.flv','.m4v'];
+                    case 'backgrounds':
+                    case 'foregrounds':
+                        return ['.png','.jpg','.jpeg','.gif','.webp'];
+                    default:
+                        return [];
+                }
+            }
+            
+            // Toast notification system
+            function showToast(title, message, type = 'info', showProgress = false) {
+                if (!autoLoadToast) return;
+                
+                // Set icon based on type
+                const iconSvg = {
+                    'info': '<svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>',
+                    'success': '<svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>',
+                    'error': '<svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>',
+                    'warning': '<svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>'
+                };
+                
+                toastIcon.innerHTML = iconSvg[type] || iconSvg['info'];
+                toastTitle.textContent = title;
+                toastMessage.textContent = message;
+                
+                if (showProgress) {
+                    toastProgressContainer.classList.remove('hidden');
+                    toastProgressBar.style.width = '0%';
+                    toastProgressText.textContent = '';
+                } else {
+                    toastProgressContainer.classList.add('hidden');
+                }
+                
+                autoLoadToast.classList.remove('hidden');
+                
+                // Auto-hide for success and info messages (unless showing progress)
+                if (!showProgress && (type === 'success' || type === 'info')) {
+                    setTimeout(() => hideToast(), 5000);
+                }
+            }
+            
+            function updateToastProgress(progress, text = '') {
+                if (toastProgressBar && toastProgressText) {
+                    toastProgressBar.style.width = `${Math.max(0, Math.min(100, progress))}%`;
+                    toastProgressText.textContent = text;
+                }
+            }
+            
+            function hideToast() {
+                if (autoLoadToast) {
+                    autoLoadToast.classList.add('hidden');
+                    toastProgressContainer.classList.add('hidden');
+                }
+            }
+            
+            // File management functions
+            function showAutoLoadedFilesInfo() {
+                const allAutoLoaded = MediaLibrary.getAllAutoLoadedFiles();
+                
+                if (allAutoLoaded.length === 0) {
+                    autoLoadedInfo.textContent = 'No auto-loaded files found.';
+                    autoLoadedInfo.classList.remove('hidden');
+                    return;
+                }
+                
+                const categoryCount = {};
+                allAutoLoaded.forEach(item => {
+                    if (!categoryCount[item.category]) {
+                        categoryCount[item.category] = 0;
+                    }
+                    categoryCount[item.category]++;
+                });
+                
+                const infoText = Object.entries(categoryCount)
+                    .map(([category, count]) => {
+                        const categoryName = category === 'visualTargets' ? 'Visual Targets' : 
+                                           category === 'backgrounds' ? 'Backgrounds' : 'Foregrounds';
+                        return `${categoryName}: ${count}`;
+                    })
+                    .join(' | ');
+                
+                autoLoadedInfo.textContent = `Auto-loaded files: ${infoText} (Total: ${allAutoLoaded.length})`;
+                autoLoadedInfo.classList.remove('hidden');
+                
+                // Auto-hide after 10 seconds
+                setTimeout(() => {
+                    autoLoadedInfo.classList.add('hidden');
+                }, 10000);
+            }
+            
+            function clearAllAutoLoadedFiles() {
+                const allAutoLoaded = MediaLibrary.getAllAutoLoadedFiles();
+                
+                if (allAutoLoaded.length === 0) {
+                    showToast('No Files to Clear', 'No auto-loaded files found.', 'info');
+                    return;
+                }
+                
+                if (!confirm(`This will remove ${allAutoLoaded.length} auto-loaded files from the media library. Continue?`)) {
+                    return;
+                }
+                
+                let totalCleared = 0;
+                Object.keys(MediaLibrary.assets).forEach(category => {
+                    const cleared = MediaLibrary.clearAutoLoadedFiles(category);
+                    totalCleared += cleared;
+                });
+                
+                // Update media library display
+                MediaLibrary.updateView();
+                
+                showToast('Files Cleared', `Removed ${totalCleared} auto-loaded files from the media library.`, 'success');
+                
+                // Update file counts
+                setTimeout(() => {
+                    updateAutoLoadUI();
+                }, 500);
             }
             async function refreshPermissionStates(){
-                // Update labels if permission missing, but do NOT flip user-enabled flags
+                // Update status indicators and folder info based on permissions
                 for (const key of ['visualTargets','backgrounds','foregrounds']){
                     const entry = autoLoadConfig[key];
                     if(entry && entry.handle){
                         const granted = await ensurePermission(entry.handle);
+                        const prefix = key === 'visualTargets' ? 'vt' : key === 'backgrounds' ? 'bg' : 'fg';
+                        const indicator = document.getElementById(`${prefix}-status-indicator`);
+                        const folderInfo = document.getElementById(`${prefix}-folder-info`);
+                        
                         if(!granted){
-                            const labelEl = key==='visualTargets'? vtFolderLabel : key==='backgrounds'? bgFolderLabel : fgFolderLabel;
-                            labelEl.textContent = (entry.name || 'Folder') + ' (permission needed)';
+                            if (indicator) {
+                                indicator.className = 'w-3 h-3 rounded-full bg-yellow-500';
+                                indicator.title = 'Permission needed';
+                            }
+                            if (folderInfo) {
+                                folderInfo.textContent = `📁 ${entry.name || 'Folder'} (permission needed)`;
+                                folderInfo.classList.remove('text-slate-300');
+                                folderInfo.classList.add('text-yellow-400');
+                            }
                         }
                     }
                 }
@@ -3922,17 +4592,30 @@ This software is provided "as is" without warranty of any kind.`);
             }
             async function pickDirectoryFor(key) {
                 if (!window.showDirectoryPicker) {
-                    alert('Your browser does not support directory access API. Use a Chromium-based browser.');
+                    showToast('Browser Not Supported', 'Your browser does not support directory access. Use a Chromium-based browser.', 'error');
                     return;
                 }
                 try {
                     const dirHandle = await window.showDirectoryPicker();
                     autoLoadConfig[key] = { name: dirHandle.name, handle: dirHandle }; // Persist handle in IndexedDB
                     autoLoadConfig.enabled[key] = true; // Always enable when user picks a folder
+                    
+                    // Save and update UI
                     saveHandlePersistent(key, dirHandle).catch(()=>{});
                     saveAutoLoadConfig();
-                    updateAutoLoadUI();
-                } catch(e) { if (e.name !== 'AbortError') console.warn('Folder pick cancelled/failed', e); }
+                    updateAutoLoadUI(); // Check permissions now since user actively selected folder
+                    
+                    // Show success feedback
+                    const categoryName = key === 'visualTargets' ? 'Visual Targets' : 
+                                       key === 'backgrounds' ? 'Backgrounds' : 'Foregrounds';
+                    showToast('Folder Connected', `${categoryName} folder "${dirHandle.name}" has been connected successfully.`, 'success');
+                    
+                } catch(e) { 
+                    if (e.name !== 'AbortError') {
+                        console.warn('Folder pick cancelled/failed', e);
+                        showToast('Folder Selection Failed', 'Unable to select folder. Please try again.', 'error');
+                    }
+                }
             }
             // Legacy placeholder retained (no-op)
             function saveHandlesTransient(){ }
@@ -3962,48 +4645,90 @@ This software is provided "as is" without warranty of any kind.`);
 
                 const enabledCategories = categories.filter(cat => cat.enabled && cat.handle);
                 if (enabledCategories.length === 0) {
-                    if (isUserInitiated) alert('No folders selected for import. Please select folders first.');
+                    if (isUserInitiated) {
+                        showToast('No Folders Selected', 'Please select and enable folders before running auto-load.', 'warning');
+                    }
                     return;
                 }
 
+                if (isUserInitiated) {
+                    showToast('Auto-Loading Files', 'Checking permissions and loading files...', 'info', true);
+                }
+
                 // Check for permissions and request if necessary
+                let permissionIssues = [];
                 for (const cat of enabledCategories) {
                     const hasPermission = await ensurePermission(cat.handle);
                     if (!hasPermission) {
                         if (isUserInitiated) {
-                            alert(`Permission for "${cat.key}" folder is needed. Please click "View files" in the next dialog.`);
                             try {
                                 await cat.handle.requestPermission({ mode: 'read' });
                             } catch (e) {
-                                alert(`Permission denied for "${cat.key}". This folder will be skipped.`);
+                                permissionIssues.push(cat.key);
                             }
+                        } else {
+                            permissionIssues.push(cat.key);
                         }
                     }
                 }
 
+                if (permissionIssues.length > 0 && isUserInitiated) {
+                    const folderNames = permissionIssues.map(key => {
+                        switch(key) {
+                            case 'visualTargets': return 'Visual Targets';
+                            case 'backgrounds': return 'Backgrounds';
+                            case 'foregrounds': return 'Foregrounds';
+                            default: return key;
+                        }
+                    }).join(', ');
+                    showToast('Permission Required', `Permission needed for: ${folderNames}. Some folders will be skipped.`, 'warning');
+                }
+
                 let totalLoaded = 0;
+                let processedCategories = 0;
+                
                 for (const cat of enabledCategories) {
                     try {
                         // Final check, in case permission was just denied
                         if (await ensurePermission(cat.handle)) {
                             const files = await loadDirectoryEntries(cat.handle, cat.extensions);
                             if (files.length > 0) {
-                                await handleFiles(files, cat.key);
+                                const folderName = autoLoadConfig[cat.key]?.name || 'Auto-loaded folder';
+                                await handleFiles(files, cat.key, true, folderName);
                                 totalLoaded += files.length;
                             }
                         }
                     } catch (e) {
                         console.warn(`Failed to load ${cat.key}:`, e);
+                        if (isUserInitiated) {
+                            const categoryName = cat.key === 'visualTargets' ? 'Visual Targets' : 
+                                               cat.key === 'backgrounds' ? 'Backgrounds' : 'Foregrounds';
+                            showToast('Load Error', `Failed to load files from ${categoryName} folder.`, 'error');
+                        }
+                    }
+                    
+                    processedCategories++;
+                    if (isUserInitiated) {
+                        updateToastProgress((processedCategories / enabledCategories.length) * 100, 
+                                          `Processed ${processedCategories}/${enabledCategories.length} folders`);
                     }
                 }
 
                 if (isUserInitiated) {
-                    if (totalLoaded > 0) {
-                        alert(`Loaded ${totalLoaded} files successfully!`);
-                    } else {
-                        alert('No files were loaded. Make sure folders contain supported files and permissions are granted.');
-                    }
+                    setTimeout(() => {
+                        hideToast();
+                        if (totalLoaded > 0) {
+                            showToast('Loading Complete', `Successfully loaded ${totalLoaded} files!`, 'success');
+                        } else {
+                            showToast('No Files Loaded', 'Make sure folders contain supported files and permissions are granted.', 'warning');
+                        }
+                    }, 500);
                 }
+                
+                // Update file counts after loading
+                setTimeout(() => {
+                    updateAutoLoadUI(); // Don't skip permission checks after user-initiated loading
+                }, 1000);
             }
 
             mediaSettingsToggle?.addEventListener('click', () => {
@@ -4012,7 +4737,7 @@ This software is provided "as is" without warranty of any kind.`);
                 if (expanded) {
                     mediaSettingsPanel.style.maxHeight = '0px';
                 } else {
-                    mediaSettingsPanel.style.maxHeight = '1000px';
+                    mediaSettingsPanel.style.maxHeight = '2000px'; // Increased from 1000px to accommodate all content
                 }
             });
             autoLoadVisualTargetsChk?.addEventListener('change', e => { autoLoadConfig.enabled.visualTargets = e.target.checked; saveAutoLoadConfig(); });
@@ -4044,17 +4769,127 @@ This software is provided "as is" without warranty of any kind.`);
             });
             runAutoLoadNowBtn?.addEventListener('click', () => runAutoLoad(true));
 
+            // File management event listeners
+            viewAutoLoadedBtn?.addEventListener('click', showAutoLoadedFilesInfo);
+            clearAllAutoLoadedBtn?.addEventListener('click', clearAllAutoLoadedFiles);
+            
+            // Toast notification close button
+            toastClose?.addEventListener('click', hideToast);
+
             function updateImportButtonVisibility(){
                 // This function is no longer needed but kept to avoid breaking other parts of the code
             }
 
             loadAutoLoadConfig();
-            updateAutoLoadUI();
-            // Load any persisted handles and update UI, then auto-run if enabled
+            updateAutoLoadUI(true); // Skip permission checks on startup
+            // Load any persisted handles and update UI without auto-running
             loadPersistentHandles().then(()=> {
-                refreshPermissionStates();
-                const needAuto = ['visualTargets','backgrounds','foregrounds'].some(k => autoLoadConfig.enabled[k] && autoLoadConfig[k]?.handle);
-                if(needAuto) runAutoLoad(false); // Pass false for startup auto-load
+                // Don't check permissions or auto-run on startup to avoid annoying prompts
+                // refreshPermissionStates(); // Commented out to prevent startup permission prompts
+                updateAutoLoadUI(true); // Just update the UI without permission checks
+            });
+
+            // --- Cache Management ---
+            const clearAppCacheBtn = document.getElementById('clear-app-cache');
+            const checkAppVersionBtn = document.getElementById('check-app-version');
+            const versionInfo = document.getElementById('version-info');
+            
+            clearAppCacheBtn?.addEventListener('click', async () => {
+                const button = clearAppCacheBtn;
+                const originalText = button.textContent;
+                
+                try {
+                    button.textContent = 'Clearing...';
+                    button.disabled = true;
+                    
+                    // Clear all caches
+                    if ('caches' in window) {
+                        const cacheNames = await caches.keys();
+                        await Promise.all(cacheNames.map(name => caches.delete(name)));
+                    }
+                    
+                    // Clear service worker cache via message
+                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                        const messageChannel = new MessageChannel();
+                        messageChannel.port1.onmessage = (event) => {
+                            if (event.data.success) {
+                                console.log('Service worker cache cleared');
+                            }
+                        };
+                        navigator.serviceWorker.controller.postMessage(
+                            { type: 'CLEAR_CACHE' }, 
+                            [messageChannel.port2]
+                        );
+                    }
+                    
+                    // Show success message
+                    button.textContent = 'Cache Cleared!';
+                    button.classList.remove('upload-button');
+                    button.classList.add('delete-button');
+                    
+                    // Reload after brief delay
+                    setTimeout(() => {
+                        window.location.reload(true);
+                    }, 1000);
+                    
+                } catch (error) {
+                    console.error('Cache clearing failed:', error);
+                    button.textContent = 'Error - Try Ctrl+Shift+R';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.disabled = false;
+                    }, 3000);
+                }
+            });
+            
+            checkAppVersionBtn?.addEventListener('click', async () => {
+                const currentVersion = APP_VERSION;
+                const storedVersion = localStorage.getItem(VERSION_KEY) || 'unknown';
+                const lastUpdate = localStorage.getItem('lastForceReload');
+                
+                let serviceWorkerVersion = 'not available';
+                
+                // Try to get service worker version
+                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                    try {
+                        const messageChannel = new MessageChannel();
+                        messageChannel.port1.onmessage = (event) => {
+                            serviceWorkerVersion = event.data.version || 'unknown';
+                            updateVersionDisplay();
+                        };
+                        navigator.serviceWorker.controller.postMessage(
+                            { type: 'GET_VERSION' }, 
+                            [messageChannel.port2]
+                        );
+                        
+                        // Fallback timeout
+                        setTimeout(updateVersionDisplay, 1000);
+                    } catch (e) {
+                        updateVersionDisplay();
+                    }
+                } else {
+                    updateVersionDisplay();
+                }
+                
+                function updateVersionDisplay() {
+                    versionInfo.classList.remove('hidden');
+                    const lastUpdateDate = lastUpdate ? new Date(parseInt(lastUpdate)).toLocaleDateString() : 'Never';
+                    const statusIcon = storedVersion === currentVersion ? '✅' : '⚠️';
+                    const statusText = storedVersion === currentVersion ? 'Up to date' : 'Version mismatch';
+                    
+                    versionInfo.innerHTML = `
+                        <div class="text-emerald-400 font-medium mb-1">📋 Version Status</div>
+                        <div class="grid grid-cols-2 gap-1 text-xs">
+                            <div>Current:</div><div class="text-slate-200">${currentVersion}</div>
+                            <div>Stored:</div><div class="text-slate-200">${storedVersion}</div>
+                            <div>SW:</div><div class="text-slate-200">${serviceWorkerVersion}</div>
+                            <div>Last Clear:</div><div class="text-slate-200">${lastUpdateDate}</div>
+                        </div>
+                        <div class="mt-2 text-xs font-medium ${storedVersion === currentVersion ? 'text-emerald-400' : 'text-yellow-400'}">
+                            ${statusIcon} ${statusText}
+                        </div>
+                    `;
+                }
             });
 
             // --- Grid System ---
@@ -4093,8 +4928,9 @@ This software is provided "as is" without warranty of any kind.`);
                         return [];
                 }
                 
-                const frameWidth = canvas.width / cols;
-                const frameHeight = canvas.height / rows;
+                const { width: canvasWidth, height: canvasHeight } = getCanvasDimensions();
+                const frameWidth = canvasWidth / cols;
+                const frameHeight = canvasHeight / rows;
                 
                 for (let row = 0; row < rows; row++) {
                     for (let col = 0; col < cols; col++) {
@@ -4245,6 +5081,10 @@ This software is provided "as is" without warranty of any kind.`);
                     } else {
                         isSnapping = false;
                         snapAnimation = null;
+                        // Recompute occupancy after snap animation completes
+                        if (currentGrid && typeof recomputeGridOccupancy === 'function') {
+                            recomputeGridOccupancy();
+                        }
                     }
                 }
                 
@@ -4313,61 +5153,81 @@ This software is provided "as is" without warranty of any kind.`);
                     ctx.lineTo(left, top + radius + accentSize);
                     ctx.stroke();
                     
-                    // Draw premium position dot
+                    // Draw premium position dot area with cleaner styling
                     ctx.setLineDash([]);
                     
-                    // Outer glow ring with gradient
-                    const outerGradient = ctx.createRadialGradient(frame.x, frame.y, 8, frame.x, frame.y, 16);
-                    outerGradient.addColorStop(0, 'rgba(129, 140, 248, 0.3)');
+                    // Subtle outer glow ring (reduced intensity for cleaner look)
+                    const outerGradient = ctx.createRadialGradient(frame.x, frame.y, 6, frame.x, frame.y, 14);
+                    outerGradient.addColorStop(0, 'rgba(129, 140, 248, 0.15)');
                     outerGradient.addColorStop(1, 'rgba(129, 140, 248, 0)');
                     ctx.fillStyle = outerGradient;
                     ctx.beginPath();
-                    ctx.arc(frame.x, frame.y, 16, 0, Math.PI * 2);
+                    ctx.arc(frame.x, frame.y, 14, 0, Math.PI * 2);
                     ctx.fill();
                     
-                    // Middle ring
-                    ctx.strokeStyle = 'rgba(99, 102, 241, 0.6)';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.arc(frame.x, frame.y, 12, 0, Math.PI * 2);
-                    ctx.stroke();
-                    
-                    // Main position dot with beautiful gradient
-                    const mainGradient = ctx.createRadialGradient(
-                        frame.x - 2, frame.y - 2, 0,  // Inner highlight offset
-                        frame.x, frame.y, 10
-                    );
-                    mainGradient.addColorStop(0, 'rgba(165, 180, 252, 1)'); // Light indigo highlight
-                    mainGradient.addColorStop(0.7, 'rgba(129, 140, 248, 0.95)'); // Main indigo
-                    mainGradient.addColorStop(1, 'rgba(79, 70, 229, 0.9)'); // Darker edge
-                    
-                    ctx.fillStyle = mainGradient;
-                    ctx.shadowColor = 'rgba(129, 140, 248, 0.5)';
-                    ctx.shadowBlur = 12;
-                    ctx.beginPath();
-                    ctx.arc(frame.x, frame.y, 10, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Reset shadow
-                    ctx.shadowColor = 'transparent';
-                    ctx.shadowBlur = 0;
-                    
-                    // Inner white highlight
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                    ctx.beginPath();
-                    ctx.arc(frame.x - 1, frame.y - 1, 3, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Position number with premium styling
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
-                    ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", "SF Pro Display", sans-serif';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.strokeStyle = 'rgba(79, 70, 229, 0.3)';
-                    ctx.lineWidth = 3;
-                    const numberText = (index + 1).toString();
-                    ctx.strokeText(numberText, frame.x, frame.y);
-                    ctx.fillText(numberText, frame.x, frame.y);
+                    // Draw occupancy indicator based on frame.occupied status
+                    if (frame.occupied) {
+                        // Occupied - filled dot with green theme
+                        const mainGradient = ctx.createRadialGradient(
+                            frame.x - 2, frame.y - 2, 0,  // Inner highlight offset
+                            frame.x, frame.y, 10
+                        );
+                        mainGradient.addColorStop(0, 'rgba(134, 239, 172, 1)'); // Light green highlight
+                        mainGradient.addColorStop(0.7, 'rgba(34, 197, 94, 0.95)'); // Main green
+                        mainGradient.addColorStop(1, 'rgba(21, 128, 61, 0.9)'); // Darker edge
+                        
+                        ctx.fillStyle = mainGradient;
+                        ctx.shadowColor = 'rgba(34, 197, 94, 0.5)';
+                        ctx.shadowBlur = 12;
+                        ctx.beginPath();
+                        ctx.arc(frame.x, frame.y, 10, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Reset shadow
+                        ctx.shadowColor = 'transparent';
+                        ctx.shadowBlur = 0;
+                        
+                        // Inner white highlight for occupied indication
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                        ctx.beginPath();
+                        ctx.arc(frame.x - 1, frame.y - 1, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Small filled center dot to show occupancy
+                        ctx.fillStyle = 'rgba(21, 128, 61, 0.8)';
+                        ctx.beginPath();
+                        ctx.arc(frame.x, frame.y, 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    } else {
+                        // Empty - hollow dot with original blue theme but lighter
+                        const mainGradient = ctx.createRadialGradient(
+                            frame.x - 2, frame.y - 2, 0,  // Inner highlight offset
+                            frame.x, frame.y, 10
+                        );
+                        mainGradient.addColorStop(0, 'rgba(165, 180, 252, 0.6)'); // Light indigo highlight
+                        mainGradient.addColorStop(0.7, 'rgba(129, 140, 248, 0.5)'); // Main indigo, reduced opacity
+                        mainGradient.addColorStop(1, 'rgba(79, 70, 229, 0.4)'); // Darker edge, reduced opacity
+                        
+                        // Draw hollow circle (stroke only for empty)
+                        ctx.strokeStyle = mainGradient;
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.arc(frame.x, frame.y, 8, 0, Math.PI * 2);
+                        ctx.stroke();
+                        
+                        // Very subtle inner fill to show it's a valid drop target
+                        ctx.fillStyle = 'rgba(165, 180, 252, 0.1)';
+                        ctx.beginPath();
+                        ctx.arc(frame.x, frame.y, 6, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Small highlight on the ring
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.arc(frame.x, frame.y, 8, Math.PI * 1.2, Math.PI * 1.8);
+                        ctx.stroke();
+                    }
                 });
                 
                 // Enhanced active position highlight when dragging
@@ -4463,6 +5323,12 @@ This software is provided "as is" without warranty of any kind.`);
             // Simplified grid controls
             showGuidesChk?.addEventListener('change', () => {
                 showGuides = showGuidesChk.checked;
+                
+                // Recompute occupancy when guides are shown to ensure accurate display
+                if (showGuides && currentGrid && typeof recomputeGridOccupancy === 'function') {
+                    recomputeGridOccupancy();
+                }
+                
                 requestAnimationFrame(draw);
             });
             
@@ -4473,16 +5339,37 @@ This software is provided "as is" without warranty of any kind.`);
             arrangeTargetsBtn?.addEventListener('click', () => {
                 if (!currentGrid) return;
                 const visibleObjects = objects.filter(o => o.visible);
-                const availableFrames = gridFrames.slice();
                 
-                // Distribute objects evenly across available positions
-                visibleObjects.forEach((obj, i) => {
-                    const frameIndex = i % availableFrames.length;
-                    const frame = availableFrames[frameIndex];
+                // First recompute occupancy to get current state
+                recomputeGridOccupancy();
+                
+                // Get available (non-occupied) frames
+                const availableFrames = gridFrames.filter(frame => !frame.occupied);
+                
+                if (availableFrames.length === 0) {
+                    // Show toast notification that grid is full
+                    showToast('Grid is full! No available positions for auto-arrangement.', 'warning');
+                    return;
+                }
+                
+                // Only arrange as many objects as we have available positions
+                const objectsToArrange = visibleObjects.slice(0, availableFrames.length);
+                const skippedObjects = visibleObjects.length - objectsToArrange.length;
+                
+                // Distribute objects to available positions
+                objectsToArrange.forEach((obj, i) => {
+                    const frame = availableFrames[i];
                     setObjectCenterPosition(obj, frame.x, frame.y);
                 });
                 
-                recomputeGridOccupancy?.();
+                // Show feedback about the arrangement
+                if (skippedObjects > 0) {
+                    showToast(`Arranged ${objectsToArrange.length} objects. ${skippedObjects} objects skipped (grid full).`, 'info');
+                } else {
+                    showToast(`Successfully arranged ${objectsToArrange.length} objects to grid positions.`, 'success');
+                }
+                
+                recomputeGridOccupancy();
                 requestAnimationFrame(draw);
             });
             
@@ -4504,11 +5391,18 @@ This software is provided "as is" without warranty of any kind.`);
                     const nearest = findNearestGridFrame(center.x, center.y);
                     if (nearest) {
                         const distance = Math.sqrt((center.x - nearest.x) ** 2 + (center.y - nearest.y) ** 2);
-                        if (distance <= 30) { // Close enough to consider occupied
+                        // Use a reasonable threshold for occupancy detection
+                        // Objects that are snapped should be very close, but account for small positioning variations
+                        if (distance <= 20) { // Reasonable threshold for detecting snapped objects
                             nearest.occupied = true;
+                            // Debug: uncomment the line below to see occupancy detection in console
+                            // console.log(`Object at (${center.x.toFixed(1)}, ${center.y.toFixed(1)}) occupies grid point at (${nearest.x}, ${nearest.y}), distance: ${distance.toFixed(2)}`);
                         }
                     }
                 });
+                
+                // Force a redraw to update occupancy indicators
+                requestAnimationFrame(draw);
             }
 
             // --- Media Handling ---
@@ -4526,7 +5420,7 @@ This software is provided "as is" without warranty of any kind.`);
                 progressDetail.textContent = `${current} of ${total} files processed`;
             }
             
-            async function handleFiles(files, categoryOverride = 'visualTargets') { 
+            async function handleFiles(files, categoryOverride = 'visualTargets', isAutoLoad = false, sourceFolderName = null) { 
                 const mediaFiles = Array.from(files).filter(file => 
                     file.type.startsWith('image/') || 
                     file.type.startsWith('video/') ||
@@ -4562,7 +5456,7 @@ This software is provided "as is" without warranty of any kind.`);
                                 video.muted = true;
                                 video.playsInline = true;
                                 video.onloadedmetadata = () => {
-                                    addMediaItem(video, categoryOverride);
+                                    addMediaItem(video, categoryOverride, isAutoLoad, sourceFolderName);
                                     if (mediaFiles.length > 1) {
                                         updateProgress(i + 1, mediaFiles.length);
                                     }
@@ -4581,7 +5475,7 @@ This software is provided "as is" without warranty of any kind.`);
                                 img.src = e.target.result;
                                 img.dataset.name = file.name;
                                 img.onload = () => {
-                                    addMediaItem(img, categoryOverride);
+                                    addMediaItem(img, categoryOverride, isAutoLoad, sourceFolderName);
                                     if (mediaFiles.length > 1) {
                                         updateProgress(i + 1, mediaFiles.length);
                                     }
@@ -4619,14 +5513,19 @@ This software is provided "as is" without warranty of any kind.`);
                     }
                 }
             }
-            function addMediaItem(mediaElement, category = 'visualTargets') { 
-                // Add to specified category (default visual targets)
-                addToMediaLibrary(mediaElement, category);
+            function addMediaItem(mediaElement, category = 'visualTargets', isAutoLoad = false, sourceFolderName = null) { 
+                // Add to specified category with auto-load metadata
+                const metadata = isAutoLoad ? {
+                    autoLoaded: true,
+                    sourceFolderName: sourceFolderName,
+                    category: category
+                } : {};
+                addToMediaLibrary(mediaElement, category, metadata);
             }
             
-            function addToMediaLibrary(mediaElement, category) {
+            function addToMediaLibrary(mediaElement, category, metadata = {}) {
                 // Add to memory via abstraction
-                MediaLibrary.add(category, mediaElement);
+                MediaLibrary.add(category, mediaElement, metadata);
                 
                 // Add to UI
                 const targetGrid = getGridForCategory(category);
@@ -4774,7 +5673,7 @@ This software is provided "as is" without warranty of any kind.`);
                         } else {
                             addImageToCanvas(mediaElement.src, mediaElement.dataset.name); 
                         }
-                        mediaLibrary.classList.remove('open'); 
+                        // Removed auto-close behavior - let users manually close drawer after selecting multiple items
                     }
                 }); 
                 
@@ -4924,7 +5823,27 @@ This software is provided "as is" without warranty of any kind.`);
             }
 
             // --- Canvas Drag & Drop ---
-            function addImageToCanvas(imgSrc, name, x, y) { const img = new Image(); img.src = imgSrc; img.dataset.name = name; img.onload = () => { const w = 150; const h = (img.height / img.width) * w; const finalX = (x === undefined) ? (canvas.width / 2) - (w / 2) : x - (w/2); const finalY = (y === undefined) ? (canvas.height / 2) - (h / 2) : y - (h/2); const newObj = new ImageObject(img, finalX, finalY, w, h, getNextZIndex()); objects.push(newObj); setSelectedObject(newObj); updateAnimationTriggerPanel(); }; }
+            function addImageToCanvas(imgSrc, name, x, y) { 
+                const img = new Image(); 
+                img.src = imgSrc; 
+                img.dataset.name = name; 
+                img.onload = () => { 
+                    const w = 150; 
+                    const h = (img.height / img.width) * w; 
+                    const { width: canvasWidth, height: canvasHeight } = getCanvasDimensions();
+                    const finalX = (x === undefined) ? (canvasWidth / 2) - (w / 2) : x - (w/2); 
+                    const finalY = (y === undefined) ? (canvasHeight / 2) - (h / 2) : y - (h/2); 
+                    const newObj = new ImageObject(img, finalX, finalY, w, h, getNextZIndex()); 
+                    objects.push(newObj); 
+                    setSelectedObject(newObj); 
+                    updateAnimationTriggerPanel(); 
+                    
+                    // Recompute grid occupancy after adding new object
+                    if (currentGrid && typeof recomputeGridOccupancy === 'function') {
+                        recomputeGridOccupancy();
+                    }
+                }; 
+            }
             
             function addVideoToCanvas(videoSrc, name, x, y) { 
                 const video = document.createElement('video'); 
@@ -4936,14 +5855,20 @@ This software is provided "as is" without warranty of any kind.`);
                 video.onloadedmetadata = () => { 
                     const w = 150; 
                     const h = (video.videoHeight / video.videoWidth) * w; 
-                    const finalX = (x === undefined) ? (canvas.width / 2) - (w / 2) : x - (w/2); 
-                    const finalY = (y === undefined) ? (canvas.height / 2) - (h / 2) : y - (h/2); 
+                    const { width: canvasWidth, height: canvasHeight } = getCanvasDimensions();
+                    const finalX = (x === undefined) ? (canvasWidth / 2) - (w / 2) : x - (w/2); 
+                    const finalY = (y === undefined) ? (canvasHeight / 2) - (h / 2) : y - (h/2); 
                     const newObj = new VideoObject(video, finalX, finalY, w, h, getNextZIndex()); 
                     objects.push(newObj); 
                     setSelectedObject(newObj); 
                     updateAnimationTriggerPanel(); 
                     video.play().catch(e => console.log('Video autoplay failed:', e));
                     ensureRenderLoop();
+                    
+                    // Recompute grid occupancy after adding new video object
+                    if (currentGrid && typeof recomputeGridOccupancy === 'function') {
+                        recomputeGridOccupancy();
+                    }
                 }; 
             }
             canvas.addEventListener('dragover', (e) => e.preventDefault());
@@ -5086,8 +6011,9 @@ This software is provided "as is" without warranty of any kind.`);
                 });
             }
             function addCanvasObject(type) { 
-                const centerX = canvas.width / 2; 
-                const centerY = canvas.height / 2; 
+                const { width: cWidth, height: cHeight } = getCanvasDimensions();
+                const centerX = cWidth / 2; 
+                const centerY = cHeight / 2; 
                 let newObj; 
                 
                 if(type === 'text') { 
@@ -5113,7 +6039,8 @@ This software is provided "as is" without warranty of any kind.`);
                 shapeOffsetY = Math.sin(angle) * offsetAmount * (1 + objects.length * 0.2);
                 
                 // Keep offset within reasonable bounds
-                const maxOffset = Math.min(canvas.width, canvas.height) / 3;
+                const { width: cWidth2, height: cHeight2 } = getCanvasDimensions();
+                const maxOffset = Math.min(cWidth2, cHeight2) / 3;
                 shapeOffsetX = Math.max(-maxOffset, Math.min(maxOffset, shapeOffsetX));
                 shapeOffsetY = Math.max(-maxOffset, Math.min(maxOffset, shapeOffsetY));
                 
@@ -5121,6 +6048,11 @@ This software is provided "as is" without warranty of any kind.`);
                 setActiveTool('select'); 
                 setSelectedObject(newObj); 
                 updateAnimationTriggerPanel(); 
+                
+                // Recompute grid occupancy after adding new canvas object
+                if (currentGrid && typeof recomputeGridOccupancy === 'function') {
+                    recomputeGridOccupancy();
+                }
             }
             selectTool.addEventListener('click', () => setActiveTool('select'));
             textTool.addEventListener('click', () => addCanvasObject('text'));
@@ -5159,7 +6091,19 @@ This software is provided "as is" without warranty of any kind.`);
                     isResizing = true; resizeHandle = handle.position; setSelectedObject(handle.object); 
                     selectedObject.original = { x: selectedObject.x, y: selectedObject.y, width: selectedObject.width, height: selectedObject.height, size: selectedObject.size }; 
                 } else { 
-                    const obj = getObjectAt(x, y); setSelectedObject(obj); if (obj) { isDragging = true; dragStartX = x - obj.x; dragStartY = y - obj.y; } 
+                    const obj = getObjectAt(x, y); setSelectedObject(obj); 
+                    if (obj) { 
+                        isDragging = true; 
+                        dragStartX = x - obj.x; 
+                        dragStartY = y - obj.y; 
+                        
+                        // Show grid temporarily during drag if a grid is enabled but hidden
+                        if (currentGrid && !showGuides) {
+                            showGuides = true;
+                            tempGridVisibility = true; // Flag to remember we temporarily enabled it
+                            if (showGuidesChk) showGuidesChk.checked = true;
+                        }
+                    } 
                 } 
                 startPinchIfPossible();
             });
@@ -5244,6 +6188,14 @@ This software is provided "as is" without warranty of any kind.`);
                 // Recompute grid occupancy after any dragging ends (in case object moved)
                 if (isDragging && currentGrid && typeof recomputeGridOccupancy === 'function') {
                     recomputeGridOccupancy();
+                }
+                
+                // Hide grid if it was temporarily shown during drag
+                if (isDragging && tempGridVisibility) {
+                    showGuides = false;
+                    tempGridVisibility = false;
+                    if (showGuidesChk) showGuidesChk.checked = false;
+                    requestAnimationFrame(draw); // Force redraw to hide grid
                 }
                 
                 activePointers.delete(e.pointerId); 
@@ -5577,10 +6529,29 @@ This software is provided "as is" without warranty of any kind.`);
                 const obj = selectedObject; 
                 const orig = obj.original; 
                 
+                // Check if object is pinned to a grid point
+                let pinnedGridPoint = null;
+                if (currentGrid && gridFrames.length > 0) {
+                    const center = getObjectCenter(obj);
+                    const nearest = findNearestGridFrame(center.x, center.y);
+                    if (nearest) {
+                        const distance = Math.sqrt((center.x - nearest.x) ** 2 + (center.y - nearest.y) ** 2);
+                        if (distance <= 20) { // Use same threshold as occupancy detection
+                            pinnedGridPoint = nearest;
+                        }
+                    }
+                }
+                
                 if (obj.type === 'text') { 
-                    // Store the original center position (from when resize started)
-                    const originalCenterX = orig.x + orig.width / 2; 
-                    const originalCenterY = orig.y + orig.height / 2; 
+                    // Store the original center position (from when resize started or grid point if pinned)
+                    let centerX, centerY;
+                    if (pinnedGridPoint) {
+                        centerX = pinnedGridPoint.x;
+                        centerY = pinnedGridPoint.y;
+                    } else {
+                        centerX = orig.x + orig.width / 2; 
+                        centerY = orig.y + orig.height / 2;
+                    }
                     
                     // Calculate scale based on the resize handle being dragged
                     let scale = 1;
@@ -5599,7 +6570,7 @@ This software is provided "as is" without warranty of any kind.`);
                             break;
                         default:
                             // For other handles, use distance from center
-                            const dist = Math.hypot(mouseX - originalCenterX, mouseY - originalCenterY);
+                            const dist = Math.hypot(mouseX - centerX, mouseY - centerY);
                             const baseDist = Math.max(orig.width, orig.height) / 2;
                             scale = Math.max(0.2, dist / baseDist);
                     }
@@ -5609,39 +6580,58 @@ This software is provided "as is" without warranty of any kind.`);
                     obj.updateMetrics(); 
                     obj.isResizing = false;
                     
-                    // Keep text centered at original position
-                    obj.x = originalCenterX - obj.width / 2; 
-                    obj.y = originalCenterY - obj.height / 2; 
+                    // Keep text centered at pinned grid point or original position
+                    obj.x = centerX - obj.width / 2; 
+                    obj.y = centerY - obj.height / 2; 
                 } else { 
                     const aspectRatio = orig.width / orig.height; 
                     let newWidth, newHeight; 
                     
-                    switch (resizeHandle) { 
-                        case 'br': 
-                            newWidth = mouseX - orig.x; 
-                            newHeight = mouseY - orig.y; 
-                            obj.x = orig.x; 
-                            obj.y = orig.y; 
-                            break; 
-                        case 'bl': 
-                            newWidth = (orig.x + orig.width) - mouseX; 
-                            newHeight = mouseY - orig.y; 
-                            obj.x = mouseX; 
-                            obj.y = orig.y; 
-                            break; 
-                        case 'tr': 
-                            newWidth = mouseX - orig.x; 
-                            newHeight = (orig.y + orig.height) - mouseY; 
-                            obj.x = orig.x; 
-                            obj.y = (orig.y + orig.height) - newHeight; 
-                            break; 
-                        case 'tl': 
-                            newWidth = (orig.x + orig.width) - mouseX; 
-                            newHeight = (orig.y + orig.height) - mouseY; 
-                            obj.x = mouseX; 
-                            obj.y = (orig.y + orig.height) - newHeight; 
-                            break; 
-                    } 
+                    if (pinnedGridPoint) {
+                        // For grid-pinned objects, resize from center
+                        const originalCenterX = pinnedGridPoint.x;
+                        const originalCenterY = pinnedGridPoint.y;
+                        
+                        // Calculate distance from mouse to center to determine scale
+                        const mouseDist = Math.hypot(mouseX - originalCenterX, mouseY - originalCenterY);
+                        const originalDist = Math.hypot(orig.width / 2, orig.height / 2);
+                        const scale = Math.max(0.2, mouseDist / originalDist);
+                        
+                        newWidth = Math.max(10, orig.width * scale);
+                        newHeight = Math.max(10, orig.height * scale);
+                        
+                        // Position object so its center stays at the grid point
+                        obj.x = originalCenterX - newWidth / 2;
+                        obj.y = originalCenterY - newHeight / 2;
+                    } else {
+                        // Original corner-based resizing for non-pinned objects
+                        switch (resizeHandle) { 
+                            case 'br': 
+                                newWidth = mouseX - orig.x; 
+                                newHeight = mouseY - orig.y; 
+                                obj.x = orig.x; 
+                                obj.y = orig.y; 
+                                break; 
+                            case 'bl': 
+                                newWidth = (orig.x + orig.width) - mouseX; 
+                                newHeight = mouseY - orig.y; 
+                                obj.x = mouseX; 
+                                obj.y = orig.y; 
+                                break; 
+                            case 'tr': 
+                                newWidth = mouseX - orig.x; 
+                                newHeight = (orig.y + orig.height) - mouseY; 
+                                obj.x = orig.x; 
+                                obj.y = (orig.y + orig.height) - newHeight; 
+                                break; 
+                            case 'tl': 
+                                newWidth = (orig.x + orig.width) - mouseX; 
+                                newHeight = (orig.y + orig.height) - mouseY; 
+                                obj.x = mouseX; 
+                                obj.y = (orig.y + orig.height) - newHeight; 
+                                break; 
+                        }
+                    }
                     
                     // For rectangles, allow deformation but snap to square when close
                     if (obj.shapeType === 'rect') {
@@ -5697,6 +6687,11 @@ This software is provided "as is" without warranty of any kind.`);
                 setSelectedObject(null); 
                 hideContextMenu(); 
                 updateAnimationTriggerPanel(); // Update animation panel when object is deleted
+                
+                // Recompute grid occupancy after object deletion
+                if (currentGrid && typeof recomputeGridOccupancy === 'function') {
+                    recomputeGridOccupancy();
+                }
             }
             
             // --- Event Listeners ---

@@ -1,4 +1,5 @@
-const CACHE_NAME = 'gaze-tracker-v1.1.0';
+const CACHE_NAME = 'gaze-tracker-v2024.09.14.001'; // Update this with each deployment
+const APP_VERSION = '2024.09.14.001'; // Keep in sync with main app version
 const urlsToCache = [
   './',
   './index.html',
@@ -30,7 +31,10 @@ const urlsToCache = [
 
 // Install Service Worker
 self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Installing...');
+  console.log('[Service Worker] Installing version:', APP_VERSION);
+  // Skip waiting to activate immediately when new version is available
+  self.skipWaiting();
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -45,33 +49,78 @@ self.addEventListener('install', (event) => {
 
 // Activate Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activating...');
+  console.log('[Service Worker] Activating version:', APP_VERSION);
+  // Take control of all clients immediately
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[Service Worker] Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    Promise.all([
+      // Clear old caches
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('[Service Worker] Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      }),
+      // Take control immediately
+      self.clients.claim()
+    ])
   );
 });
 
-// Fetch Strategy: Cache First with Network Fallback
+// Fetch Strategy: Network First for HTML, Cache First for Assets
 self.addEventListener('fetch', (event) => {
   // Skip cross-origin requests
   if (!event.request.url.startsWith(self.location.origin)) {
     return;
   }
 
+  // Network first for HTML files to ensure latest version
+  if (event.request.destination === 'document' || event.request.url.endsWith('.html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Cache the fresh HTML
+          if (response && response.status === 200) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // Fallback to cache if network fails
+          return caches.match(event.request);
+        })
+    );
+    return;
+  }
+
+  // Cache first for other assets
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
         // Return cached version or fetch from network
         if (response) {
+          // For assets, check if we should refresh cache occasionally
+          const cacheDate = response.headers.get('date');
+          const now = new Date();
+          const cacheAge = cacheDate ? (now - new Date(cacheDate)) / (1000 * 60 * 60) : 0;
+          
+          // Refresh cache for assets older than 1 hour
+          if (cacheAge > 1) {
+            fetch(event.request).then((freshResponse) => {
+              if (freshResponse && freshResponse.status === 200) {
+                caches.open(CACHE_NAME).then((cache) => {
+                  cache.put(event.request, freshResponse.clone());
+                });
+              }
+            }).catch(() => {}); // Ignore network errors for background updates
+          }
+          
           console.log('[Service Worker] Serving from cache:', event.request.url);
           return response;
         }
@@ -106,5 +155,21 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
+  }
+  
+  if (event.data && event.data.type === 'GET_VERSION') {
+    event.ports[0].postMessage({ version: APP_VERSION });
+  }
+  
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
+    event.waitUntil(
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => caches.delete(cacheName))
+        );
+      }).then(() => {
+        event.ports[0].postMessage({ success: true });
+      })
+    );
   }
 });
