@@ -1,0 +1,180 @@
+/* ============================================
+   LAYER COMPONENTS
+   ============================================ */
+
+/* Layer Item */
+.layer-item {
+    background: var(--bg-primary);
+    border: 1px solid var(--md-outline-variant);
+    border-radius: 8px;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.layer-item:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-color);
+}
+
+.layer-item.selected {
+    background: var(--bg-secondary);
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-md);
+}
+
+#layer-list {
+    overflow-x: hidden !important;
+    width: 100%;
+}
+
+/* Layer Item Buttons */
+.layer-item-button {
+    background: transparent;
+    border: none;
+    padding: 2px;
+    border-radius: 3px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 9px;
+    position: relative;
+    overflow: hidden;
+    min-width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.layer-item-button:hover {
+    background: var(--bg-secondary);
+    color: var(--primary-color);
+    transform: scale(1.06);
+    box-shadow: var(--shadow-md);
+}
+
+.layer-item-button:hover::before {
+    opacity: 0.1;
+}
+
+.layer-item-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.layer-item-button.layer-visibility-hidden {
+    opacity: 0.3;
+    color: var(--text-muted);
+}
+
+.layer-item-button.layer-visibility-hidden:hover {
+    opacity: 0.6;
+    color: var(--text-secondary);
+}
+
+/* ============================================
+   ACCORDION COMPONENTS
+   ============================================ */
+
+/* Section Header */
+.section-header {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    border: 1px solid var(--md-outline-variant);
+    box-shadow: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    contain: paint;
+    background-clip: padding-box;
+}
+
+.section-header:hover {
+    box-shadow: none;
+    transform: none;
+    border-color: var(--md-outline-variant);
+}
+
+/* Move accordion focus outline to the outer card to avoid double border */
+.section-header:focus-within {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-radius: 12px;
+}
+
+/* Accordion Button */
+.accordion-button {
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-radius: inherit; /* match outer card radius to avoid double contour */
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent; /* let section-header own the glass look */
+    backdrop-filter: none;
+    border: none; /* avoid double border: header draws the border */
+    letter-spacing: .3px;
+    box-shadow: none; /* avoid double edge with header shadow */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    will-change: background, border-color;
+}
+
+.accordion-button:focus-visible {
+    outline: none;
+}
+
+.accordion-button:hover {
+    color: var(--text-primary);
+}
+
+.accordion-button svg.arrow-icon {
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--primary-color);
+    filter: none;
+    transform: rotate(0deg); /* Expanded (default open) points down */
+}
+
+/* Collapsed state: rotate to point right */
+.accordion-button[aria-expanded="false"] svg.arrow-icon {
+    transform: rotate(-90deg);
+}
+
+/* Section Content */
+.section-content {
+    background: var(--bg-primary);
+    border-radius: 12px;
+    border: 1px solid var(--md-outline-variant);
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.2s ease, background 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ============================================
+   EMPTY STATES
+   ============================================ */
+
+.empty-state {
+    text-align: center;
+    padding: 24px 12px;
+    color: var(--text-muted);
+}
+
+.empty-state svg {
+    margin: 0 auto 12px;
+    opacity: 0.6;
+}
+
+.empty-state .title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text-secondary);
+}
+
+.empty-state .subtitle {
+    font-size: 12px;
+    line-height: 1.4;
+}

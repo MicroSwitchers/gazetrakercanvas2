@@ -1,0 +1,345 @@
+/* ============================================
+   BUTTON COMPONENTS
+   ============================================ */
+
+/* Tool Buttons */
+.tool-button {
+    transition: background 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease, color 0.15s ease;
+    background: var(--bg-secondary);
+    border: 1px solid var(--md-outline);
+    border-radius: 12px;
+    color: var(--text-secondary);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    font-weight: 500;
+}
+
+.tool-button:hover {
+    background: var(--bg-tertiary);
+    box-shadow: var(--shadow-md);
+    color: var(--text-primary);
+    border-color: var(--md-outline);
+}
+
+.tool-button:hover::before {
+    opacity: 1;
+}
+
+.tool-button.active {
+    background: var(--md-primary);
+    color: var(--md-on-primary);
+    font-weight: 600;
+    box-shadow: var(--shadow-md);
+    border-color: var(--md-primary);
+}
+
+.tool-button.active::before {
+    opacity: 0;
+}
+
+.tool-button svg {
+    transition: transform 0.2s ease;
+}
+
+.tool-button:hover svg {
+    transform: scale(1.1);
+}
+
+/* Enhanced styling for shape tool icons */
+.tool-button svg defs {
+    pointer-events: none;
+}
+
+.tool-button:hover svg stop[offset="0%"] {
+    stop-opacity: 0.9;
+}
+
+.tool-button.active svg stop[offset="0%"] {
+    stop-color: white;
+    stop-opacity: 1;
+}
+
+.tool-button.active svg stop[offset="100%"] {
+    stop-color: white;
+    stop-opacity: 0.7;
+}
+
+/* Upload Button */
+.upload-button {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--md-outline);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    box-shadow: none;
+    position: relative;
+    overflow: hidden;
+    font-size: 14px;
+    text-transform: none;
+    letter-spacing: 0.2px;
+}
+
+.upload-button:hover {
+    background: var(--bg-tertiary);
+}
+
+.upload-button:hover::before {
+    left: 100%;
+}
+
+/* Delete Button */
+.delete-button {
+    background: var(--bg-secondary);
+    color: var(--md-error);
+    border: 1px solid var(--md-error);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    min-height: 42px; /* approximate height of upload-button */
+}
+
+.delete-button:hover {
+    background: var(--md-error);
+    color: var(--md-on-error);
+}
+
+.delete-button.inactive {
+    opacity: 0.45;
+    cursor: default;
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    border-color: var(--md-outline-variant);
+}
+
+.delete-button.inactive:hover {
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+}
+
+/* Grid Button Styles */
+.grid-button {
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.grid-button.selected {
+    border-color: var(--primary-color) !important;
+    background-color: rgb(30, 58, 138) !important;
+    box-shadow: 0 0 0 2px var(--primary-color), 0 4px 12px rgba(59, 130, 246, 0.3);
+    transform: scale(1.02);
+}
+
+.grid-button:hover:not(.selected) {
+    border-color: rgba(148, 163, 184, 0.6);
+    background-color: rgb(51, 65, 85);
+    transform: translateY(-1px);
+}
+
+.grid-button:active {
+    transform: scale(0.98);
+}
+
+.grid-preview div {
+    background: #94a3b8 !important;
+    border-radius: 1px;
+}
+
+.grid-button.selected .grid-preview div {
+    background: #e2e8f0 !important;
+}
+
+/* Animation Trigger Button */
+.animation-trigger-btn {
+    background: var(--bg-secondary);
+    border: 1px solid var(--md-outline-variant);
+    border-radius: 3px;
+    padding: 2px 4px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: .5px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background .18s ease, transform .18s ease, opacity .25s ease;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 18px; /* slimmer */
+    position: relative;
+    box-shadow: none;
+    opacity: 0.6; /* subtle */
+}
+
+.animation-trigger-btn:hover {
+    background: var(--bg-tertiary);
+    opacity: 0.55;
+    transform: translateY(-1px);
+}
+
+.animation-trigger-btn:active {
+    transform: translateY(0);
+}
+
+.animation-trigger-btn.triggering {
+    background: rgba(56,189,248,0.3);
+    color: var(--text-secondary);
+    opacity: 0.7;
+    transform: scale(1.05);
+}
+
+.animation-trigger-btn .key-indicator {
+    background: rgba(148,163,184,0.25);
+    color: var(--text-secondary);
+    border-radius: 2px;
+    padding: 0 2px;
+    width: auto;
+    height: 14px;
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(148,163,184,0.35);
+    margin-right: 2px;
+}
+
+.animation-trigger-btn .animation-icon {
+    font-size: 8px;
+    line-height: 1;
+    color: var(--text-muted);
+    margin-left: 1px;
+}
+
+.animation-trigger-btn.triggering .animation-icon {
+    color: var(--text-secondary);
+}
+
+.animation-trigger-btn .object-name {
+    /* hide for low profile */
+    display: none;
+}
+
+.animation-trigger-btn.gentle-shake .animation-icon {
+    animation: gentle-shake 0.5s ease-in-out;
+}
+
+.animation-trigger-btn.pendum .animation-icon {
+    animation: pendum 0.5s ease-in-out;
+}
+
+.animation-trigger-btn.circular .animation-icon {
+    animation: circular 0.5s ease-in-out;
+}
+
+/* Text Style Toggle Buttons */
+.btn-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(148,163,184,0.25);
+    background: rgba(255,255,255,0.04);
+    color: #e2e8f0;
+    font-weight: 600;
+    min-width: 36px;
+}
+
+.btn-toggle:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+.btn-toggle.active {
+    background: rgba(59,130,246,0.15);
+    border-color: rgba(59,130,246,0.45);
+    color: #bfdbfe;
+}
+
+/* Animation Type Buttons */
+.animation-type-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 10px;
+    border: 1px solid rgba(148,163,184,0.25);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    color: #e2e8f0;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.animation-type-btn:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(148,163,184,0.4);
+}
+
+.animation-type-btn.active {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.25), rgba(99, 102, 241, 0.15));
+    border-color: rgba(99, 102, 241, 0.7);
+    color: #e0e7ff;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+.animation-type-btn.active .anim-label {
+    color: #f0f4ff;
+    font-weight: 600;
+}
+
+.animation-type-btn.active .anim-preview {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(79, 70, 229, 0.15));
+    border-color: rgba(129, 140, 248, 0.4);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 8px rgba(79, 70, 229, 0.2);
+}
+
+/* Enhanced Preview Visuals */
+.anim-preview {
+    position: relative;
+    width: 56px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(148,163,184,0.08), rgba(100,116,139,0.12));
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.animation-type-btn:hover .anim-preview {
+    background: linear-gradient(135deg, rgba(148,163,184,0.15), rgba(100,116,139,0.18));
+    transform: scale(1.05);
+}
+
+.anim-label {
+    font-size: 12px;
+    color: #94a3b8;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+/* Accessible Focus States */
+.tool-button:focus-visible,
+.upload-button:focus-visible,
+.delete-button:focus-visible,
+.layer-item-button:focus-visible,
+.preset-color-bg:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}

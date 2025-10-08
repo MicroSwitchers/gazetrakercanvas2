@@ -1,0 +1,116 @@
+/* ============================================
+   MEDIA COMPONENTS
+   ============================================ */
+
+/* Media Item */
+.media-item {
+    background: var(--bg-primary);
+    border: 1px solid var(--md-outline-variant);
+    border-radius: 12px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    aspect-ratio: 1;
+    position: relative;
+}
+
+.media-item:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-xl);
+    transform: scale(1.02);
+}
+
+.media-item .remove-media-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    background: rgba(220,53,69,0.9);
+    border: none;
+    color: #fff;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .2s ease, transform .2s ease, background .2s ease;
+    z-index: 5;
+}
+
+.media-item:hover .remove-media-btn,
+.media-item:focus-within .remove-media-btn {
+    opacity: 1;
+}
+
+.media-item .remove-media-btn:hover {
+    background: rgba(200,40,55,1);
+    transform: scale(1.08);
+}
+
+.media-item img {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 2;
+}
+
+.media-item:hover img {
+    transform: scale(1.1) rotate(1deg);
+}
+
+/* ============================================
+   PRESET COLORS
+   ============================================ */
+
+.preset-color {
+    border-radius: 12px;
+    border: 2px solid var(--md-outline-variant);
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.preset-color:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-lg);
+    transform: scale(1.03);
+}
+
+.preset-color-bg {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--md-outline-variant);
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    margin: 4px; /* spacing between circles */
+}
+
+/* Ensure parent rows allow wrapping with consistent gap */
+.preset-row,
+.neutral-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px; /* extra insurance with margin */
+    justify-content: flex-start;
+}
+
+.preset-color-bg.selected {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-lg), 0 0 0 2px var(--primary-color);
+    transform: scale(1.06);
+}
+
+.preset-color-bg:hover {
+    transform: scale(1.08);
+    box-shadow: var(--shadow-xl);
+}

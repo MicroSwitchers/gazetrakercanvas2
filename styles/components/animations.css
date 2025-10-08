@@ -1,0 +1,308 @@
+/* ============================================
+   ANIMATIONS & KEYFRAMES
+   ============================================ */
+
+/* Fade In Up Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+/* Splash Screen Animations */
+@keyframes splashIn {
+    from {
+        transform: translateY(32px) scale(.92);
+        opacity: 0;
+        filter: blur(4px);
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+@keyframes glow {
+    from {
+        opacity: 0.3;
+    }
+    to {
+        opacity: 0.7;
+    }
+}
+
+@keyframes logoFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* Gentle Pulse Animation */
+@keyframes gentlePulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.02);
+        opacity: 0.95;
+    }
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.08) rotate(2deg);
+        opacity: 0.9;
+    }
+}
+
+/* Float Animation */
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    33% {
+        transform: translate(30px, -30px) rotate(1deg);
+    }
+    66% {
+        transform: translate(-20px, 20px) rotate(-1deg);
+    }
+}
+
+/* Shake Animation */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* ============================================
+   ANIMATION BUTTON ICON KEYFRAMES
+   ============================================ */
+
+/* Gentle Shake for Animation Buttons */
+@keyframes gentle-shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-2px);
+    }
+    75% {
+        transform: translateX(2px);
+    }
+}
+
+/* Pendum for Animation Buttons */
+@keyframes pendum {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-6deg);
+    }
+    75% {
+        transform: rotate(6deg);
+    }
+}
+
+/* Circular for Animation Buttons */
+@keyframes circular {
+    0% {
+        transform: rotate(0deg) translateX(2px) rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg) translateX(2px) rotate(-360deg);
+    }
+}
+
+/* ============================================
+   CANVAS OBJECT ANIMATIONS
+   ============================================ */
+
+.canvas-object-shake {
+    animation: object-shake var(--animation-duration, 1s) ease-in-out;
+}
+
+.canvas-object-pendum {
+    animation: object-pendum var(--animation-duration, 1s) ease-in-out;
+}
+
+.canvas-object-circular {
+    animation: object-circular var(--animation-duration, 1s) ease-in-out;
+}
+
+@keyframes object-shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(calc(-1px * var(--animation-intensity, 5)));
+    }
+    75% {
+        transform: translateX(calc(1px * var(--animation-intensity, 5)));
+    }
+}
+
+@keyframes object-pendum {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(calc(-1.5deg * var(--animation-intensity, 5)));
+    }
+    75% {
+        transform: rotate(calc(1.5deg * var(--animation-intensity, 5)));
+    }
+}
+
+@keyframes object-circular {
+    0% {
+        transform: rotate(0deg) translateX(calc(1px * var(--animation-intensity, 5))) rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg) translateX(calc(1px * var(--animation-intensity, 5))) rotate(-360deg);
+    }
+}
+
+/* ============================================
+   ANIMATION PREVIEW KEYFRAMES
+   ============================================ */
+
+/* Static "No Motion" Preview */
+.preview-none .no-motion-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(203,213,225,0.6);
+    border-radius: 3px;
+    transform: translate(-50%, -50%);
+    background: rgba(203,213,225,0.1);
+}
+
+/* Wiggle: Simple Left-Right Shake */
+.preview-wiggle .dot {
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(135deg, #f1f5f9, #cbd5e1);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.2);
+    animation: preview-wiggle 0.6s ease-in-out infinite;
+}
+
+@keyframes preview-wiggle {
+    0%, 100% {
+        transform: translate(-50%, -50%);
+    }
+    50% {
+        transform: translate(calc(-50% - 8px), -50%);
+    }
+}
+
+/* Pendum: Pivot Swing from Top */
+.preview-pendum .arm {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: 1px;
+    height: 24px;
+    transform-origin: top center;
+    animation: preview-pendum 1.2s ease-in-out infinite;
+}
+
+.preview-pendum .rod {
+    position: absolute;
+    top: 0;
+    left: -0.5px;
+    width: 1px;
+    height: 18px;
+    background: linear-gradient(to bottom, rgba(229,231,235,0.8), rgba(203,213,225,0.6));
+    border-radius: 0.5px;
+}
+
+.preview-pendum .bob {
+    position: absolute;
+    bottom: 0;
+    left: -5px;
+    width: 10px;
+    height: 10px;
+    background: radial-gradient(circle at 30% 30%, #f1f5f9, #cbd5e1);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.3);
+}
+
+@keyframes preview-pendum {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-15deg);
+    }
+    75% {
+        transform: rotate(15deg);
+    }
+}
+
+/* Circular: Simple Circular Orbit */
+.preview-circular .bob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background: radial-gradient(circle at 30% 30%, #f1f5f9, #cbd5e1);
+    border-radius: 50%;
+    transform-origin: -12px 0px;
+    animation: preview-circle 1.5s linear infinite;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.3);
+}
+
+@keyframes preview-circle {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Remove Duplicated Legacy Previews */
+.wiggle-preview,
+.sway-preview,
+.circle-preview {
+    animation: none;
+}
+
+@keyframes wiggle-preview {}
+@keyframes sway-preview {}
+@keyframes circle-preview {}

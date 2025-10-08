@@ -1,0 +1,431 @@
+/* ============================================
+   UI ELEMENTS
+   ============================================ */
+
+/* ============================================
+   CONTEXT MENU
+   ============================================ */
+
+.context-menu {
+    display: none;
+    position: absolute;
+    background: var(--bg-primary);
+    border: 1px solid var(--md-outline-variant);
+    border-radius: 12px;
+    box-shadow: var(--shadow-xl);
+    z-index: 1000;
+    overflow: hidden;
+    min-width: 200px;
+}
+
+.context-menu button {
+    display: block;
+    width: 100%;
+    padding: 14px 18px;
+    text-align: left;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    transition: background 0.2s ease, color 0.2s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.context-menu button:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.context-menu button.danger {
+    color: var(--danger-color);
+}
+
+.context-menu button.danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.context-menu hr {
+    margin: 8px 0;
+    border: none;
+    border-top: 1px solid var(--md-outline-variant);
+    opacity: 0.6;
+}
+
+/* ============================================
+   SPLASH SCREEN
+   ============================================ */
+
+#splash-screen-overlay {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1)), rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px) saturate(1.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#splash-screen-overlay.fade-out {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.95);
+}
+
+#splash-screen {
+    width: min(420px, 85vw);
+    max-width: 420px;
+    background: linear-gradient(145deg, var(--md-surface), var(--md-surface-variant));
+    border: 1px solid var(--md-outline-variant);
+    border-radius: 24px;
+    padding: 36px 32px 32px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 32px rgba(59, 130, 246, 0.15), var(--md-elev-3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: splashIn 0.8s cubic-bezier(.4,0,.2,1);
+}
+
+#splash-screen::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.03) 0%, transparent 70%);
+    animation: glow 4s ease-in-out infinite alternate;
+}
+
+#splash-screen.fade-out {
+    opacity: 0;
+}
+
+#splash-screen .logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 24px;
+    filter: none;
+    position: relative;
+    z-index: 2;
+    animation: gentlePulse 2s ease-in-out infinite;
+}
+
+#splash-screen .title {
+    color: var(--text-primary);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--text-primary), var(--md-primary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+#splash-screen .subtitle {
+    color: var(--text-secondary);
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 2;
+}
+
+#splash-screen .author {
+    color: var(--text-muted);
+    font-size: 13px;
+    text-align: center;
+    font-weight: 500;
+    padding: 8px 20px;
+    background: var(--bg-secondary);
+    border-radius: 20px;
+    border: 1px solid var(--md-outline-variant);
+    position: relative;
+    z-index: 2;
+}
+
+#splash-screen .start-btn {
+    background: linear-gradient(135deg, var(--md-primary), var(--primary-hover));
+    color: var(--md-on-primary);
+    border: none;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: .4px;
+    padding: 12px 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+#splash-screen .start-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+#splash-screen .start-btn:hover::before {
+    left: 100%;
+}
+
+#splash-screen .start-btn:focus-visible {
+    outline: 3px solid var(--md-primary);
+    outline-offset: 4px;
+}
+
+#splash-screen .start-btn:hover {
+    background: linear-gradient(135deg, var(--primary-hover), var(--md-primary));
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4), 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+#splash-screen .start-btn:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+#splash-screen .about-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--md-outline);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: .2px;
+    padding: 10px 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+#splash-screen .about-btn:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--md-outline-variant);
+    transform: translateY(-1px);
+}
+
+#splash-screen .about-btn:active {
+    transform: translateY(0);
+}
+
+/* ============================================
+   EXPORT INFO DIALOG
+   ============================================ */
+
+#export-info-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+}
+
+#export-info-dialog-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+
+#export-info-dialog {
+    width: min(520px, 92vw);
+    max-width: 520px;
+    max-height: 85vh;
+    background: var(--md-surface);
+    border: 1px solid var(--md-outline-variant);
+    border-radius: 20px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4), var(--md-elev-3);
+    overflow: hidden;
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#export-info-dialog-overlay.show #export-info-dialog {
+    transform: scale(1) translateY(0);
+}
+
+#export-info-dialog-header {
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid var(--md-outline-variant);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(145deg, var(--md-surface), var(--md-surface-variant));
+}
+
+#export-info-dialog-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#export-info-dialog-close {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+#export-info-dialog-close:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+#export-info-dialog-content {
+    padding: 28px;
+    overflow-y: auto;
+    max-height: calc(85vh - 100px);
+}
+
+.export-info-section {
+    text-align: center;
+}
+
+.export-info-image {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    border-radius: 16px;
+    margin: 0 auto 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--md-outline-variant);
+}
+
+.export-info-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0;
+    text-align: left;
+    padding: 20px 24px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--md-outline-variant);
+}
+
+/* ============================================
+   PROGRESS BAR
+   ============================================ */
+
+.progress-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-primary);
+    border: 1px solid var(--md-outline-variant);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow-xl);
+    z-index: 10000;
+    min-width: 300px;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 12px 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-text {
+    color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.progress-detail {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+/* ============================================
+   TOAST NOTIFICATIONS
+   ============================================ */
+
+.toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg-primary);
+    border: 1px solid var(--md-outline-variant);
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: var(--shadow-xl);
+    z-index: 10000;
+    max-width: 400px;
+    animation: fadeInUp 0.3s ease-out;
+}
+
+/* ============================================
+   PROPERTIES PANEL
+   ============================================ */
+
+/* Always keep properties panel rendered; internal states manage visibility */
+#properties-panel-content {
+    display: block;
+}
+
+/* ============================================
+   MISCELLANEOUS
+   ============================================ */
+
+/* About Links */
+.about-link {
+    color: #93c5fd;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
