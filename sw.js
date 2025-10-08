@@ -1,11 +1,15 @@
-const CACHE_NAME = 'gaze-tracker-v2024.09.14.001'; // Update this with each deployment
-const APP_VERSION = '2024.09.14.001'; // Keep in sync with main app version
+const CACHE_NAME = 'gaze-tracker-v2024.10.03.001'; // Update this with each deployment
+const APP_VERSION = '2024.10.03.001'; // Keep in sync with main app version
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
   './gazetracker.svg',
   './dist/output.css',
+  // JavaScript modules
+  './js/pwa.js',
+  './js/service-worker-manager.js',
+  // Icons
   './icons/icon-72x72.png',
   './icons/icon-96x96.png',
   './icons/icon-128x128.png',
@@ -14,6 +18,7 @@ const urlsToCache = [
   './icons/icon-192x192.png',
   './icons/icon-384x384.png',
   './icons/icon-512x512.png',
+  // External fonts
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap',
   'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap',
   'https://fonts.googleapis.com/css2?family=Andika:ital,wght@0,400;0,700;1,400;1,700&display=swap',
@@ -70,19 +75,22 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch Strategy: Network First for HTML, Cache First for Assets
+// Fetch Strategy: Network First for HTML/JS, Cache First for Assets
 self.addEventListener('fetch', (event) => {
-  // Skip cross-origin requests
-  if (!event.request.url.startsWith(self.location.origin)) {
+  // Skip cross-origin requests (except fonts)
+  if (!event.request.url.startsWith(self.location.origin) &&
+      !event.request.url.includes('fonts.googleapis.com')) {
     return;
   }
 
-  // Network first for HTML files to ensure latest version
-  if (event.request.destination === 'document' || event.request.url.endsWith('.html')) {
+  // Network first for HTML and JavaScript files to ensure latest version
+  if (event.request.destination === 'document' ||
+      event.request.url.endsWith('.html') ||
+      event.request.url.endsWith('.js')) {
     event.respondWith(
-      fetch(event.request)
+      fetch(event.request, { cache: 'no-cache' })
         .then((response) => {
-          // Cache the fresh HTML
+          // Cache the fresh HTML/JS
           if (response && response.status === 200) {
             const responseToCache = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
