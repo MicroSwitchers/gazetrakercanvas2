@@ -70,94 +70,125 @@
             font-display: swap;
         }
         :root {
-            /* Clinical Professional Color System (Light Mode) */
-            --md-primary: #0891b2;
-            --md-primary-hover: #0e7490;
-            --md-on-primary: #ffffff;
-            --md-primary-container: #ecfeff;
-            --md-on-primary-container: #164e63;
-            --md-surface: #ffffff;
-            --md-surface-variant: #f1f5f9;
-            --md-surface-tertiary: #e2e8f0;
-            --md-on-surface: #0f172a;
+            --md-primary: #1f8ceb;
+            --md-primary-hover: #1471c3;
+            --md-on-primary: #f9fbff;
+            --md-primary-container: #dceeff;
+            --md-on-primary-container: #0b1d33;
+            --md-surface: #f5f7fd;
+            --md-surface-variant: rgba(255, 255, 255, 0.72);
+            --md-surface-tertiary: rgba(255, 255, 255, 0.45);
+            --md-on-surface: #101827;
             --md-on-surface-variant: #334155;
-            /* Darken muted text in light mode for WCAG 4.5:1 on white */
-            --md-on-surface-muted: #475569;
-            --md-outline: #94a3b8;
-            --md-outline-variant: #cbd5e1;
-            --md-error: #dc2626;
+            --md-on-surface-muted: #4c5a73;
+            --md-outline: rgba(71, 97, 144, 0.24);
+            --md-outline-variant: rgba(130, 152, 197, 0.18);
+            --md-error: #e5484d;
             --md-on-error: #ffffff;
             --md-warning: #f59e0b;
-            --md-on-warning: #ffffff;
-            /* Professional Elevations (subtle) */
-            --md-elev-0: none;
-            --md-elev-1: 0 1px 3px rgba(15, 23, 42, 0.08);
-            --md-elev-2: 0 2px 6px rgba(15, 23, 42, 0.10);
-            --md-elev-3: 0 4px 12px rgba(15, 23, 42, 0.12);
+            --md-on-warning: #0f172a;
+            --md-success: #16a34a;
+            --danger-color: #e5484d;
+            --success-color: #16a34a;
 
-            /* Scrollbar (light) */
-            --scrollbar-track: var(--md-surface-variant);
-            --scrollbar-thumb: #cbd5e1;
-            --scrollbar-thumb-hover: var(--md-primary);
-            /* Focus ring for a11y */
-            --md-focus: #22d3ee;
+            --md-elev-0: none;
+            --md-elev-1: 0 18px 40px rgba(15, 30, 63, 0.07);
+            --md-elev-2: 0 22px 60px rgba(15, 30, 63, 0.10);
+            --md-elev-3: 0 26px 80px rgba(15, 30, 63, 0.14);
+
+            --app-bg: linear-gradient(150deg, #f5f7fd 0%, #eff4ff 45%, #fdfcff 100%);
+            --app-grid-overlay: radial-gradient(circle at top left, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0) 65%),
+                                 radial-gradient(circle at bottom right, rgba(226, 235, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
+            --panel-glass: rgba(255, 255, 255, 0.85);
+            --panel-border: rgba(142, 156, 189, 0.22);
+            --panel-shadow: 0 18px 45px rgba(15, 30, 63, 0.08);
+            --chip-bg: rgba(226, 235, 255, 0.9);
+            --chip-color: #1d4ed8;
+            --focus-ring: 0 0 0 3px rgba(31, 140, 235, 0.35);
+            --md-focus: rgba(31, 140, 235, 0.55);
+
+            --scrollbar-track: rgba(227, 233, 251, 0.45);
+            --scrollbar-thumb: rgba(116, 141, 195, 0.55);
+            --scrollbar-thumb-hover: rgba(37, 99, 235, 0.75);
         }
         
         .dark {
-            /* Clinical Professional Color System (Dark Mode) */
-            --md-primary: #06b6d4;
-            --md-primary-hover: #22d3ee;
-            /* Use white text on primary for strong contrast */
-            --md-on-primary: #ffffff;
-            --md-primary-container: #164e63;
-            --md-on-primary-container: #cffafe;
-            --md-surface: #0f172a;
-            --md-surface-variant: #1e293b;
-            --md-surface-tertiary: #334155;
-            --md-on-surface: #f1f5f9;
-            --md-on-surface-variant: #cbd5e1;
-            --md-on-surface-muted: #94a3b8;
-            --md-outline: #475569;
-            --md-outline-variant: #334155;
-            --md-error: #ef4444;
-            --md-on-error: #ffffff;
-            --md-warning: #fbbf24;
-            --md-on-warning: #0f172a;
-            /* Professional Elevations (dark) */
-            --md-elev-0: none;
-            --md-elev-1: 0 1px 3px rgba(0, 0, 0, 0.20);
-            --md-elev-2: 0 2px 6px rgba(0, 0, 0, 0.25);
-            --md-elev-3: 0 4px 12px rgba(0, 0, 0, 0.30);
+            --md-primary: #5bb5ff;
+            --md-primary-hover: #7ac4ff;
+            --md-on-primary: #06121f;
+            --md-primary-container: #143059;
+            --md-on-primary-container: #d5e9ff;
+            --md-surface: #020611;
+            --md-surface-variant: #0f1624;
+            --md-surface-tertiary: #17243a;
+            --md-on-surface: #eff6ff;
+            --md-on-surface-variant: #9cb4d8;
+            --md-on-surface-muted: #6f89b5;
+            --md-outline: rgba(82, 114, 161, 0.48);
+            --md-outline-variant: rgba(47, 69, 110, 0.48);
+            --md-error: #ff8c99;
+            --md-on-error: #2a0608;
+            --md-warning: #fcd27f;
+            --md-on-warning: #111827;
+            --md-success: #4ade80;
+            --danger-color: #ff8c99;
+            --success-color: #4ade80;
 
-            /* Scrollbar (dark) */
-            --scrollbar-track: var(--md-surface-variant);
-            --scrollbar-thumb: var(--md-on-surface-muted);
-            --scrollbar-thumb-hover: var(--md-primary);
+            --md-elev-0: none;
+            --md-elev-1: 0 22px 45px rgba(2, 12, 32, 0.55);
+            --md-elev-2: 0 28px 60px rgba(2, 12, 32, 0.60);
+            --md-elev-3: 0 38px 80px rgba(2, 12, 32, 0.65);
+
+            --app-bg: linear-gradient(160deg, #020611 0%, #061a36 45%, #0a2347 100%);
+            --app-grid-overlay: radial-gradient(circle at top left, rgba(30, 64, 175, 0.35) 0%, rgba(15, 23, 42, 0) 60%),
+                                 radial-gradient(circle at bottom right, rgba(6, 182, 212, 0.22) 0%, rgba(15, 23, 42, 0) 65%);
+            --panel-glass: rgba(10, 22, 40, 0.78);
+            --panel-border: rgba(65, 106, 172, 0.28);
+            --panel-shadow: 0 24px 45px rgba(2, 12, 32, 0.55);
+            --chip-bg: rgba(43, 85, 145, 0.55);
+            --chip-color: #e0f2ff;
+            --focus-ring: 0 0 0 3px rgba(91, 181, 255, 0.45);
+            --md-focus: rgba(91, 181, 255, 0.65);
+
+            --scrollbar-track: rgba(24, 40, 64, 0.65);
+            --scrollbar-thumb: rgba(118, 164, 236, 0.55);
+            --scrollbar-thumb-hover: rgba(91, 181, 255, 0.85);
         }
         
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             font-feature-settings: 'cv01', 'cv03', 'cv04', 'cv11';
             overscroll-behavior: none;
-            background: var(--md-surface);
-            background-image: none;
+            background: var(--app-bg);
+            background-attachment: fixed;
+            background-size: cover;
             color: var(--md-on-surface);
-            /* Limit transitions to avoid paint glitches on text */
+            line-height: 1.6;
             transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             min-height: 100vh;
             color-scheme: light dark;
         }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background: var(--app-grid-overlay);
+        }
         .drawer {
-            /* Avoid transitioning "all" to prevent text paint issues during open/close */
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: fixed;
             top: 0;
             height: 100vh;
             max-height: 100vh;
-            background: var(--md-surface);
-            box-shadow: var(--md-elev-2);
+            background: var(--panel-glass);
+            backdrop-filter: blur(26px) saturate(1.3);
+            -webkit-backdrop-filter: blur(26px) saturate(1.3);
+            box-shadow: var(--panel-shadow);
             z-index: 50;
-            border: 1px solid var(--md-outline-variant);
+            border: 1px solid var(--panel-border);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -168,18 +199,20 @@
             position: fixed;
             top: 20%;
             transform: translateY(-50%);
-            background: var(--md-surface-variant);
-            border: 1px solid var(--md-outline);
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid var(--panel-border);
             padding: 12px;
-            z-index: 60; /* above .drawer (50) */
+            z-index: 60;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             line-height: 0;
-            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-            box-shadow: var(--md-elev-2);
-            border-radius: 12px;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            box-shadow: 0 18px 32px rgba(15, 30, 63, 0.16);
+            border-radius: 16px;
+            backdrop-filter: blur(18px) saturate(1.35);
+            -webkit-backdrop-filter: blur(18px) saturate(1.35);
         }
         .drawer-right {
             right: 0;
@@ -203,9 +236,21 @@
     .drawer-toggle::before { content: none; }
         
         .drawer-toggle:hover {
-            background: var(--md-surface-variant);
-            box-shadow: var(--md-elev-3);
-            transform: translateY(-50%) scale(1.03);
+            background: rgba(255, 255, 255, 0.78);
+            box-shadow: 0 22px 38px rgba(15, 30, 63, 0.20);
+            transform: translateY(-50%) scale(1.05);
+            border-color: rgba(71, 97, 144, 0.35);
+        }
+
+        .dark .drawer-toggle {
+            background: rgba(8, 20, 38, 0.72);
+            border-color: rgba(65, 106, 172, 0.45);
+            box-shadow: 0 26px 40px rgba(2, 12, 32, 0.55);
+        }
+
+        .dark .drawer-toggle:hover {
+            background: rgba(15, 31, 56, 0.85);
+            border-color: rgba(91, 181, 255, 0.55);
         }
         
         .drawer-toggle-left {
@@ -237,45 +282,102 @@
         }
         
         .drawer-toggle svg {
-            color: var(--md-primary);
-            transition: color 0.2s ease;
+            color: var(--md-on-surface-variant);
+            transition: color 0.3s ease;
             width: 20px;
             height: 20px;
         }
-        
+
         .drawer-toggle:hover svg {
-            color: var(--md-primary-hover);
+            color: var(--md-primary);
+        }
+
+        .dark .drawer-toggle svg {
+            color: var(--md-on-surface-muted);
         }
         /* Tool button base - Professional clinical style */
         .tool-button {
-            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-            background: var(--md-surface);
-            border: 1px solid var(--md-outline);
-            border-radius: 6px;
-            color: var(--md-on-surface-variant);
-            box-shadow: none;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+            background: rgba(255, 255, 255, 0.42);
+            border: 1px solid rgba(71, 97, 144, 0.18);
+            border-radius: 14px;
+            color: var(--md-on-surface-muted);
+            box-shadow: 0 14px 28px rgba(15, 30, 63, 0.08);
             position: relative;
-            font-weight: 500;
+            font-weight: 600;
             font-size: 13px;
+            backdrop-filter: blur(14px) saturate(1.15);
+            -webkit-backdrop-filter: blur(14px) saturate(1.15);
         }
 
     .tool-button::before { content: none; }
 
         .tool-button:hover {
-            background: var(--md-surface-variant);
+            background: rgba(255, 255, 255, 0.65);
             color: var(--md-on-surface);
-            border-color: var(--md-primary);
+            border-color: rgba(31, 140, 235, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 18px 34px rgba(31, 55, 95, 0.18);
         }
 
         .tool-button.active {
-            background: var(--md-primary);
+            background: linear-gradient(135deg, var(--md-primary), var(--md-primary-hover));
             color: var(--md-on-primary);
-            font-weight: 600;
-            border-color: var(--md-primary);
+            font-weight: 700;
+            border-color: transparent;
+            box-shadow: 0 22px 42px rgba(31, 140, 235, 0.28);
         }
 
         .tool-button svg {
-            transition: none;
+            transition: transform 0.3s ease, color 0.3s ease;
+            color: inherit;
+        }
+
+        .tool-button:hover svg {
+            transform: scale(1.05);
+        }
+
+        .dark .tool-button {
+            background: rgba(12, 24, 42, 0.72);
+            border-color: rgba(65, 106, 172, 0.35);
+            box-shadow: 0 20px 40px rgba(2, 12, 32, 0.55);
+            color: var(--md-on-surface-variant);
+        }
+
+        .dark .tool-button:hover {
+            background: rgba(20, 38, 64, 0.85);
+            border-color: rgba(91, 181, 255, 0.45);
+            box-shadow: 0 24px 48px rgba(2, 12, 32, 0.65);
+        }
+
+        .dark .tool-button.active {
+            box-shadow: 0 26px 52px rgba(91, 181, 255, 0.38);
+        }
+
+        /* Pencil color button styles */
+        .pencil-color-btn {
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            box-shadow: 0 14px 28px rgba(15, 30, 63, 0.16);
+            border: 2px solid rgba(255, 255, 255, 0.65) !important;
+            border-radius: 14px;
+        }
+
+        .pencil-color-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 18px 34px rgba(15, 30, 63, 0.22);
+        }
+
+        .pencil-color-btn.active {
+            border: 2px solid rgba(255, 255, 255, 0.95) !important;
+            outline: 3px solid rgba(31, 140, 235, 0.45);
+            outline-offset: 2px;
+            box-shadow: 0 22px 44px rgba(31, 140, 235, 0.28);
+        }
+
+        .pencil-color-btn:focus-visible {
+            outline: 3px solid var(--md-focus);
+            outline-offset: 2px;
         }
 
         /* Accessible focus states */
@@ -299,12 +401,39 @@
             width: 100%;
             height: 100vh;
             position: relative;
-            background: var(--md-surface);
-            background-image: none;
+            background: radial-gradient(circle at 20% 20%, rgba(31, 140, 235, 0.12), transparent 55%),
+                        radial-gradient(circle at 80% 30%, rgba(6, 182, 212, 0.14), transparent 62%),
+                        linear-gradient(160deg, rgba(255, 255, 255, 0.85) 0%, rgba(223, 234, 255, 0.92) 50%, rgba(242, 248, 255, 0.98) 100%);
             overflow: hidden;
+            border-left: 1px solid var(--panel-border);
+            border-right: 1px solid var(--panel-border);
         }
         
-    #canvas-container::before { content: none; }
+    #canvas-container::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(90deg, rgba(31, 55, 95, 0.08) 1px, transparent 1px),
+                          linear-gradient(0deg, rgba(31, 55, 95, 0.08) 1px, transparent 1px);
+        background-size: 64px 64px;
+        opacity: 0.35;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+        .dark #canvas-container {
+            background: radial-gradient(circle at 15% 20%, rgba(91, 181, 255, 0.22), transparent 55%),
+                        radial-gradient(circle at 75% 35%, rgba(6, 182, 212, 0.22), transparent 60%),
+                        linear-gradient(160deg, rgba(4, 10, 22, 0.95) 0%, rgba(10, 24, 44, 0.98) 55%, rgba(8, 20, 36, 1) 100%);
+            border-left: 1px solid rgba(65, 106, 172, 0.32);
+            border-right: 1px solid rgba(65, 106, 172, 0.32);
+        }
+
+        .dark #canvas-container::before {
+            background-image: linear-gradient(90deg, rgba(91, 181, 255, 0.18) 1px, transparent 1px),
+                              linear-gradient(0deg, rgba(91, 181, 255, 0.18) 1px, transparent 1px);
+            opacity: 0.25;
+        }
         
         canvas {
             display: block;
@@ -317,13 +446,15 @@
         .context-menu {
             display: none;
             position: absolute;
-            background: var(--md-surface);
-            border: 1px solid var(--md-outline-variant);
-            border-radius: 12px;
-            box-shadow: var(--md-elev-3);
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(71, 97, 144, 0.22);
+            border-radius: 16px;
+            box-shadow: 0 22px 48px rgba(15, 30, 63, 0.18);
             z-index: 1000;
             overflow: hidden;
             min-width: 200px;
+            backdrop-filter: blur(16px) saturate(1.1);
+            -webkit-backdrop-filter: blur(16px) saturate(1.1);
         }
         
     .context-menu::before { content: none; }
@@ -345,7 +476,7 @@
         }
         
         .context-menu button:hover {
-            background: var(--md-surface-variant);
+            background: rgba(31, 140, 235, 0.12);
             color: var(--md-on-surface);
         }
         
@@ -354,8 +485,8 @@
         }
         
         .context-menu button.danger:hover {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger-color);
+            background: rgba(229, 72, 77, 0.15);
+            color: var(--md-on-error);
         }
         
         .context-menu hr {
@@ -395,26 +526,59 @@
         }
         
         .section-header {
-            background: var(--md-surface-variant);
-            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.45);
+            border-radius: 16px;
             margin-bottom: 12px;
-            border: 1px solid var(--md-outline);
-            box-shadow: none;
-            transition: border-color 0.2s ease, background 0.2s ease;
+            border: 1px solid rgba(71, 97, 144, 0.18);
+            box-shadow: 0 12px 28px rgba(15, 30, 63, 0.1);
+            transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
             contain: paint;
             background-clip: padding-box;
+            backdrop-filter: blur(14px) saturate(1.1);
+            -webkit-backdrop-filter: blur(14px) saturate(1.1);
         }
 
-    .section-header:hover { box-shadow: none; transform: none; border-color: var(--md-primary); background: var(--md-surface-variant); }
+    .section-header:hover { box-shadow: 0 18px 36px rgba(15, 30, 63, 0.18); transform: translateY(-1px); border-color: rgba(31, 140, 235, 0.35); background: rgba(255, 255, 255, 0.65); }
 
         .section-content {
-            background: var(--md-surface);
-            border-radius: 6px;
-            border: 1px solid var(--md-outline-variant);
-            box-shadow: none;
-            transition: border-color 0.2s ease, background 0.2s ease;
+            background: rgba(255, 255, 255, 0.68);
+            border-radius: 20px;
+            border: 1px solid rgba(71, 97, 144, 0.16);
+            box-shadow: 0 16px 32px rgba(15, 30, 63, 0.12);
+            transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(16px) saturate(1.1);
+            -webkit-backdrop-filter: blur(16px) saturate(1.1);
+        }
+
+        .dark .section-header {
+            background: rgba(12, 24, 42, 0.68);
+            border-color: rgba(65, 106, 172, 0.35);
+            box-shadow: 0 18px 38px rgba(2, 12, 32, 0.55);
+        }
+
+        .dark .section-header:hover {
+            border-color: rgba(91, 181, 255, 0.45);
+            background: rgba(20, 38, 64, 0.85);
+            box-shadow: 0 24px 52px rgba(2, 12, 32, 0.65);
+        }
+
+        .dark .section-content {
+            background: rgba(12, 24, 42, 0.78);
+            border-color: rgba(65, 106, 172, 0.35);
+            box-shadow: 0 22px 46px rgba(2, 12, 32, 0.58);
+        }
+
+        .bg-color-container {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 16px 8px;
+            margin: 0 -8px;
+        }
+
+        .dark .bg-color-container {
+            background: rgba(0, 0, 0, 0.4);
         }
         
     .section-content::before { content: none; }
@@ -422,9 +586,9 @@
             background: transparent;
             border: none;
             padding: 4px;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
-            color: var(--md-on-surface-variant);
+            color: var(--md-on-surface-muted);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-size: 11px;
             position: relative;
@@ -437,10 +601,10 @@
     .layer-item-button::before { content: none; }
         
         .layer-item-button:hover {
-            background: var(--md-surface-variant);
+            background: rgba(31, 140, 235, 0.15);
             color: var(--md-primary);
-            transform: scale(1.06);
-            box-shadow: var(--md-elev-1);
+            transform: translateY(-1px) scale(1.05);
+            box-shadow: 0 12px 24px rgba(15, 30, 63, 0.18);
         }
         
         .layer-item-button:hover::before {
@@ -464,16 +628,18 @@
         }
         
         .layer-item {
-            background: var(--md-surface);
-            border: 1px solid var(--md-outline-variant);
-            border-radius: 8px;
-            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: var(--md-elev-1);
+            background: rgba(255, 255, 255, 0.58);
+            border: 1px solid rgba(71, 97, 144, 0.18);
+            border-radius: 16px;
+            transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+            box-shadow: 0 16px 32px rgba(15, 30, 63, 0.12);
             position: relative;
             overflow: hidden;
             max-width: 100%;
             width: 100%;
             box-sizing: border-box;
+            backdrop-filter: blur(12px) saturate(1.1);
+            -webkit-backdrop-filter: blur(12px) saturate(1.1);
         }
         
         #layer-list {
@@ -484,69 +650,92 @@
     .layer-item::before { content: none; }
         
         .layer-item:hover {
-            box-shadow: var(--md-elev-2);
-            border-color: var(--md-primary);
+            box-shadow: 0 22px 42px rgba(15, 30, 63, 0.18);
+            border-color: rgba(31, 140, 235, 0.45);
+            transform: translateY(-2px);
         }
         
         .layer-item.selected {
-            background: var(--md-surface-variant);
-            border-color: var(--md-primary);
-            box-shadow: var(--md-elev-1);
+            background: linear-gradient(135deg, rgba(31, 140, 235, 0.18), rgba(255, 255, 255, 0.65));
+            border-color: rgba(31, 140, 235, 0.6);
+            box-shadow: 0 26px 52px rgba(31, 140, 235, 0.24);
+        }
+
+        .dark .layer-item {
+            background: rgba(12, 24, 42, 0.78);
+            border-color: rgba(65, 106, 172, 0.32);
+            box-shadow: 0 22px 46px rgba(2, 12, 32, 0.55);
+        }
+
+        .dark .layer-item:hover {
+            border-color: rgba(91, 181, 255, 0.45);
+            box-shadow: 0 28px 56px rgba(2, 12, 32, 0.65);
+        }
+
+        .dark .layer-item.selected {
+            background: linear-gradient(135deg, rgba(91, 181, 255, 0.22), rgba(15, 31, 56, 0.85));
+            border-color: rgba(91, 181, 255, 0.65);
+            box-shadow: 0 32px 60px rgba(91, 181, 255, 0.32);
         }
         
         .upload-button {
-            background: var(--md-surface);
-            color: var(--md-on-surface);
-            border: 1px solid var(--md-outline);
-            border-radius: 6px;
-            padding: 10px 14px;
-            font-weight: 500;
+            background: rgba(31, 140, 235, 0.12);
+            color: var(--md-primary);
+            border: 1px solid rgba(31, 140, 235, 0.28);
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.15s ease, border-color 0.15s ease;
-            box-shadow: none;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 14px 28px rgba(31, 55, 95, 0.12);
             font-size: 13px;
             text-transform: none;
-            letter-spacing: 0;
+            letter-spacing: 0.02em;
         }
 
     .upload-button::before { content: none; }
 
     .upload-button:hover {
-        background: var(--md-surface-variant);
+        background: rgba(31, 140, 235, 0.18);
         border-color: var(--md-primary);
+        transform: translateY(-2px);
+        box-shadow: 0 18px 36px rgba(31, 55, 95, 0.18);
     }
 
         .delete-button {
-            background: var(--md-surface);
-            color: var(--md-error);
-            border: 1px solid var(--md-outline);
-            border-radius: 6px;
-            padding: 10px 14px;
-            font-weight: 500;
+            background: rgba(229, 72, 77, 0.08);
+            color: var(--danger-color);
+            border: 1px solid rgba(229, 72, 77, 0.28);
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             font-size: 13px;
+            box-shadow: 0 12px 26px rgba(129, 29, 29, 0.12);
         }
     .delete-button::before { content: none; }
-        .delete-button:hover {
-            background: var(--md-error);
+        .delete-button:not(.inactive):hover {
+            background: rgba(229, 72, 77, 0.18);
             color: var(--md-on-error);
-            border-color: var(--md-error);
+            border-color: rgba(229, 72, 77, 0.45);
+            transform: translateY(-2px);
+            box-shadow: 0 18px 32px rgba(129, 29, 29, 0.2);
         }
         .delete-button.inactive {
             opacity: 0.5;
             cursor: not-allowed;
-            background: var(--md-surface);
+            background: rgba(148, 163, 184, 0.12);
             color: var(--md-on-surface-muted);
-            border-color: var(--md-outline-variant);
+            border-color: rgba(148, 163, 184, 0.25);
         }
-        .delete-button.inactive:hover {
-            background: var(--md-surface);
+        .delete-button.inactive:hover, .delete-button.inactive:focus {
+            background: rgba(148, 163, 184, 0.12);
             color: var(--md-on-surface-muted);
-            border-color: var(--md-outline-variant);
+            border-color: rgba(148, 163, 184, 0.25);
         }
         
         .preset-color {
@@ -597,26 +786,33 @@
         /* Grid Button Styles */
         .grid-button {
             position: relative;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
             /* Ensure consistent spacing between preview and number */
             gap: 6px;
+            border: 1px solid rgba(71, 97, 144, 0.18);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.45);
+            box-shadow: 0 12px 26px rgba(15, 30, 63, 0.1);
+            backdrop-filter: blur(12px) saturate(1.05);
+            -webkit-backdrop-filter: blur(12px) saturate(1.05);
         }
         
         .grid-button.selected {
-            border-color: var(--md-primary) !important;
-            background-color: var(--md-primary-container) !important;
-            box-shadow: 0 0 0 2px var(--md-primary), var(--md-elev-2);
-            transform: scale(1.02);
+            border-color: rgba(31, 140, 235, 0.45) !important;
+            background: linear-gradient(135deg, rgba(31, 140, 235, 0.18), rgba(255, 255, 255, 0.75)) !important;
+            box-shadow: 0 20px 42px rgba(31, 140, 235, 0.24);
+            transform: translateY(-1px) scale(1.03);
         }
 
         .grid-button:hover:not(.selected) {
-            border-color: var(--md-primary);
-            background-color: var(--md-surface-variant);
-            transform: translateY(-1px);
+            border-color: rgba(31, 140, 235, 0.35);
+            background-color: rgba(255, 255, 255, 0.65);
+            transform: translateY(-2px);
+            box-shadow: 0 18px 36px rgba(15, 30, 63, 0.18);
         }
 
         .grid-button:active {
-            transform: scale(0.98);
+            transform: scale(0.99);
         }
         
         .grid-preview div {
@@ -626,6 +822,24 @@
         
         .grid-button.selected .grid-preview div {
             background: var(--md-on-surface) !important;
+        }
+
+        .dark .grid-button {
+            background: rgba(12, 24, 42, 0.68);
+            border-color: rgba(65, 106, 172, 0.32);
+            box-shadow: 0 18px 38px rgba(2, 12, 32, 0.55);
+        }
+
+        .dark .grid-button:hover:not(.selected) {
+            background: rgba(20, 38, 64, 0.86);
+            border-color: rgba(91, 181, 255, 0.45);
+            box-shadow: 0 24px 50px rgba(2, 12, 32, 0.65);
+        }
+
+        .dark .grid-button.selected {
+            background: linear-gradient(135deg, rgba(91, 181, 255, 0.22), rgba(15, 31, 56, 0.88)) !important;
+            border-color: rgba(91, 181, 255, 0.6) !important;
+            box-shadow: 0 28px 56px rgba(91, 181, 255, 0.32);
         }
 
         /* High contrast user preference support */
@@ -659,13 +873,20 @@
             font-size: 11px;
             color: var(--md-on-surface);
             /* Fallback then modern mix for subtle translucent panel */
-            background: var(--md-surface-variant);
-            background: color-mix(in oklab, var(--md-surface) 85%, transparent);
-            padding: 6px 10px;
-            border: 1px solid var(--md-outline);
-            border-radius: 8px;
-            box-shadow: var(--md-elev-1);
-            backdrop-filter: blur(6px);
+            background: rgba(255, 255, 255, 0.65);
+            padding: 8px 14px;
+            border: 1px solid rgba(71, 97, 144, 0.18);
+            border-radius: 12px;
+            box-shadow: 0 12px 28px rgba(15, 30, 63, 0.12);
+            backdrop-filter: blur(10px) saturate(1.05);
+            -webkit-backdrop-filter: blur(10px) saturate(1.05);
+        }
+
+        .dark .grid-legend {
+            background: rgba(12, 24, 42, 0.75);
+            border-color: rgba(65, 106, 172, 0.32);
+            box-shadow: 0 18px 36px rgba(2, 12, 32, 0.55);
+            color: var(--md-on-surface);
         }
 
         /* Link colors with accessible contrast */
@@ -673,48 +894,55 @@
         a:hover { color: var(--md-primary-hover); }
         
         .form-input {
-            border: 1px solid var(--md-outline);
-            border-radius: 4px;
-            padding: 8px 12px;
-            font-size: 13px;
-            font-weight: 400;
-            transition: border-color 0.15s ease, box-shadow 0.15s ease;
-            background: var(--md-surface);
+            border: 1px solid rgba(71, 97, 144, 0.22);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+            background: rgba(255, 255, 255, 0.75);
             color: var(--md-on-surface);
-            box-shadow: none;
+            box-shadow: 0 12px 26px rgba(15, 30, 63, 0.08);
+            backdrop-filter: blur(12px) saturate(1.05);
+            -webkit-backdrop-filter: blur(12px) saturate(1.05);
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--md-primary);
-            box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.15);
+            box-shadow: 0 0 0 4px rgba(31, 140, 235, 0.18);
+            background: rgba(255, 255, 255, 0.92);
         }
 
         .form-input::placeholder {
             color: var(--md-on-surface-muted);
             font-weight: 400;
+            opacity: 0.75;
         }
 
         .form-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
-            color: var(--md-on-surface);
+            color: var(--md-on-surface-muted);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.08em;
             margin-bottom: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
         
         /* Enhanced select dropdown styling */
         select.form-input {
-            background: var(--md-surface) !important;
+            background: rgba(255, 255, 255, 0.75) !important;
             color: var(--md-on-surface) !important;
             cursor: pointer !important;
-            border: 1px solid var(--md-outline) !important;
-            border-radius: 4px !important;
-            padding: 8px 32px 8px 12px !important;
-            font-size: 13px !important;
+            border: 1px solid rgba(71, 97, 144, 0.22) !important;
+            border-radius: 12px !important;
+            padding: 12px 40px 12px 16px !important;
+            font-size: 14px !important;
             line-height: 1.4 !important;
-            transition: border-color 0.15s ease !important;
+            transition: border-color 0.25s ease !important;
 
             /* Remove all native appearances */
             appearance: none !important;
@@ -761,7 +989,7 @@
         }
         
         .dark select.form-input {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239cb4d8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
         }
         
         /* Completely remove all native dropdown arrows */
@@ -799,62 +1027,97 @@
         }
         
         .media-item {
-            background: var(--md-surface);
-            border: 1px solid var(--md-outline-variant);
-            border-radius: 12px;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
-            box-shadow: var(--md-elev-1);
+            background: linear-gradient(145deg, #ffffff, #f8f8f6);
+            border: 2px solid var(--md-outline-variant);
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
             overflow: hidden;
             aspect-ratio: 1;
             position: relative;
         }
-        
-    .media-item::before { content: none; }
-        
+
+        .media-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .media-item::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 16px;
+            border-radius: 18px; /* Slightly larger to cover border */
+            background: linear-gradient(135deg, var(--md-primary), var(--md-primary-hover));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+
         .media-item:hover {
-            border-color: var(--md-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(8, 145, 178, 0.2), 0 4px 12px rgba(0, 0, 0, 0.1);
             box-shadow: var(--md-elev-3);
-            transform: scale(1.02);
+            border-color: transparent;
+        }
+
+        .media-item:hover::after {
+            opacity: 1;
         }
 
         .media-item .remove-media-btn {
-            position:absolute;
-            top:4px;
-            right:4px;
-            width:22px;
-            height:22px;
-            background:rgba(220,53,69,0.9);
-            border:none;
-            color:#fff;
-            font-weight:700;
-            font-size:12px;
-            line-height:1;
-            border-radius:50%;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            opacity:0;
-            transition:opacity .2s ease, transform .2s ease, background .2s ease;
-            z-index:5;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 28px;
+            height: 28px;
+            height: 28px; 
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            border: 2px solid #ffffff;
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            line-height: 1;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4); 
         }
         .media-item:hover .remove-media-btn,
         .media-item:focus-within .remove-media-btn {
-            opacity:1;
+            opacity: 1;
+            transform: scale(1);
         }
         .media-item .remove-media-btn:hover {
-            background:rgba(200,40,55,1);
-            transform:scale(1.08);
+            background: linear-gradient(135deg, #b91c1c, #991b1b);
+            transform: scale(1.15) rotate(90deg);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.6);
         }
-        
-        .media-item img {
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+        .media-item img,
+        .media-item video {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             z-index: 2;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
-        
-        .media-item:hover img {
-            transform: scale(1.1) rotate(1deg);
+
+        .media-item:hover img,
+        .media-item:hover video {
+            transform: scale(1.05);
         }
         /* Always keep properties panel rendered; internal states manage visibility */
         #properties-panel-content {
@@ -871,6 +1134,7 @@
         
         .status-active {
             background: var(--success-color);
+            background: #22c55e; /* A consistent success green */
             box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
         }
         
@@ -887,6 +1151,7 @@
             display: inline-flex;
             align-items: center;
             background: var(--md-primary);
+            background: var(--md-primary-container);
             color: white;
             padding: 4px 8px;
             border-radius: 6px;
@@ -894,42 +1159,208 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            color: var(--md-on-primary-container);
         }
         
         .drawer-header {
-            background: var(--md-surface-variant);
-            border-bottom: 2px solid var(--md-primary);
-            padding: 12px;
-            margin: -12px -12px 16px -12px;
-            border-radius: 0;
-            /* Isolate layer to prevent text pop-in due to parent transitions */
+            background: transparent;
+            border-bottom: 1px solid var(--panel-border);
+            padding: 8px 0 16px;
+            margin-bottom: 16px;
             contain: paint;
             will-change: auto;
         }
         
         .drawer-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
-            color: var(--md-on-surface);
             margin: 0;
-            /* Avoid opacity/visibility animation on titles */
-            transition: color 0.2s ease;
+            letter-spacing: -0.015em;
+            background: linear-gradient(135deg, var(--md-on-surface), var(--md-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            transition: background 0.3s ease;
             backface-visibility: hidden;
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
         }
         
         .drawer-subtitle {
-            font-size: 11px;
-            color: var(--md-on-surface-variant);
-            margin: 2px 0 0 0;
+            font-size: 12px;
+            color: var(--md-on-surface-muted);
+            margin: 4px 0 0 0;
+            font-weight: 500;
+            letter-spacing: 0.02em;
         }
         
         .drawer-author {
-            font-size: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--chip-color);
+            background: var(--chip-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 999px;
+            padding: 4px 12px;
+            margin: 12px 0 0 0;
+            font-weight: 600;
+        }
+
+        .control-card {
+            background: rgba(255, 255, 255, 0.55);
+            border: 1px solid rgba(71, 97, 144, 0.18);
+            border-radius: 20px;
+            padding: 18px 20px;
+            box-shadow: 0 18px 36px rgba(15, 30, 63, 0.12);
+            backdrop-filter: blur(18px) saturate(1.1);
+            -webkit-backdrop-filter: blur(18px) saturate(1.1);
+        }
+
+        .dark .control-card {
+            background: rgba(12, 24, 42, 0.72);
+            border: 1px solid rgba(65, 106, 172, 0.32);
+            box-shadow: 0 24px 48px rgba(2, 12, 32, 0.55);
+        }
+
+        .control-card__copy {
+            flex: 1;
+        }
+
+        .control-card__title {
+            margin: 0;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--md-on-surface);
+        }
+
+        .control-card__subtitle {
+            margin: 6px 0 0 0;
+            font-size: 0.75rem;
             color: var(--md-on-surface-muted);
-            margin: 2px 0 0 0;
             font-weight: 500;
+        }
+
+        .control-card__actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toolbar-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border-radius: 14px;
+            border: 1px solid rgba(71, 97, 144, 0.18);
+            background: rgba(255, 255, 255, 0.35);
+            color: var(--md-on-surface-muted);
+            cursor: pointer;
+            transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+            box-shadow: 0 12px 24px rgba(15, 30, 63, 0.1);
+            backdrop-filter: blur(14px) saturate(1.05);
+            -webkit-backdrop-filter: blur(14px) saturate(1.05);
+        }
+
+        .toolbar-icon-btn:hover {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(31, 140, 235, 0.32);
+            color: var(--md-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 16px 32px rgba(31, 55, 95, 0.18);
+        }
+
+        .toolbar-icon-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .dark .toolbar-icon-btn {
+            background: rgba(12, 24, 42, 0.68);
+            border-color: rgba(65, 106, 172, 0.32);
+            box-shadow: 0 18px 38px rgba(2, 12, 32, 0.55);
+            color: var(--md-on-surface-variant);
+        }
+
+        .dark .toolbar-icon-btn:hover {
+            background: rgba(20, 38, 64, 0.85);
+            border-color: rgba(91, 181, 255, 0.45);
+            color: var(--md-primary);
+            box-shadow: 0 24px 50px rgba(2, 12, 32, 0.65);
+        }
+
+        .mode-card {
+            border: 1px solid rgba(71, 97, 144, 0.18);
+            background: rgba(255, 255, 255, 0.52);
+            border-radius: 20px;
+            backdrop-filter: blur(18px) saturate(1.08);
+            -webkit-backdrop-filter: blur(18px) saturate(1.08);
+            box-shadow: 0 18px 38px rgba(15, 30, 63, 0.12);
+        }
+
+        .dark .mode-card {
+            background: rgba(12, 24, 42, 0.72);
+            border-color: rgba(65, 106, 172, 0.32);
+            box-shadow: 0 24px 50px rgba(2, 12, 32, 0.58);
+        }
+
+        .mode-card__eyebrow {
+            color: var(--md-on-surface-muted);
+            letter-spacing: 0.12em;
+        }
+
+        .mode-card__status {
+            background: linear-gradient(135deg, rgba(31, 140, 235, 0.28), rgba(91, 204, 255, 0.35));
+            border: 1px solid rgba(31, 140, 235, 0.45);
+            border-radius: 18px;
+            box-shadow: 0 20px 42px rgba(31, 140, 235, 0.2);
+            color: #f8fbff;
+        }
+
+        .mode-card__status svg {
+            color: inherit;
+        }
+
+        #current-mode-text {
+            color: #f8fbff;
+        }
+
+        #current-mode-description {
+            color: rgba(248, 251, 255, 0.92);
+        }
+
+        .mode-card__cta {
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            border: 1px solid rgba(22, 163, 74, 0.65);
+            color: #f8fff5;
+            box-shadow: 0 24px 48px rgba(22, 163, 74, 0.32);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .mode-card__cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 30px 60px rgba(22, 163, 74, 0.4);
+        }
+
+        .dark .mode-card__status {
+            background: linear-gradient(135deg, rgba(91, 181, 255, 0.32), rgba(10, 37, 73, 0.85));
+            border-color: rgba(91, 181, 255, 0.55);
+            color: rgba(240, 248, 255, 0.95);
+            box-shadow: 0 26px 52px rgba(91, 181, 255, 0.28);
+        }
+
+        .dark #current-mode-description {
+            color: rgba(240, 248, 255, 0.82);
+        }
+
+        .dark .mode-card__cta {
+            background: linear-gradient(135deg, #22c55e, #4ade80);
+            border-color: rgba(74, 222, 128, 0.55);
+            box-shadow: 0 28px 54px rgba(21, 128, 61, 0.42);
         }
         
         /* Scrollbar styling (theme-aware, Material flat) */
@@ -980,9 +1411,79 @@
             .drawer {
                 width: 280px;
             }
-            
+
             .drawer-toggle {
                 padding: 10px;
+            }
+
+            /* Splash Screen - Mobile Stacked Layout */
+            #splash-screen {
+                flex-direction: column;
+                width: min(460px, 94vw);
+                max-width: 460px;
+                padding: 0;
+                gap: 0;
+                max-height: 92vh;
+            }
+
+            #splash-left-panel {
+                flex: 0 0 auto;
+                width: 100%;
+                padding: 32px 24px 24px;
+                border-right: none;
+                border-bottom: 2px solid var(--md-outline-variant);
+            }
+
+            #splash-screen .logo {
+                width: 64px;
+                height: 64px;
+                margin-bottom: 16px;
+            }
+
+            #splash-screen .title {
+                font-size: 1.5rem;
+                margin-bottom: 8px;
+            }
+
+            #splash-screen .subtitle {
+                font-size: 0.9rem;
+                margin-bottom: 12px;
+            }
+
+            #splash-screen .author {
+                font-size: 0.75rem;
+                padding: 8px 16px;
+                margin-bottom: 0;
+            }
+
+            /* Feature Showcase Box - Mobile */
+            #feature-showcase-box {
+                padding: 24px 20px 20px;
+                min-height: auto;
+            }
+
+            .feature-image-container {
+                height: 220px;
+            }
+
+            #feature-title {
+                font-size: 1.05rem;
+            }
+
+            #feature-description {
+                font-size: 0.82rem;
+            }
+
+            #feature-prev-btn,
+            #feature-next-btn {
+                width: 42px;
+                height: 42px;
+            }
+
+            #feature-prev-btn svg,
+            #feature-next-btn svg {
+                width: 18px;
+                height: 18px;
             }
         }
         
@@ -1000,20 +1501,52 @@
         }
         #splash-screen-overlay.fade-out { opacity: 0; pointer-events: none; transform: scale(0.95); }
         #splash-screen {
-            width: min(420px, 85vw);
-            max-width: 420px;
-            background: linear-gradient(145deg, var(--md-surface), var(--md-surface-variant));
-            border: 1px solid var(--md-outline-variant);
-            border-radius: 24px;
-            padding: 36px 32px 32px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 32px rgba(59, 130, 246, 0.15), var(--md-elev-3);
+            width: min(1000px, 92vw);
+            max-width: 1000px;
+            max-height: 85vh;
+            background: var(--md-surface);
+            border: 2px solid var(--md-outline-variant);
+            border-radius: 28px;
+            padding: 0;
+            box-shadow: 0 24px 72px rgba(0, 0, 0, 0.35), 0 12px 36px rgba(8, 145, 178, 0.12);
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+            gap: 0;
             position: relative;
             overflow: hidden;
             animation: splashIn 0.8s cubic-bezier(.4,0,.2,1);
+        }
+
+        #splash-screen::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 28px;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+        }
+
+        #splash-left-panel {
+            flex: 0 0 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            text-align: center;
+            padding: 40px 32px 32px;
+            background: linear-gradient(145deg, var(--md-surface-variant), var(--md-surface));
+            border-right: 2px solid var(--md-outline-variant);
+            position: relative;
+        }
+
+        #splash-left-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top left, rgba(8, 145, 178, 0.08), transparent 50%);
+            pointer-events: none;
         }
         #splash-screen::before {
             content: '';
@@ -1026,52 +1559,259 @@
             animation: glow 4s ease-in-out infinite alternate;
         }
         #splash-screen .logo {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 16px;
-            filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.2));
+            width: 80px;
+            height: 80px;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 10px 20px rgba(8, 145, 178, 0.3));
             animation: logoFloat 3s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
         }
         #splash-screen .title {
-            font-size: 1.6rem;
+            font-size: 2rem;
             font-weight: 700;
             color: var(--md-on-surface);
-            margin-bottom: 6px;
-            letter-spacing: -0.02em;
-            line-height: 1.2;
-            background: linear-gradient(135deg, var(--md-on-surface), var(--md-primary));
+            color: var(--md-primary);
+            margin-bottom: 12px;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #0891b2, #0e7490);
+            background: linear-gradient(135deg, var(--md-primary), var(--md-primary-hover));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+        #splash-screen .subtitle {
+            font-size: 1rem;
+            color: var(--md-on-surface-variant);
+            margin-bottom: 16px;
+            font-weight: 500;
+            letter-spacing: 0.025em;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+        #splash-screen .author {
+            font-size: 0.85rem;
+            color: var(--md-on-surface-muted);
+            margin-bottom: auto;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            padding: 12px 20px;
+            background: linear-gradient(145deg, var(--md-surface), var(--md-surface-tertiary));
+            border-radius: 24px;
+            border: 1px solid var(--md-outline-variant);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Feature Showcase Box */
+        #feature-showcase-box {
+            flex: 1;
+            background: var(--md-surface);
+            padding: 36px 32px 28px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        #feature-showcase-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #0891b2, #14b8a6, #0891b2);
+            height: 3px; 
+            background-size: 200% 100%;
+            animation: shimmer 4s ease-in-out infinite;
+            animation: shimmer 3s ease-in-out infinite;
+            background: linear-gradient(90deg, var(--md-primary), var(--md-primary-hover), var(--md-primary));
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 0%; }
+            50% { background-position: 100% 0%; }
+        }
+
+        #feature-showcase-content {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: opacity 0.3s ease-in-out;
+            flex: 1 1 auto;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .feature-image-container {
+            flex-shrink: 0;
+            width: 100%;
+            height: 220px;
+            border-radius: 18px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+            display: flex;
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(8, 145, 178, 0.4);
+            position: relative;
+        }
+
+        .feature-image-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+        }
+
+        .feature-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 16px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+        }
+
+        .feature-text-container {
+            flex: 0 0 auto;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-top: 4px;
+            margin-bottom: 8px;
+        }
+
+        #feature-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--md-on-surface);
+            margin: 0;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+            background: linear-gradient(135deg, #0891b2, #0e7490);
+            background: linear-gradient(135deg, var(--md-primary), var(--md-primary-hover));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        #splash-screen .subtitle {
-            font-size: 0.95rem;
+
+        #feature-description {
+            font-size: 0.88rem;
             color: var(--md-on-surface-variant);
-            margin-bottom: 3px;
-            font-weight: 500;
-            letter-spacing: 0.02em;
-        }
-        #splash-screen .author {
-            font-size: 0.75rem;
-            color: var(--md-on-surface-muted);
-            margin-bottom: 24px;
-            font-weight: 400;
+            margin: 0;
+            line-height: 1.5;
             letter-spacing: 0.01em;
+        }
+
+        .feature-progress-container {
+            width: 100%;
+            height: 4px;
+            background: var(--md-surface-variant);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+
+        .feature-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--md-primary), var(--md-primary-hover));
+            width: 0%;
+            transition: width 0.1s linear;
+            border-radius: 2px;
+        }
+
+        .feature-navigation-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid var(--md-outline-variant);
+            flex-shrink: 0;
+        }
+
+        #feature-prev-btn,
+        #feature-next-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border: 2px solid var(--md-outline-variant);
+            color: var(--md-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+            position: relative;
+        }
+
+        #feature-prev-btn::before,
+        #feature-next-btn::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--md-primary), var(--md-primary-hover));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        #feature-prev-btn:hover,
+        #feature-next-btn:hover {
+            color: var(--md-on-primary);
+            transform: translateY(-2px) scale(1.05);
+            transform: translateY(-2px) scale(1.05); 
+            box-shadow: 0 8px 16px rgba(8, 145, 178, 0.3), 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-color: transparent;
+        }
+
+        #feature-prev-btn:hover::before,
+        #feature-next-btn:hover::before {
+            opacity: 1;
+        }
+
+        #feature-prev-btn:active,
+        #feature-next-btn:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #feature-prev-btn svg,
+        #feature-next-btn svg {
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
         }
         #splash-screen .start-btn {
             background: linear-gradient(135deg, var(--md-primary), var(--md-primary-hover));
             color: var(--md-on-primary);
             border: none;
             border-radius: 999px;
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 600;
-            letter-spacing: .4px;
-            padding: 12px 28px;
+            letter-spacing: .5px;
+            padding: 14px 32px;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             cursor: pointer;
-            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 24px rgba(8, 145, 178, 0.35), 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 24px color-mix(in srgb, var(--md-primary) 35%, transparent), 0 4px 12px rgba(0, 0, 0, 0.15);
             transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -1083,50 +1823,56 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
         }
         #splash-screen .start-btn:hover::before {
             left: 100%;
         }
-        #splash-screen .start-btn:focus-visible { 
-            outline: 3px solid var(--md-primary); 
-            outline-offset: 4px; 
+        #splash-screen .start-btn:focus-visible {
+            outline: 3px solid var(--md-primary);
+            outline-offset: 4px;
         }
-        #splash-screen .start-btn:hover { 
-            background: linear-gradient(135deg, var(--md-primary-hover), var(--md-primary));
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 12px 32px rgba(59, 130, 246, 0.4), 0 6px 16px rgba(0, 0, 0, 0.2);
+        #splash-screen .start-btn:hover {
+            background: linear-gradient(135deg, #0a9ec4, var(--md-primary));
+            transform: translateY(-3px) scale(1.03);
+            transform: translateY(-3px) scale(1.03); 
+            box-shadow: 0 12px 36px rgba(8, 145, 178, 0.45), 0 6px 16px rgba(0, 0, 0, 0.2);
         }
-        #splash-screen .start-btn:active { 
-            transform: translateY(0) scale(0.98); 
-            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3), 0 2px 8px rgba(0, 0, 0, 0.15);
+        #splash-screen .start-btn:active {
+            transform: translateY(-1px) scale(0.98);
+            transform: translateY(-1px) scale(0.98); 
+            box-shadow: 0 6px 20px rgba(8, 145, 178, 0.35), 0 3px 10px rgba(0, 0, 0, 0.15);
         }
         #splash-screen .about-btn {
-            background: transparent;
+            background: var(--md-surface);
             color: var(--md-on-surface-variant);
-            border: 1px solid var(--md-outline);
+            border: 2px solid var(--md-outline);
             border-radius: 999px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: .2px;
-            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: .3px;
+            padding: 12px 24px;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             cursor: pointer;
-            transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
         #splash-screen .about-btn:hover {
             background: var(--md-surface-variant);
             color: var(--md-on-surface);
-            border-color: var(--md-outline-variant);
-            transform: translateY(-1px);
+            border-color: var(--md-primary);
+            border-color: var(--md-primary); 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
         }
         #splash-screen .about-btn:active {
             transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
         @keyframes splashIn { 
             from { 
@@ -1240,6 +1986,76 @@
             background: var(--md-surface-variant);
             border-radius: 12px;
             border: 1px solid var(--md-outline-variant);
+        }
+
+        /* Salient Feature Info Dialog - Same styles as Export Info Dialog */
+        #salient-info-dialog-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+        #salient-info-dialog-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+        #salient-info-dialog {
+            width: min(520px, 92vw);
+            max-width: 520px;
+            max-height: 85vh;
+            background: var(--md-surface);
+            border: 1px solid var(--md-outline-variant);
+            border-radius: 20px;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4), var(--md-elev-3);
+            overflow: hidden;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #salient-info-dialog-overlay.show #salient-info-dialog {
+            transform: scale(1) translateY(0);
+        }
+        #salient-info-dialog-header {
+            padding: 24px 28px 20px;
+            border-bottom: 1px solid var(--md-outline-variant);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(145deg, var(--md-surface), var(--md-surface-variant));
+        }
+        #salient-info-dialog-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--md-on-surface);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        #salient-info-dialog-close {
+            background: transparent;
+            border: none;
+            color: var(--md-on-surface-variant);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        #salient-info-dialog-close:hover {
+            background: var(--md-surface-variant);
+            color: var(--md-on-surface);
+        }
+        #salient-info-dialog-content {
+            padding: 28px;
+            overflow-y: auto;
+            max-height: calc(85vh - 100px);
         }
         
     #splash-screen::before { content: none; }
@@ -1689,19 +2505,50 @@
     <!-- Splash Screen -->
     <div id="splash-screen-overlay">
         <div id="splash-screen">
-            <img src="gazetracker.svg" alt="Gaze Tracker Logo" class="logo">
-            <h1 class="title">Gaze Tracking Canvas</h1>
-            <p class="subtitle">Visual Target Management System</p>
-            <p class="author">by Niall Brown - Early Childhood Vision Consultant (ECVC)</p>
-            <div class="flex gap-3 mt-4">
-                <button id="splash-close-btn" class="start-btn" type="button" aria-label="Start using the application">
-                    <span>Start</span>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
-                </button>
-                <button id="about-btn" class="about-btn" type="button" aria-label="About and licensing information">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-                    <span>About & Licensing</span>
-                </button>
+            <div id="splash-left-panel">
+                <img src="gazetracker.svg" alt="Gaze Tracker Logo" class="logo">
+                <h1 class="title">Gaze Tracking Canvas</h1>
+                <p class="subtitle">Visual Target Management System</p>
+                <p class="author">by Niall Brown - Early Childhood Vision Consultant (ECVC)</p>
+
+                <div class="flex gap-3 mt-4">
+                    <button id="splash-close-btn" class="start-btn" type="button" aria-label="Start using the application">
+                        <span>Start</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+                    </button>
+                    <button id="about-btn" class="about-btn" type="button" aria-label="About and licensing information">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+                        <span>About & Licensing</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Feature Showcase Box -->
+            <div id="feature-showcase-box">
+                <div id="feature-showcase-content">
+                    <div class="feature-image-container">
+                        <img id="feature-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 24 24' fill='%23f59e0b'%3E%3Cpath d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'/%3E%3Cpath fill='%23000' d='M12 8a1 1 0 0 1 1 1v4a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1zm0 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2z'/%3E%3C/svg%3E" alt="Important: Canvas Not Saved">
+                    </div>
+                    <div class="feature-text-container">
+                        <h3 id="feature-title">Important: Canvas Not Saved</h3>
+                        <p id="feature-description">This app is for quick and flexible manipulation of 2D visual targets (images, videos, shapes). It will not save the arrangements.</p>
+                    </div>
+                </div>
+                <div class="feature-progress-container">
+                    <div class="feature-progress-bar" id="feature-progress-bar"></div>
+                </div>
+                <div class="feature-navigation-buttons">
+                    <button id="feature-prev-btn" type="button" aria-label="Previous feature">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <button id="feature-next-btn" type="button" aria-label="Next feature">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -1736,6 +2583,36 @@
         </div>
     </div>
 
+    <!-- Salient Feature Info Dialog -->
+    <div id="salient-info-dialog-overlay">
+        <div id="salient-info-dialog">
+            <div id="salient-info-dialog-header">
+                <div id="salient-info-dialog-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <circle cx="12" cy="8" r="0.5" fill="currentColor"/>
+                    </svg>
+                    Salient Feature Highlighter
+                </div>
+                <button id="salient-info-dialog-close" onclick="hideSalientInfoDialog()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="salient-info-dialog-content">
+                <div class="export-info-section">
+                    <img src="salientfeatures.png" alt="Salient Feature Highlighter Example" class="export-info-image">
+                    <p class="export-info-description">
+                        The Salient Feature Highlighter helps children with CVI identify key features in images by tracing outlines with bright, high-contrast colors. Use the pencil tool to highlight important visual features, helping to direct attention and support visual learning.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content -->
     <div class="relative w-screen h-screen">
         <!-- Canvas Area -->
@@ -1760,14 +2637,14 @@
                 </div>
                 
                 <!-- Professional Header Bar -->
-                <div class="mb-4" style="background: var(--md-surface-variant); border: 1px solid var(--md-outline); border-radius: 6px; padding: 16px;">
-                    <div class="flex items-center justify-between">
-                        <div style="flex: 1;">
-                            <h3 style="color: var(--md-primary); font-size: 13px; font-weight: 600; letter-spacing: 0.5px; margin: 0; text-transform: uppercase;">App Appearance</h3>
-                            <p style="color: var(--md-on-surface-muted); font-size: 11px; margin: 4px 0 0 0; font-weight: 400;">Theme & Display Settings</p>
+                <div class="mb-4 control-card">
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="control-card__copy">
+                            <h3 class="control-card__title">App Appearance</h3>
+                            <p class="control-card__subtitle">Theme & Display Settings</p>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-left: 16px;">
-                            <button id="theme-toggle" class="p-2 rounded transition-colors" aria-label="Toggle theme" style="color: var(--md-on-surface-variant); background: transparent; border: none; cursor: pointer;">
+                        <div class="control-card__actions">
+                            <button id="theme-toggle" class="toolbar-icon-btn" aria-label="Toggle theme">
                                 <svg id="theme-light-icon" class="h-4 w-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                                 </svg>
@@ -1775,7 +2652,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                                 </svg>
                             </button>
-                            <button id="fullscreen-toggle" class="p-2 rounded transition-colors" aria-label="Toggle fullscreen" style="color: var(--md-on-surface-variant); background: transparent; border: none; cursor: pointer;">
+                            <button id="fullscreen-toggle" class="toolbar-icon-btn" aria-label="Toggle fullscreen">
                                 <svg id="fullscreen-enter-icon" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                                 </svg>
@@ -1789,30 +2666,30 @@
 
                 <div id="left-panel-accordion" class="space-y-2">
                 <!-- Mode Toggle -->
-                <div class="p-4 border-b-2" style="border-color: var(--md-outline); background: var(--md-surface-container);">
+                <div class="p-4 mode-card">
                     <!-- Current Mode Display -->
-                    <div class="mb-3">
-                        <p class="text-xs font-semibold uppercase tracking-wide text-center mb-2" style="color: var(--md-on-surface-variant);">You are in</p>
-                        <div id="mode-description" class="text-center px-4 py-3 rounded-lg" style="background: #1976d2; border: 3px solid #1976d2;">
-                            <p id="current-mode-text" class="text-base font-bold" style="color: white;">
+                    <div class="mb-4">
+                        <p class="mode-card__eyebrow text-xs font-semibold uppercase tracking-wide text-center mb-2">Current Mode</p>
+                        <div id="mode-description" class="mode-card__status text-center px-5 py-4 rounded-lg shadow-md">
+                            <p id="current-mode-text" class="text-lg font-bold">
                                 <span class="flex items-center justify-center space-x-2">
-                                    <svg id="current-mode-icon-edit" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <svg id="current-mode-icon-edit" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                     </svg>
-                                    <svg id="current-mode-icon-play" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                    <svg id="current-mode-icon-play" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                     <span id="current-mode-name">EDIT MODE</span>
                                 </span>
                             </p>
-                            <p id="current-mode-description" class="text-xs mt-1" style="color: rgba(255,255,255,0.9);">Create and modify targets</p>
+                            <p id="current-mode-description" class="text-sm mt-2 font-medium">Create and modify targets</p>
                         </div>
                     </div>
 
                     <!-- Switch Mode Button -->
-                    <button id="mode-toggle-btn" class="w-full py-6 px-5 rounded-xl font-bold text-base transition-all shadow-lg hover:shadow-xl" style="background: #4caf50; color: white; border: 2px solid #4caf50;">
-                        <span class="flex flex-col items-center justify-center space-y-1">
+                    <button id="mode-toggle-btn" class="mode-card__cta w-full py-6 px-5 rounded-xl font-bold text-base transition-all shadow-lg hover:shadow-xl">
+                        <span class="flex flex-col items-center justify-center space-y-2">
                             <span class="text-xs opacity-80">Switch to</span>
                             <span class="flex items-center justify-center space-x-2">
                                 <svg id="switch-icon-play" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -1846,6 +2723,14 @@
                         <button id="select-tool" class="tool-button active flex items-center justify-center space-x-2 p-3 rounded-md" title="Select Tool (V)">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path><path d="M13 13l6 6"></path></svg>
                             <span class="font-medium">Select</span>
+                        </button>
+                        <button id="pencil-tool" class="tool-button flex items-center justify-center space-x-2 p-3 rounded-md" title="Salient Feature Highlighter - Trace features with touch or mouse">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path><path d="m15 5 4 4"></path></svg>
+                            <span class="font-medium">Pencil</span>
+                        </button>
+                        <button id="eraser-tool" class="tool-button flex items-center justify-center space-x-2 p-3 rounded-md" title="Eraser - Remove pencil strokes">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"></path><path d="M22 21H7"></path><path d="m5 11 9 9"></path></svg>
+                            <span class="font-medium">Eraser</span>
                         </button>
                         <button id="text-tool" class="tool-button flex items-center justify-center space-x-2 p-3 rounded-md" title="Add Text">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 12a4 4 0 0 0 0-8H6v8"></path><path d="M15 20a4 4 0 0 0 0-8H6v8Z"></path></svg>
@@ -1948,6 +2833,103 @@
                         <div class="space-y-3">
                             <h3 class="text-xs font-semibold uppercase tracking-wide" style="color: var(--md-primary);">Shape Color</h3>
                             <input type="color" id="shape-color-input" class="form-input w-full h-10 cursor-pointer">
+                        </div>
+                    </div>
+
+                    <!-- Pencil Tool Properties -->
+                    <div id="pencil-properties" class="hidden space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xs font-semibold uppercase tracking-wide" style="color: var(--md-primary);">Pencil Color</h3>
+                                <button id="salient-info-btn" class="p-1 rounded hover:bg-gray-700 transition-colors" title="Learn about Salient Feature Highlighter">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--md-primary);">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="12" y1="16" x2="12" y2="12"/>
+                                        <circle cx="12" cy="8" r="0.5" fill="currentColor"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="text-xs" style="color: var(--md-on-surface-muted);">Select a bright color for tracing salient features</p>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button class="pencil-color-btn active" data-color="#FF0000" style="background-color: #FF0000; width: 100%; height: 48px; border-radius: 8px; border: 3px solid transparent;" title="Bright Red"></button>
+                                <button class="pencil-color-btn" data-color="#FFFF00" style="background-color: #FFFF00; width: 100%; height: 48px; border-radius: 8px; border: 3px solid transparent;" title="Bright Yellow"></button>
+                                <button class="pencil-color-btn" data-color="#00FF00" style="background-color: #00FF00; width: 100%; height: 48px; border-radius: 8px; border: 3px solid transparent;" title="Bright Green"></button>
+                                <button class="pencil-color-btn" data-color="#FFA500" style="background-color: #FFA500; width: 100%; height: 48px; border-radius: 8px; border: 3px solid transparent;" title="Bright Orange"></button>
+                                <button class="pencil-color-btn" data-color="#FF00FF" style="background-color: #FF00FF; width: 100%; height: 48px; border-radius: 8px; border: 3px solid transparent;" title="Bright Purple"></button>
+                                <button class="pencil-color-btn" data-color="#00FFFF" style="background-color: #00FFFF; width: 100%; height: 48px; border-radius: 8px; border: 3px solid transparent;" title="Bright Blue"></button>
+                            </div>
+                        </div>
+                        <div class="space-y-3 pt-4 mt-4" style="border-top: 1px solid var(--md-outline-variant);">
+                            <h3 class="text-xs font-semibold uppercase tracking-wide" style="color: var(--md-primary);">Pencil Width</h3>
+                            <div class="flex items-center space-x-3">
+                                <input type="range" id="pencil-width-slider" min="2" max="30" value="8" class="flex-1">
+                                <span id="pencil-width-value" class="text-sm font-medium" style="color: var(--md-on-surface); min-width: 40px;">8px</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 pt-4 mt-4" style="border-top: 1px solid var(--md-outline-variant);">
+                            <h3 class="text-xs font-semibold uppercase tracking-wide" style="color: var(--md-primary);">Opacity</h3>
+                            <div class="flex items-center space-x-3">
+                                <input type="range" id="pencil-opacity-slider" min="10" max="100" value="95" class="flex-1">
+                                <span id="pencil-opacity-value" class="text-sm font-medium" style="color: var(--md-on-surface); min-width: 40px;">95%</span>
+                            </div>
+                        </div>
+                        <div class="space-y-3 pt-4 mt-4" style="border-top: 1px solid var(--md-outline-variant);">
+                            <h3 class="text-xs font-semibold uppercase tracking-wide" style="color: var(--md-primary);">Drawing Aids</h3>
+                            <label class="flex items-center space-x-2 cursor-pointer" title="Reduces hand jitter and shakiness for smoother lines">
+                                <input type="checkbox" id="stroke-stabilization-toggle" class="form-checkbox" checked>
+                                <span class="text-sm">Stroke Stabilization</span>
+                                <svg class="w-4 h-4 ml-1" style="color: var(--md-on-surface-muted);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </label>
+                            <p class="text-xs pl-6" style="color: var(--md-on-surface-muted);">
+                                Smooths out shaky hand movements for cleaner, more precise tracing
+                            </p>
+                        </div>
+                        <div class="pt-4 mt-4" style="border-top: 1px solid var(--md-outline-variant);">
+                            <div class="flex gap-2 mb-2">
+                                <button id="undo-stroke-btn" class="upload-button flex-1 py-2 px-3 text-sm" title="Undo last stroke (Ctrl+Z)">
+                                    <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+                                    </svg>
+                                    Undo
+                                </button>
+                                <button id="redo-stroke-btn" class="upload-button flex-1 py-2 px-3 text-sm" title="Redo stroke (Ctrl+Y)">
+                                    <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2m18-10l-6 6m6-6l-6-6"></path>
+                                    </svg>
+                                    Redo
+                                </button>
+                            </div>
+                            <button id="clear-pencil-btn" class="upload-button w-full py-2 px-3 text-sm" title="Clear all pencil strokes">
+                                <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                Clear All Strokes
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Eraser Tool Properties -->
+                    <div id="eraser-properties" class="hidden space-y-4">
+                        <div class="space-y-3">
+                            <h3 class="text-xs font-semibold uppercase tracking-wide" style="color: var(--md-primary);">Eraser Size</h3>
+                            <p class="text-xs" style="color: var(--md-on-surface-muted);">Adjust eraser width to remove strokes</p>
+                            <div class="flex items-center space-x-3">
+                                <input type="range" id="eraser-width-slider" min="10" max="40" value="20" class="flex-1">
+                                <span id="eraser-width-value" class="text-sm font-medium" style="color: var(--md-on-surface); min-width: 40px;">20px</span>
+                            </div>
+                        </div>
+                        <div class="pt-4 mt-4" style="border-top: 1px solid var(--md-outline-variant);">
+                            <p class="text-xs mb-3" style="color: var(--md-on-surface-muted);">
+                                <strong>Tip:</strong> Right-click while using the Pencil tool to erase quickly
+                            </p>
+                            <button id="clear-all-eraser-btn" class="upload-button w-full py-2 px-3 text-sm" title="Clear all pencil strokes">
+                                <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                Clear All Pencil Strokes
+                            </button>
                         </div>
                     </div>
 
@@ -2257,7 +3239,7 @@
                             <label class="form-label block mb-2">Background Colour</label>
                             <input type="color" id="bg-color-slider" value="#000000" class="form-input w-full h-10 cursor-pointer">
                         </div>
-                        <div>
+                        <div class="bg-color-container">
                             <label class="form-label block mb-2">Quick Background Colours</label>
                             <!-- Row 1: High Contrast & Greys -->
                             <div class="flex justify-between px-2 mb-8 gap-2">
@@ -2266,7 +3248,7 @@
                                 <button class="preset-color-bg" style="background-color: #808080;" data-color="#808080" title="Medium Grey" aria-label="Medium grey background"></button>
                                 <button class="preset-color-bg" style="background-color: #c0c0c0;" data-color="#c0c0c0" title="Light Grey" aria-label="Light grey background"></button>
                             </div>
-                            
+
                             <!-- Row 2: Light Colors & Neutrals -->
                             <div class="flex justify-between px-2 mt-2 gap-2">
                                 <button class="preset-color-bg" style="background-color: #ffffff; border-color: #333;" data-color="#ffffff" title="White" aria-label="White background"></button>
@@ -2709,6 +3691,21 @@
                         </button>
                     </div>
                     <div class="accordion-content section-content p-3" style="max-height:0; overflow:hidden;">
+                        <!-- Hover Effects -->
+                        <div class="p-3 rounded-lg mb-3" style="border: 1px solid var(--md-outline); background: var(--md-surface-variant);">
+                            <h4 class="text-sm font-medium mb-2" style="color: var(--md-on-surface);">Hover Effects</h4>
+                            <div class="text-xs mb-3" style="color: var(--md-on-surface-variant);">
+                                Enable visual feedback when hovering over objects on the canvas.
+                            </div>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="hover-popup-toggle" class="form-checkbox" checked>
+                                <span class="text-sm">Pop-up effect on hover</span>
+                            </label>
+                            <p class="text-xs mt-2 pl-6" style="color: var(--md-on-surface-muted);">
+                                Objects scale up slightly when you hover over them, making them easier to identify and select.
+                            </p>
+                        </div>
+
                         <!-- Cache Management -->
                         <div class="p-3 rounded-lg" style="border: 1px solid var(--md-outline); background: var(--md-surface-variant);">
                             <h4 class="text-sm font-medium mb-2" style="color: var(--md-on-surface);">App Cache Management</h4>
@@ -3074,10 +4071,158 @@
             // --- Splash Screen ---
             const splashScreen = document.getElementById('splash-screen');
             const splashOverlay = document.getElementById('splash-screen-overlay');
-            
+
+            // Feature Showcase Data
+            const features = [
+                {
+                    title: "Important: Canvas Not Saved",
+                    description: "This app is for quick and flexible manipulation of 2D visual targets (images, videos, shapes). It will not save the arrangements.",
+                    image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 24 24' fill='%23f59e0b'%3E%3Cpath d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'/%3E%3Cpath fill='%23000' d='M12 8a1 1 0 0 1 1 1v4a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1zm0 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2z'/%3E%3C/svg%3E"
+                },
+                {
+                    title: "Export Scene to Image",
+                    description: "Create and export complexity scenes for 2D image assessment.",
+                    image: "complexitypicture.png"
+                },
+                {
+                    title: "Salient Feature Highlighter",
+                    description: "Trace key visual features to help children learn to identify important salient visual features of pictures.",
+                    image: "salientfeatures.png"
+                },
+                {
+                    title: "Position Grids",
+                    description: "Create arrays of various numbers of images with the position grid feature and just two clicks.",
+                    image: "grids.png"
+                },
+                {
+                    title: "Auto Load Folders",
+                    description: "Set up folders for one click importing of commonly used visual targets, backgrounds, and foregrounds.",
+                    image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 24 24' fill='none' stroke='%230891b2' stroke-width='1.5'%3E%3Cpath d='M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z'%3E%3C/path%3E%3Cline x1='12' y1='11' x2='12' y2='17'%3E%3C/line%3E%3Cline x1='9' y1='14' x2='15' y2='14'%3E%3C/line%3E%3C/svg%3E"
+                },
+                {
+                    title: "Animations and Paths",
+                    description: "Incoperate movement into visual targets by appling simple, in-place animations, or movement paths.",
+                    image: "path.png"
+                },
+                {
+                    title: "Quick Background Colours",
+                    description: "Easily switch between dark, light, and buff color backgrounds to increase contrast or reduce glare for visual comfort.",
+                    image: "backgrounds.png"
+                },
+                {
+                    title: "Creating Foregrounds",
+                    description: "To create foreground images for this app, create or generate an image with areas that have transparent \"alpha channel\" areas. Visual targets will show through the transparent areas.",
+                    image: "alpha.png"
+                },
+                {
+                    title: "Canvas Backgrounds",
+                    description: "Image backgrounds can be imported that will always be displayed as the lowest layer, below your visual targets.",
+                    image: "cbackground.png"
+                }
+            ];
+
+            // Initialize feature showcase
+            let currentFeatureIndex = 0;
+            let progressInterval = null;
+            const ROTATION_DURATION = 9000; // 9 seconds
+
+            function updateFeatureDisplay() {
+                const feature = features[currentFeatureIndex];
+                const featureImage = document.getElementById('feature-image');
+                const featureTitle = document.getElementById('feature-title');
+                const featureDescription = document.getElementById('feature-description');
+
+                if (featureImage && featureTitle && featureDescription) {
+                    // Fade out
+                    const showcaseContent = document.getElementById('feature-showcase-content');
+                    showcaseContent.style.opacity = '0';
+
+                    setTimeout(() => {
+                        featureImage.src = feature.image;
+                        featureImage.alt = feature.title;
+                        featureTitle.textContent = feature.title;
+                        featureDescription.textContent = feature.description;
+
+                        // Fade in
+                        showcaseContent.style.opacity = '1';
+                    }, 300);
+                }
+
+                // Reset and start progress bar
+                resetProgressBar();
+            }
+
+            function resetProgressBar() {
+                const progressBar = document.getElementById('feature-progress-bar');
+                if (!progressBar) return;
+
+                // Clear any existing progress interval
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
+
+                // Reset to 0
+                progressBar.style.width = '0%';
+
+                // Animate progress bar
+                let progress = 0;
+                const updateInterval = 100; // Update every 100ms
+                const increment = (updateInterval / ROTATION_DURATION) * 100;
+
+                progressInterval = setInterval(() => {
+                    progress += increment;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(progressInterval);
+                    }
+                    progressBar.style.width = progress + '%';
+                }, updateInterval);
+            }
+
+            function nextFeature() {
+                currentFeatureIndex = (currentFeatureIndex + 1) % features.length;
+                updateFeatureDisplay();
+            }
+
+            function prevFeature() {
+                currentFeatureIndex = (currentFeatureIndex - 1 + features.length) % features.length;
+                updateFeatureDisplay();
+            }
+
+            // Set up navigation buttons
+            const featureNextBtn = document.getElementById('feature-next-btn');
+            const featurePrevBtn = document.getElementById('feature-prev-btn');
+
+            if (featureNextBtn) {
+                featureNextBtn.addEventListener('click', nextFeature);
+            }
+
+            if (featurePrevBtn) {
+                featurePrevBtn.addEventListener('click', prevFeature);
+            }
+
+            // Start initial progress bar
+            resetProgressBar();
+
+            // Auto-rotate every 9 seconds
+            let featureRotationInterval = setInterval(nextFeature, ROTATION_DURATION);
+
+            // Stop auto-rotation when splash is closed
+            function clearFeatureRotation() {
+                if (featureRotationInterval) {
+                    clearInterval(featureRotationInterval);
+                    featureRotationInterval = null;
+                }
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                    progressInterval = null;
+                }
+            }
+
             const splashCloseBtn = document.getElementById('splash-close-btn');
             function hideSplash() {
                 if (!splashOverlay) return;
+                clearFeatureRotation();
                 splashScreen.classList.add('fade-out');
                 splashOverlay.classList.add('fade-out');
                 setTimeout(() => {
@@ -3145,6 +4290,47 @@ This software is provided "as is" without warranty of any kind.`);
                     hideExportInfoDialog();
                 }
             });
+
+            // Salient Feature Info Dialog
+            const salientInfoBtn = document.getElementById('salient-info-btn');
+            const salientInfoDialogOverlay = document.getElementById('salient-info-dialog-overlay');
+            const salientInfoDialogClose = document.getElementById('salient-info-dialog-close');
+
+            function showSalientInfoDialog() {
+                salientInfoDialogOverlay.classList.add('show');
+                setTimeout(() => salientInfoDialogClose.focus(), 100);
+            }
+
+            function hideSalientInfoDialog() {
+                salientInfoDialogOverlay.classList.remove('show');
+                setTimeout(() => salientInfoBtn.focus(), 300);
+            }
+
+            salientInfoBtn?.addEventListener('click', showSalientInfoDialog);
+            salientInfoDialogClose.addEventListener('click', hideSalientInfoDialog);
+
+            // Close dialog with Escape key
+            salientInfoDialogOverlay.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    hideSalientInfoDialog();
+                }
+            });
+
+            // Close dialog when clicking outside
+            salientInfoDialogOverlay.addEventListener('click', (e) => {
+                if (e.target === salientInfoDialogOverlay) {
+                    hideSalientInfoDialog();
+                }
+            });
+
+            // Allow Enter/Space on close button
+            salientInfoDialogClose.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    hideSalientInfoDialog();
+                }
+            });
             
             // --- DOM Elements ---
             const canvas = document.getElementById('main-canvas');
@@ -3170,6 +4356,8 @@ This software is provided "as is" without warranty of any kind.`);
             const visualTargetsEmptyState = document.getElementById('visual-targets-empty-state');
             
             const selectTool = document.getElementById('select-tool');
+            const pencilTool = document.getElementById('pencil-tool');
+            const eraserTool = document.getElementById('eraser-tool');
             const textTool = document.getElementById('text-tool');
             const rectTool = document.getElementById('rect-tool');
             const squareTool = document.getElementById('square-tool');
@@ -3199,6 +4387,7 @@ This software is provided "as is" without warranty of any kind.`);
             const propertiesPanel = document.getElementById('properties-panel-content');
             const textProperties = document.getElementById('text-properties');
             const shapeProperties = document.getElementById('shape-properties');
+            const pencilProperties = document.getElementById('pencil-properties');
             const transformProperties = document.getElementById('transform-properties');
             const imageProperties = document.getElementById('image-properties');
             const animationProperties = document.getElementById('animation-properties');
@@ -3207,6 +4396,19 @@ This software is provided "as is" without warranty of any kind.`);
             const textColorInput = document.getElementById('text-color-input');
             const textSizeInput = document.getElementById('text-size-input');
             const textFontSelect = document.getElementById('text-font-select');
+            const pencilColorBtns = document.querySelectorAll('.pencil-color-btn');
+            const pencilWidthSlider = document.getElementById('pencil-width-slider');
+            const pencilWidthValue = document.getElementById('pencil-width-value');
+            const pencilOpacitySlider = document.getElementById('pencil-opacity-slider');
+            const pencilOpacityValue = document.getElementById('pencil-opacity-value');
+            const strokeStabilizationToggle = document.getElementById('stroke-stabilization-toggle');
+            const undoStrokeBtn = document.getElementById('undo-stroke-btn');
+            const redoStrokeBtn = document.getElementById('redo-stroke-btn');
+            const clearPencilBtn = document.getElementById('clear-pencil-btn');
+            const eraserProperties = document.getElementById('eraser-properties');
+            const eraserWidthSlider = document.getElementById('eraser-width-slider');
+            const eraserWidthValue = document.getElementById('eraser-width-value');
+            const clearAllEraserBtn = document.getElementById('clear-all-eraser-btn');
             // Large handles: always enabled (removed toggle)
             // --- Touch / Pointer Capability Flags ---
             const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
@@ -3298,7 +4500,28 @@ This software is provided "as is" without warranty of any kind.`);
             let pathDrawingObject = null; // Object whose path is being drawn
             let selectedPathNode = null; // Currently selected path node {path, nodeIndex}
             let isDraggingPathNode = false; // Whether dragging a path node
-            
+
+            // Pencil Drawing State
+            let pencilStrokes = []; // Array of stroke objects: {points: [{x, y, pressure}], color, width, opacity, smoothedPoints: [...]}
+            let pencilUndoStack = []; // Undo history
+            let currentPencilStroke = null; // Current stroke being drawn
+            let isDrawingPencil = false; // Whether currently drawing with pencil
+            let isErasing = false; // Whether currently erasing
+            let pencilColor = '#FF0000'; // Default bright red
+            let pencilWidth = 8; // Default width
+            let pencilOpacity = 0.95; // Default opacity (0-1)
+            let eraserWidth = 20; // Default eraser width
+            let enableStrokeStabilization = true; // Enable stabilization
+            let stabilizationBuffer = []; // Buffer for stroke stabilization
+            const STABILIZATION_WEIGHT = 0.3; // Smoothing factor (0-1, lower = more smoothing)
+
+            // Hover Effect State
+            let enableHoverPopup = true; // Enable hover pop-up effect
+            let hoveredObject = null; // Currently hovered object
+            let hoverScale = 1.0; // Current hover scale animation value
+            const HOVER_SCALE_TARGET = 1.15; // Target scale when hovered (15% larger - more noticeable)
+            const HOVER_ANIMATION_SPEED = 0.25; // Animation interpolation speed (faster)
+
             // Grid State
             let currentGrid = null; // null, 2, 4, 6, 9, or 12
             let gridFrames = [];
@@ -3619,6 +4842,155 @@ This software is provided "as is" without warranty of any kind.`);
             updateLayerList();
             updateEmptyStates();
 
+            // --- Pencil Stroke Enhancement Functions ---
+
+            // Simplify stroke by removing redundant points (Douglas-Peucker algorithm)
+            function simplifyStroke(points, tolerance = 2.0) {
+                if (points.length < 3) return points;
+
+                function perpendicularDistance(point, lineStart, lineEnd) {
+                    const dx = lineEnd.x - lineStart.x;
+                    const dy = lineEnd.y - lineStart.y;
+                    const norm = Math.sqrt(dx * dx + dy * dy);
+                    if (norm === 0) return Math.sqrt((point.x - lineStart.x) ** 2 + (point.y - lineStart.y) ** 2);
+                    return Math.abs(dy * point.x - dx * point.y + lineEnd.x * lineStart.y - lineEnd.y * lineStart.x) / norm;
+                }
+
+                function douglasPeucker(points, start, end, tolerance, result) {
+                    let maxDist = 0;
+                    let maxIndex = 0;
+
+                    for (let i = start + 1; i < end; i++) {
+                        const dist = perpendicularDistance(points[i], points[start], points[end]);
+                        if (dist > maxDist) {
+                            maxDist = dist;
+                            maxIndex = i;
+                        }
+                    }
+
+                    if (maxDist > tolerance) {
+                        douglasPeucker(points, start, maxIndex, tolerance, result);
+                        result.push(points[maxIndex]);
+                        douglasPeucker(points, maxIndex, end, tolerance, result);
+                    }
+                }
+
+                const result = [points[0]];
+                douglasPeucker(points, 0, points.length - 1, tolerance, result);
+                result.push(points[points.length - 1]);
+                return result;
+            }
+
+            // Apply stabilization to current point using weighted average
+            function stabilizePoint(newPoint) {
+                if (!enableStrokeStabilization) return newPoint;
+
+                stabilizationBuffer.push(newPoint);
+                if (stabilizationBuffer.length > 5) {
+                    stabilizationBuffer.shift();
+                }
+
+                // Weighted average with exponential decay
+                let totalWeight = 0;
+                let avgX = 0;
+                let avgY = 0;
+
+                for (let i = 0; i < stabilizationBuffer.length; i++) {
+                    const weight = Math.pow(STABILIZATION_WEIGHT, stabilizationBuffer.length - 1 - i);
+                    avgX += stabilizationBuffer[i].x * weight;
+                    avgY += stabilizationBuffer[i].y * weight;
+                    totalWeight += weight;
+                }
+
+                return {
+                    x: avgX / totalWeight,
+                    y: avgY / totalWeight,
+                    pressure: newPoint.pressure
+                };
+            }
+
+            // Smooth line using Catmull-Rom spline with pressure preservation
+            function smoothStroke(points) {
+                if (points.length < 3) return points;
+
+                // First simplify to remove redundant points
+                const simplified = simplifyStroke(points, 1.5);
+
+                const smoothed = [];
+                const numSegments = 6; // Points per segment
+
+                // Add first point
+                smoothed.push(simplified[0]);
+
+                // Interpolate between points using Catmull-Rom
+                for (let i = 0; i < simplified.length - 1; i++) {
+                    const p0 = simplified[Math.max(0, i - 1)];
+                    const p1 = simplified[i];
+                    const p2 = simplified[i + 1];
+                    const p3 = simplified[Math.min(simplified.length - 1, i + 2)];
+
+                    for (let t = 0; t < numSegments; t++) {
+                        const s = t / numSegments;
+                        const s2 = s * s;
+                        const s3 = s2 * s;
+
+                        // Catmull-Rom basis functions
+                        const x = 0.5 * (
+                            (2 * p1.x) +
+                            (-p0.x + p2.x) * s +
+                            (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * s2 +
+                            (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * s3
+                        );
+
+                        const y = 0.5 * (
+                            (2 * p1.y) +
+                            (-p0.y + p2.y) * s +
+                            (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * s2 +
+                            (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * s3
+                        );
+
+                        // Interpolate pressure
+                        const pressure = p1.pressure !== undefined && p2.pressure !== undefined
+                            ? p1.pressure * (1 - s) + p2.pressure * s
+                            : 0.5;
+
+                        smoothed.push({ x, y, pressure });
+                    }
+                }
+
+                // Add last point
+                smoothed.push(simplified[simplified.length - 1]);
+
+                return smoothed;
+            }
+
+            // Check if point is within eraser radius of any stroke segment
+            function eraseStrokesAtPoint(x, y, radius) {
+                let erasedAny = false;
+
+                // Filter out strokes that intersect with eraser circle
+                pencilStrokes = pencilStrokes.filter(stroke => {
+                    const points = stroke.smoothedPoints || stroke.points;
+
+                    for (let i = 0; i < points.length; i++) {
+                        const p = points[i];
+                        const dx = p.x - x;
+                        const dy = p.y - y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+
+                        // Check if point is within eraser radius (add stroke width for better feel)
+                        if (dist < radius + stroke.width / 2) {
+                            erasedAny = true;
+                            return false; // Remove this stroke
+                        }
+                    }
+
+                    return true; // Keep this stroke
+                });
+
+                return erasedAny;
+            }
+
             // --- Drawing Engine ---
             function draw() {
                 const dpr = window.devicePixelRatio || 1;
@@ -3645,9 +5017,43 @@ This software is provided "as is" without warranty of any kind.`);
                 // Draw grid overlay (below objects, above background)
                 drawGridOverlay();
 
+                // Animate hover scale
+                if (hoveredObject && enableHoverPopup) {
+                    hoverScale += (HOVER_SCALE_TARGET - hoverScale) * HOVER_ANIMATION_SPEED;
+                    if (Math.abs(HOVER_SCALE_TARGET - hoverScale) > 0.001) {
+                        ensureRenderLoop(); // Continue animation
+                    }
+                } else if (hoverScale > 1.0) {
+                    hoverScale += (1.0 - hoverScale) * HOVER_ANIMATION_SPEED;
+                    if (Math.abs(1.0 - hoverScale) > 0.001) {
+                        ensureRenderLoop(); // Continue animation
+                    } else {
+                        hoverScale = 1.0; // Snap to final value
+                    }
+                }
+
                 objects.sort((a, b) => a.zIndex - b.zIndex).forEach(obj => {
                     if (obj.visible) {
-                       obj.draw(ctx);
+                        // Apply hover scale effect
+                        if (obj === hoveredObject && enableHoverPopup && hoverScale > 1.0) {
+                            ctx.save();
+
+                            // Add shadow for pop-up effect
+                            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                            ctx.shadowBlur = 15 * (hoverScale - 1.0) / 0.15; // Scale shadow with hover
+                            ctx.shadowOffsetX = 0;
+                            ctx.shadowOffsetY = 5 * (hoverScale - 1.0) / 0.15;
+
+                            const centerX = obj.x + obj.width / 2;
+                            const centerY = obj.y + obj.height / 2;
+                            ctx.translate(centerX, centerY);
+                            ctx.scale(hoverScale, hoverScale);
+                            ctx.translate(-centerX, -centerY);
+                            obj.draw(ctx);
+                            ctx.restore();
+                        } else {
+                            obj.draw(ctx);
+                        }
                     }
                 });
 
@@ -3656,6 +5062,149 @@ This software is provided "as is" without warranty of any kind.`);
                     const isActive = isDrawingPath;
                     const selectedNodeIdx = selectedPathNode && selectedPathNode.path === selectedObject.animationPath ? selectedPathNode.nodeIndex : -1;
                     selectedObject.animationPath.draw(ctx, isActive, selectedNodeIdx);
+                }
+
+                // Draw pencil strokes with realistic marker/pen appearance (on top of objects, below foreground)
+                pencilStrokes.forEach(stroke => {
+                    const pointsToDraw = stroke.smoothedPoints || stroke.points;
+                    if (pointsToDraw.length < 2) return;
+
+                    ctx.save();
+                    const baseOpacity = stroke.opacity !== undefined ? stroke.opacity : 0.95;
+
+                    ctx.strokeStyle = stroke.color;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+
+                    // Layer 1: Subtle base layer for slight edge softness (very subtle)
+                    ctx.shadowColor = stroke.color;
+                    ctx.shadowBlur = stroke.width * 0.25;
+                    ctx.lineWidth = stroke.width * 1.05;
+                    ctx.globalAlpha = baseOpacity * 0.15;
+
+                    ctx.beginPath();
+                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                    for (let i = 1; i < pointsToDraw.length; i++) {
+                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                    }
+                    ctx.stroke();
+
+                    // Layer 2: Main solid stroke body
+                    ctx.shadowBlur = stroke.width * 0.08; // Minimal blur for crisp edges
+                    ctx.lineWidth = stroke.width;
+                    ctx.globalAlpha = baseOpacity * 0.88;
+
+                    ctx.beginPath();
+                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                    for (let i = 1; i < pointsToDraw.length; i++) {
+                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                    }
+                    ctx.stroke();
+
+                    // Layer 3: Inner texture passes for depth (multiple thin lines)
+                    ctx.shadowBlur = 0;
+                    ctx.globalAlpha = baseOpacity * 0.25;
+
+                    // First texture pass (slightly offset)
+                    ctx.lineWidth = stroke.width * 0.45;
+                    ctx.beginPath();
+                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                    for (let i = 1; i < pointsToDraw.length; i++) {
+                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                    }
+                    ctx.stroke();
+
+                    // Second texture pass (center highlight)
+                    ctx.lineWidth = stroke.width * 0.25;
+                    ctx.globalAlpha = baseOpacity * 0.35;
+                    ctx.globalCompositeOperation = 'overlay'; // Natural blending
+
+                    ctx.beginPath();
+                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                    for (let i = 1; i < pointsToDraw.length; i++) {
+                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                    }
+                    ctx.stroke();
+
+                    ctx.restore();
+                });
+
+                // Draw current stroke being drawn with realistic marker/pen effect (live preview)
+                if (isDrawingPencil && currentPencilStroke && currentPencilStroke.points.length > 1) {
+                    const pointsToDraw = currentPencilStroke.points;
+
+                    ctx.save();
+                    const baseOpacity = currentPencilStroke.opacity !== undefined ? currentPencilStroke.opacity : 0.95;
+
+                    ctx.strokeStyle = currentPencilStroke.color;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+
+                    // Subtle base layer
+                    ctx.shadowColor = currentPencilStroke.color;
+                    ctx.shadowBlur = currentPencilStroke.width * 0.25;
+                    ctx.lineWidth = currentPencilStroke.width * 1.05;
+                    ctx.globalAlpha = baseOpacity * 0.15;
+
+                    ctx.beginPath();
+                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                    for (let i = 1; i < pointsToDraw.length; i++) {
+                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                    }
+                    ctx.stroke();
+
+                    // Main solid body
+                    ctx.shadowBlur = currentPencilStroke.width * 0.08;
+                    ctx.lineWidth = currentPencilStroke.width;
+                    ctx.globalAlpha = baseOpacity * 0.88;
+
+                    ctx.beginPath();
+                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                    for (let i = 1; i < pointsToDraw.length; i++) {
+                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                    }
+                    ctx.stroke();
+
+                    // Inner texture
+                    ctx.shadowBlur = 0;
+                    ctx.globalAlpha = baseOpacity * 0.25;
+                    ctx.lineWidth = currentPencilStroke.width * 0.45;
+
+                    ctx.beginPath();
+                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                    for (let i = 1; i < pointsToDraw.length; i++) {
+                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                    }
+                    ctx.stroke();
+
+                    // Center highlight
+                    ctx.lineWidth = currentPencilStroke.width * 0.25;
+                    ctx.globalAlpha = baseOpacity * 0.35;
+                    ctx.globalCompositeOperation = 'overlay';
+
+                    ctx.beginPath();
+                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                    for (let i = 1; i < pointsToDraw.length; i++) {
+                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                    }
+                    ctx.stroke();
+
+                    ctx.restore();
+                }
+
+                // Draw eraser preview circle
+                if (isErasing && currentPencilStroke) {
+                    const lastPoint = currentPencilStroke.points[currentPencilStroke.points.length - 1];
+                    if (lastPoint) {
+                        ctx.save();
+                        ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
+                        ctx.lineWidth = 2;
+                        ctx.setLineDash([4, 4]);
+                        ctx.beginPath();
+                        ctx.arc(lastPoint.x, lastPoint.y, eraserWidth, 0, Math.PI * 2);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
                 }
 
                 if (foregroundImage) {
@@ -3681,7 +5230,8 @@ This software is provided "as is" without warranty of any kind.`);
                     const dragging = isDragging || isResizing;
                     const animating = objects.some(o => o.isAnimating);
                     const snapping = isSnapping;
-                    if (hasVideo || dragging || animating || snapping) {
+                    const hoverAnimating = enableHoverPopup && (hoveredObject !== null || Math.abs(hoverScale - 1.0) > 0.001);
+                    if (hasVideo || dragging || animating || snapping || hoverAnimating) {
                         draw();
                         requestAnimationFrame(loop);
                     } else {
@@ -4596,6 +6146,8 @@ This software is provided "as is" without warranty of any kind.`);
                 noSelectionProperties.style.display = 'none';
                 textProperties.style.display = 'none';
                 shapeProperties.style.display = 'none';
+                pencilProperties.style.display = 'none';
+                eraserProperties.style.display = 'none';
                 transformProperties.style.display = 'none';
                 imageProperties.style.display = 'none';
                 speechProperties.style.display = 'none';
@@ -4603,6 +6155,20 @@ This software is provided "as is" without warranty of any kind.`);
                 const noSelectionMsg = document.getElementById('no-selection-message');
                 // Always start hidden
                 animationProperties.style.display = 'none';
+
+                // Show pencil properties when pencil tool is active
+                if (currentTool === 'pencil') {
+                    pencilProperties.style.display = 'block';
+                    noSelectionProperties.style.display = 'none';
+                    return; // Don't show other properties when using pencil
+                }
+
+                // Show eraser properties when eraser tool is active
+                if (currentTool === 'eraser') {
+                    eraserProperties.style.display = 'block';
+                    noSelectionProperties.style.display = 'none';
+                    return; // Don't show other properties when using eraser
+                }
 
                 if (selectedObject) {
                     // Show transform properties for all objects
@@ -6850,7 +8416,27 @@ This software is provided "as is" without warranty of any kind.`);
             });
 
             // --- Tool Selection & Mouse Events ---
-            function setActiveTool(tool) { currentTool = tool; document.querySelectorAll('.tool-button').forEach(b => b.classList.remove('active')); const activeBtn = document.getElementById(`${tool}-tool`); if(activeBtn) activeBtn.classList.add('active'); }
+            function setActiveTool(tool) {
+                currentTool = tool;
+                document.querySelectorAll('.tool-button').forEach(b => b.classList.remove('active'));
+                const activeBtn = document.getElementById(`${tool}-tool`);
+                if(activeBtn) activeBtn.classList.add('active');
+
+                // When switching to pencil mode, deselect any object
+                // This ensures clean separation between drawing and object manipulation
+                if (tool === 'pencil') {
+                    setSelectedObject(null);
+                    canvas.style.cursor = 'crosshair';
+                } else if (tool === 'eraser') {
+                    setSelectedObject(null);
+                    canvas.style.cursor = 'not-allowed'; // Shows eraser is active
+                } else if (tool === 'select') {
+                    canvas.style.cursor = 'default';
+                }
+
+                updatePropertiesPanel(); // Update properties panel to show tool-specific options
+                draw(); // Redraw to hide/show selection handles
+            }
 
             // --- Animation Helper Mapping ---
             const friendlyToInternal = {
@@ -7118,6 +8704,8 @@ This software is provided "as is" without warranty of any kind.`);
             }
 
             selectTool.addEventListener('click', () => setActiveTool('select'));
+            pencilTool.addEventListener('click', () => setActiveTool('pencil'));
+            eraserTool.addEventListener('click', () => setActiveTool('eraser'));
             textTool.addEventListener('click', () => addCanvasObject('text'));
             rectTool.addEventListener('click', () => addCanvasObject('rect'));
             squareTool.addEventListener('click', () => addCanvasObject('square'));
@@ -7125,6 +8713,91 @@ This software is provided "as is" without warranty of any kind.`);
             triangleTool.addEventListener('click', () => addCanvasObject('triangle'));
             starTool.addEventListener('click', () => addCanvasObject('star'));
             octagonTool.addEventListener('click', () => addCanvasObject('octagon'));
+
+            // Pencil tool color selection
+            pencilColorBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    pencilColorBtns.forEach(b => {
+                        b.style.border = '3px solid transparent';
+                        b.classList.remove('active');
+                    });
+                    btn.style.border = '3px solid white';
+                    btn.classList.add('active');
+                    pencilColor = btn.getAttribute('data-color');
+                });
+            });
+
+            // Pencil width slider
+            pencilWidthSlider?.addEventListener('input', (e) => {
+                pencilWidth = parseInt(e.target.value);
+                if (pencilWidthValue) {
+                    pencilWidthValue.textContent = pencilWidth + 'px';
+                }
+            });
+
+            // Pencil opacity slider
+            pencilOpacitySlider?.addEventListener('input', (e) => {
+                pencilOpacity = parseInt(e.target.value) / 100;
+                if (pencilOpacityValue) {
+                    pencilOpacityValue.textContent = e.target.value + '%';
+                }
+            });
+
+            // Stroke stabilization toggle
+            strokeStabilizationToggle?.addEventListener('change', (e) => {
+                enableStrokeStabilization = e.target.checked;
+                if (!e.target.checked) {
+                    stabilizationBuffer = [];
+                }
+            });
+
+            // Hover popup toggle
+            const hoverPopupToggle = document.getElementById('hover-popup-toggle');
+            hoverPopupToggle?.addEventListener('change', (e) => {
+                enableHoverPopup = e.target.checked;
+                if (!e.target.checked) {
+                    hoveredObject = null;
+                    hoverScale = 1.0;
+                }
+                draw();
+            });
+
+            // Undo stroke
+            undoStrokeBtn?.addEventListener('click', () => {
+                if (pencilStrokes.length > 0) {
+                    pencilUndoStack.push(pencilStrokes.pop());
+                    draw();
+                }
+            });
+
+            // Redo stroke
+            redoStrokeBtn?.addEventListener('click', () => {
+                if (pencilUndoStack.length > 0) {
+                    pencilStrokes.push(pencilUndoStack.pop());
+                    draw();
+                }
+            });
+
+            // Clear all pencil strokes
+            clearPencilBtn?.addEventListener('click', () => {
+                pencilUndoStack = []; // Clear undo history
+                pencilStrokes = [];
+                draw();
+            });
+
+            // Eraser width slider
+            eraserWidthSlider?.addEventListener('input', (e) => {
+                eraserWidth = parseInt(e.target.value);
+                if (eraserWidthValue) {
+                    eraserWidthValue.textContent = eraserWidth + 'px';
+                }
+            });
+
+            // Clear all pencil strokes from eraser panel
+            clearAllEraserBtn?.addEventListener('click', () => {
+                pencilStrokes = [];
+                draw();
+            });
 
             // Path animation button handlers
             clearPathBtn?.addEventListener('click', () => {
@@ -7185,6 +8858,53 @@ This software is provided "as is" without warranty of any kind.`);
                 }
 
                 // --- EDIT MODE ONLY below this point ---
+
+                // Pencil tool drawing mode
+                if (currentTool === 'pencil') {
+                    // Get pressure (defaults to 0.5 if not available)
+                    const pressure = e.pressure !== undefined && e.pressure > 0 ? e.pressure : 0.5;
+
+                    // Right-click to erase
+                    if (e.button === 2) {
+                        e.preventDefault();
+                        isErasing = true;
+                        stabilizationBuffer = []; // Clear buffer
+                        currentPencilStroke = {
+                            points: [{ x, y, pressure }],
+                            color: pencilColor,
+                            width: pencilWidth
+                        };
+                        eraseStrokesAtPoint(x, y, eraserWidth);
+                        draw();
+                        return;
+                    }
+
+                    // Left-click to draw
+                    isDrawingPencil = true;
+                    stabilizationBuffer = []; // Clear stabilization buffer
+                    const stabilizedPoint = stabilizePoint({ x, y, pressure });
+                    currentPencilStroke = {
+                        points: [stabilizedPoint],
+                        color: pencilColor,
+                        width: pencilWidth,
+                        opacity: pencilOpacity
+                    };
+                    return;
+                }
+
+                // Eraser tool mode
+                if (currentTool === 'eraser') {
+                    isErasing = true;
+                    currentPencilStroke = {
+                        points: [{ x, y }],
+                        color: pencilColor,
+                        width: pencilWidth
+                    };
+                    eraseStrokesAtPoint(x, y, eraserWidth);
+                    draw();
+                    return;
+                }
+
                 // Long press detection for context menu (only primary & touch/pen)
                 if (e.isPrimary) {
                     longPressStart = { x: e.clientX, y: e.clientY };
@@ -7281,10 +9001,71 @@ This software is provided "as is" without warranty of any kind.`);
                 if (interactionMode === 'play') {
                     const obj = getObjectAt(x, y);
                     canvas.style.cursor = obj ? 'pointer' : 'default';
+
+                    // Hover popup effect in play mode
+                    if (enableHoverPopup && obj && obj !== hoveredObject) {
+                        console.log('[HOVER DEBUG] Play mode - Object detected:', obj.type, 'enableHoverPopup:', enableHoverPopup);
+                        hoveredObject = obj;
+                        hoverScale = 1.0; // Reset scale when new object is hovered
+                        ensureRenderLoop(); // Start animation
+                    } else if (!obj && hoveredObject) {
+                        console.log('[HOVER DEBUG] Play mode - Object left');
+                        hoveredObject = null;
+                        ensureRenderLoop(); // Animate back
+                    }
                     return;
                 }
 
                 // --- EDIT MODE ONLY below this point ---
+
+                // Hover popup effect in edit mode (only when not in pencil/eraser mode)
+                if (enableHoverPopup && currentTool !== 'pencil' && currentTool !== 'eraser' && !isResizing) {
+                    const obj = getObjectAt(x, y);
+                    if (obj !== hoveredObject) {
+                        console.log('[HOVER DEBUG] Edit mode - Object change:', obj?.type, 'currentTool:', currentTool, 'enableHoverPopup:', enableHoverPopup);
+                        hoveredObject = obj;
+                        if (obj) {
+                            hoverScale = 1.0; // Reset scale when new object is hovered
+                        }
+                        ensureRenderLoop(); // Start animation
+                    }
+                } else if (hoveredObject && (currentTool === 'pencil' || currentTool === 'eraser' || isResizing)) {
+                    console.log('[HOVER DEBUG] Edit mode - Clearing hover (pencil/eraser/resize)');
+                    hoveredObject = null;
+                    ensureRenderLoop();
+                }
+
+                // Pencil tool - set cursor and handle drawing
+                if (currentTool === 'pencil') {
+                    canvas.style.cursor = 'crosshair';
+
+                    // Get pressure
+                    const pressure = e.pressure !== undefined && e.pressure > 0 ? e.pressure : 0.5;
+
+                    if (isDrawingPencil && currentPencilStroke) {
+                        // Apply stabilization
+                        const stabilizedPoint = stabilizePoint({ x, y, pressure });
+                        currentPencilStroke.points.push(stabilizedPoint);
+                        draw();
+                    } else if (isErasing && currentPencilStroke) {
+                        // Right-click erasing in pencil mode
+                        currentPencilStroke.points.push({ x, y, pressure });
+                        eraseStrokesAtPoint(x, y, eraserWidth);
+                        draw();
+                    }
+                    return; // Block all other interactions in pencil mode
+                }
+
+                // Eraser tool - set cursor and handle erasing
+                if (currentTool === 'eraser') {
+                    canvas.style.cursor = 'not-allowed';
+                    if (isErasing && currentPencilStroke) {
+                        currentPencilStroke.points.push({ x, y });
+                        eraseStrokesAtPoint(x, y, eraserWidth);
+                        draw();
+                    }
+                    return; // Block all other interactions in eraser mode
+                }
 
                 // Path node dragging
                 if (isDraggingPathNode && selectedPathNode) {
@@ -7344,6 +9125,28 @@ This software is provided "as is" without warranty of any kind.`);
             function cancelLongPress() { clearTimeout(longPressTimer); longPressTimer = null; }
             canvas.addEventListener('pointerup', (e) => {
                 cancelLongPress();
+
+                // End pencil drawing
+                if (isDrawingPencil && currentPencilStroke) {
+                    // Add the completed stroke to the strokes array with smoothing
+                    if (currentPencilStroke.points.length > 1) {
+                        // Apply smoothing for professional-looking strokes
+                        currentPencilStroke.smoothedPoints = smoothStroke(currentPencilStroke.points);
+                        pencilStrokes.push(currentPencilStroke);
+                        pencilUndoStack = []; // Clear redo stack when new stroke is added
+                    }
+                    currentPencilStroke = null;
+                    isDrawingPencil = false;
+                    stabilizationBuffer = []; // Clear stabilization buffer
+                    draw();
+                }
+
+                // End erasing
+                if (isErasing) {
+                    currentPencilStroke = null;
+                    isErasing = false;
+                    draw();
+                }
 
                 // End path node dragging
                 if (isDraggingPathNode) {
@@ -7713,7 +9516,7 @@ This software is provided "as is" without warranty of any kind.`);
                     selectedPathNode = null;
                     isDraggingPathNode = false;
 
-                    // Change cursor to default
+                    // Change cursor to default (will be overridden by tool if needed)
                     canvas.style.cursor = 'default';
                 } else {
                     // Currently in Edit Mode
@@ -8179,6 +9982,53 @@ This software is provided "as is" without warranty of any kind.`);
             });
             
             // --- Keyboard Events ---
+            // Pencil tool keyboard shortcuts
+            window.addEventListener('keydown', (e) => {
+                // Ignore if input is focused
+                if (document.activeElement.tagName === 'INPUT' ||
+                    document.activeElement.tagName === 'TEXTAREA' ||
+                    document.activeElement.tagName === 'SELECT') {
+                    return;
+                }
+
+                // Only in edit mode
+                if (interactionMode !== 'edit') return;
+
+                // P - Pencil tool
+                if (e.key.toLowerCase() === 'p') {
+                    e.preventDefault();
+                    setActiveTool('pencil');
+                    return;
+                }
+
+                // E - Eraser tool
+                if (e.key.toLowerCase() === 'e') {
+                    e.preventDefault();
+                    setActiveTool('eraser');
+                    return;
+                }
+
+                // Ctrl+Z - Undo
+                if (e.ctrlKey && e.key.toLowerCase() === 'z') {
+                    e.preventDefault();
+                    if (pencilStrokes.length > 0) {
+                        pencilUndoStack.push(pencilStrokes.pop());
+                        draw();
+                    }
+                    return;
+                }
+
+                // Ctrl+Y or Ctrl+Shift+Z - Redo
+                if (e.ctrlKey && (e.key.toLowerCase() === 'y' || (e.shiftKey && e.key.toLowerCase() === 'z'))) {
+                    e.preventDefault();
+                    if (pencilUndoStack.length > 0) {
+                        pencilStrokes.push(pencilUndoStack.pop());
+                        draw();
+                    }
+                    return;
+                }
+            });
+
             window.addEventListener('keydown', (e) => {
                 if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
 
