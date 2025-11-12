@@ -1,0 +1,23 @@
+App Overview:
+A clinical assessment tool designed for eye care professionals working with children who have Cortical Visual Impairment (CVI). The app provides an interactive visual canvas with customizable targets to assess and track children's visual responses and behaviors.
+Core Purpose:
+
+Present engaging visual stimuli to motivate children during CVI assessments
+Enable clinicians to observe how children visually track, fixate on, and respond to different targets
+Provide an efficient management system for displaying and manipulating visual elements
+
+Key Features:
+
+Customizable Visual Targets: Load and layer foreground/background images with familiar, interesting pictures (or videos) to maintain child engagement. Backgrounds stay on the bottom layer of the app, and foregrounds stay on the top layer, but they will have an alpha transparency cut out in the image so the visual targets behind them are visible. Foregrounds and backgrounds are full screen, maintain their aspect ratio and there are never any black bars on the edges, they fill the screen.
+
+Flexible Display Options: Choose between complex multi-layered scenes or simple presentations with just a few images, depending on assessment needs
+
+Interactive Controls: Move, resize, and animate visual elements in real-time during sessions
+Clean Interface Design: All management tools are housed in collapsible drawers that can be hidden to minimize visual distractions for the child
+
+Assessment Focus: Serves as a visual stimulus platform while clinicians conduct their own external tracking and documentation
+
+Primary Users: Clinicians and parents working with young children with CVI.
+Workflow: The app functions as a dynamic visual presentation tool rather than a data collection system, allowing clinicians to focus on observing and documenting children's visual responses to various stimuli in a controlled, engaging environment.
+
+No adaptations for CVI are reqired in the app, because only the clinition uses the menus, and they will make any visual adaptations needed for the child on the dark canvas and images they import.

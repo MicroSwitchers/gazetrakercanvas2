@@ -1,0 +1,128 @@
+/* ============================================
+   FORM COMPONENTS
+   ============================================ */
+
+/* Form Inputs */
+.form-input {
+    border: 1px solid var(--md-outline);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    box-shadow: none;
+    position: relative;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.form-input::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* Form Labels */
+.form-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ============================================
+   SELECT DROPDOWN STYLING
+   ============================================ */
+
+/* Enhanced Select Dropdown */
+select.form-input {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    cursor: pointer !important;
+    border: 1px solid var(--md-outline) !important;
+    border-radius: 8px !important;
+    padding: 12px 40px 12px 16px !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    transition: border-color 0.15s ease !important;
+    position: relative !important;
+
+    /* Remove all native appearances */
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+
+    /* Custom arrow */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 12px center !important;
+    background-repeat: no-repeat !important;
+    background-size: 16px 12px !important;
+}
+
+/* Specific fix for animation select */
+#animation-select {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    cursor: pointer !important;
+    border: 1px solid var(--md-outline) !important;
+    border-radius: 8px !important;
+    padding: 12px 40px 12px 16px !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    transition: border-color 0.15s ease !important;
+    position: relative !important;
+
+    /* Remove all native appearances */
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+
+    /* Single custom arrow only */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 12px center !important;
+    background-repeat: no-repeat !important;
+    background-size: 16px 12px !important;
+}
+
+/* Remove any pseudo-elements that might be adding arrows */
+#animation-select::before,
+#animation-select::after {
+    display: none !important;
+    content: none !important;
+}
+
+.dark select.form-input {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e") !important;
+}
+
+/* Completely remove all native dropdown arrows */
+select.form-input::-ms-expand {
+    display: none !important;
+}
+
+select.form-input::-webkit-inner-spin-button,
+select.form-input::-webkit-outer-spin-button {
+    display: none !important;
+    -webkit-appearance: none !important;
+}
+
+/* Firefox specific fixes */
+@-moz-document url-prefix() {
+    select.form-input {
+        text-indent: 0.01px !important;
+        text-overflow: '' !important;
+    }
+}
+
+select.form-input option {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    padding: 8px 12px !important;
+    border: none !important;
+}

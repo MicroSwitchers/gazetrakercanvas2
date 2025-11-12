@@ -1,0 +1,33 @@
+/* ============================================
+   GRID COMPONENTS
+   ============================================ */
+
+/* Grid Overlay Visuals */
+.grid-legend {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    color: #a3e635;
+    font-size: 11px;
+    background: rgba(2,6,23,.6);
+    padding: 4px 8px;
+    border: 1px solid rgba(163,230,53,.35);
+    border-radius: 8px;
+    backdrop-filter: blur(6px);
+}
+
+/* Grid Pulse Animation */
+@keyframes gridPulse {
+    0% {
+        transform: scale(0.9);
+        opacity: .7;
+    }
+    70% {
+        transform: scale(1.15);
+        opacity: .2;
+    }
+    100% {
+        transform: scale(1.25);
+        opacity: 0;
+    }
+}

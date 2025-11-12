@@ -1,0 +1,97 @@
+/* ============================================
+   CSS CUSTOM PROPERTIES - THEME VARIABLES
+   ============================================ */
+
+/* Light Theme (default) */
+:root {
+    /* Material Design 3 tokens (light) */
+    --md-primary: #3b82f6;
+    --md-on-primary: #ffffff;
+    --md-primary-container: #dbeafe;
+    --md-on-primary-container: #0b3a82;
+    --md-surface: #ffffff;
+    --md-surface-variant: #f2f4f7;
+    --md-on-surface: #1f2937;
+    --md-on-surface-variant: #475569;
+    --md-outline: #d0d5dd;
+    --md-outline-variant: #e5e7eb;
+    --md-error: #ef4444;
+    --md-on-error: #ffffff;
+
+    /* Elevations */
+    --md-elev-0: none;
+    --md-elev-1: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.10);
+    --md-elev-2: 0 2px 4px rgba(16, 24, 40, 0.08), 0 4px 8px rgba(16, 24, 40, 0.08);
+    --md-elev-3: 0 8px 12px rgba(16, 24, 40, 0.10), 0 2px 6px rgba(16, 24, 40, 0.08);
+
+    /* Back-compat variables mapped to MD tokens */
+    --primary-color: var(--md-primary);
+    --primary-hover: #2563eb;
+    --text-primary: var(--md-on-surface);
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --border-color: var(--md-outline);
+    --bg-primary: var(--md-surface);
+    --bg-secondary: var(--md-surface-variant);
+    --bg-tertiary: #eef2f6;
+    --glass-bg: var(--md-surface);
+    --glass-border: var(--md-outline-variant);
+    --shadow-sm: var(--md-elev-1);
+    --shadow-md: var(--md-elev-1);
+    --shadow-lg: var(--md-elev-2);
+    --shadow-xl: var(--md-elev-3);
+    --shadow-2xl: var(--md-elev-3);
+    --shadow-glow: none;
+    --shadow-inner: inset 0 1px 2px rgba(16,24,40,0.04);
+
+    /* Scrollbar (light) */
+    --scrollbar-track: var(--bg-secondary);
+    --scrollbar-thumb: #cbd5e1; /* slate-300 */
+    --scrollbar-thumb-hover: var(--primary-color);
+}
+
+/* Dark Theme */
+.dark {
+    /* Material Design 3 tokens (dark) */
+    --md-primary: #5fa8ff;
+    --md-on-primary: #0b1220;
+    --md-primary-container: #0b1220;
+    --md-on-primary-container: #cfe3ff;
+    --md-surface: #0d141c;
+    --md-surface-variant: #151c26;
+    --md-on-surface: #e6edf3;
+    --md-on-surface-variant: #b5c2cf;
+    --md-outline: #253242;
+    --md-outline-variant: #1b2633;
+    --md-error: #ffb4ab;
+    --md-on-error: #690005;
+    --md-elev-0: none;
+    --md-elev-1: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.30);
+    --md-elev-2: 0 2px 4px rgba(0, 0, 0, 0.45), 0 4px 8px rgba(0, 0, 0, 0.35);
+    --md-elev-3: 0 8px 12px rgba(0, 0, 0, 0.50), 0 2px 6px rgba(0, 0, 0, 0.40);
+
+    /* Back-compat mappings */
+    --primary-color: var(--md-primary);
+    --primary-hover: #428fe8;
+    --text-primary: var(--md-on-surface);
+    --text-secondary: #b5c2cf;
+    --text-muted: #6e7b89;
+    --border-color: var(--md-outline);
+    --bg-primary: var(--md-surface);
+    --bg-secondary: var(--md-surface-variant);
+    --bg-tertiary: #101722;
+    --glass-bg: var(--md-surface);
+    --glass-border: var(--md-outline-variant);
+    --shadow-sm: var(--md-elev-1);
+    --shadow-md: var(--md-elev-1);
+    --shadow-lg: var(--md-elev-2);
+    --shadow-xl: var(--md-elev-3);
+    --shadow-2xl: var(--md-elev-3);
+    --shadow-glow: none;
+    --shadow-inner: inset 0 1px 2px rgba(0,0,0,0.25);
+
+    /* Scrollbar (dark) */
+    --scrollbar-track: var(--md-surface-variant);
+    --scrollbar-thumb: var(--text-muted);
+    --scrollbar-thumb-hover: var(--primary-color);
+}
