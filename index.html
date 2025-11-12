@@ -3708,7 +3708,7 @@
                                 Enable visual feedback when hovering over objects on the canvas.
                             </div>
                             <label class="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" id="hover-popup-toggle" class="form-checkbox" checked>
+                                <input type="checkbox" id="hover-popup-toggle" class="form-checkbox">
                                 <span class="text-sm">Pop-up effect on hover</span>
                             </label>
                             <p class="text-xs mt-2 pl-6" style="color: var(--md-on-surface-muted);">
@@ -4192,11 +4192,21 @@
             function nextFeature() {
                 currentFeatureIndex = (currentFeatureIndex + 1) % features.length;
                 updateFeatureDisplay();
+                // Reset the auto-rotation timer to maintain consistent timing
+                if (featureRotationInterval) {
+                    clearInterval(featureRotationInterval);
+                    featureRotationInterval = setInterval(nextFeature, ROTATION_DURATION);
+                }
             }
 
             function prevFeature() {
                 currentFeatureIndex = (currentFeatureIndex - 1 + features.length) % features.length;
                 updateFeatureDisplay();
+                // Reset the auto-rotation timer to maintain consistent timing
+                if (featureRotationInterval) {
+                    clearInterval(featureRotationInterval);
+                    featureRotationInterval = setInterval(nextFeature, ROTATION_DURATION);
+                }
             }
 
             // Set up navigation buttons
@@ -4526,7 +4536,7 @@ This software is provided "as is" without warranty of any kind.`);
             const STABILIZATION_WEIGHT = 0.3; // Smoothing factor (0-1, lower = more smoothing)
 
             // Hover Effect State
-            let enableHoverPopup = true; // Enable hover pop-up effect
+            let enableHoverPopup = false; // Enable hover pop-up effect (disabled by default)
             let hoveredObject = null; // Currently hovered object
             let hoverScale = 1.0; // Current hover scale animation value
             const HOVER_SCALE_TARGET = 1.15; // Target scale when hovered (15% larger - more noticeable)
@@ -5224,8 +5234,8 @@ This software is provided "as is" without warranty of any kind.`);
                 // Draw active drag indicator on top (above objects)
                 drawGridDragIndicator();
 
-                // Only show selection handles in Edit mode
-                if (interactionMode === 'edit' && selectedObject && currentTool === 'select') {
+                // Only show selection handles in Edit mode (but not while dragging)
+                if (interactionMode === 'edit' && selectedObject && currentTool === 'select' && !isDragging) {
                     drawSelectionHandles(selectedObject);
                 }
             }
@@ -9234,7 +9244,13 @@ This software is provided "as is" without warranty of any kind.`);
 
                 activePointers.delete(e.pointerId);
                 if (activePointers.size < 2) pinchStartInfo = null;
-                isDragging = false; isResizing = false; resizeHandle = null; 
+                isDragging = false; isResizing = false; resizeHandle = null;
+
+                // Redraw to show selection box after dragging ends
+                if (wasDragging || wasResizing) {
+                    draw();
+                }
+
                 // Double-tap detection for quick select/deselect
                 if (e.pointerType !== 'mouse') {
                     const now = performance.now();
