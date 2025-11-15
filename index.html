@@ -5686,9 +5686,9 @@ This software is provided "as is" without warranty of any kind.`);
     class TextObject extends CanvasObject { 
                 constructor(text, x, y, zIndex) { 
                     super(x, y, 0, 0, zIndex, 'text'); 
-                    this.text = text; 
-                    this.color = '#FFFFFF'; 
-                    this.size = 40; 
+                    this.text = text;
+                    this.color = '#FFFFFF';
+                    this.size = 60; 
             this.fontFamily = 'Luciole, "Atkinson Hyperlegible", Inter, system-ui, sans-serif';
         this.fontWeight = 400;
         this.fontStyle = 'normal';
@@ -5731,11 +5731,11 @@ This software is provided "as is" without warranty of any kind.`);
             class ShapeObject extends CanvasObject { 
                 constructor(shapeType, x, y, zIndex, color = '#FF5733') { 
                     // Set initial dimensions; make rectangles slightly wider than tall for recognizability
-                    let initWidth = 100;
-                    let initHeight = 100;
+                    let initWidth = 180;
+                    let initHeight = 180;
                     if (shapeType === 'rect') {
-                        initWidth = 120; // slightly longer on X axis
-                        initHeight = 100;
+                        initWidth = 220; // slightly longer on X axis
+                        initHeight = 180;
                     }
                     super(x - initWidth/2, y - initHeight/2, initWidth, initHeight, zIndex, 'shape'); 
                     this.shapeType = shapeType; 
@@ -7631,7 +7631,7 @@ This software is provided "as is" without warranty of any kind.`);
             
             function setObjectCenterPosition(obj, centerX, centerY) {
                 if (!obj) return;
-                
+
                 if (obj.type === 'circle') {
                     obj.x = centerX;
                     obj.y = centerY;
@@ -7645,7 +7645,51 @@ This software is provided "as is" without warranty of any kind.`);
                     obj.y = centerY - obj.height / 2;
                 }
             }
-            
+
+            function resizeObjectToGridFrame(obj, gridFrame) {
+                if (!obj || !gridFrame) return;
+
+                // Use the shorter dimension of the grid frame for object sizing
+                // This ensures objects fit nicely in grid boxes
+                const shorterDimension = Math.min(gridFrame.width, gridFrame.height);
+
+                // Add padding (80% of grid frame dimension to leave breathing room)
+                const targetSize = shorterDimension * 0.8;
+
+                if (obj.type === 'text') {
+                    // For text, resize the font size
+                    obj.size = Math.max(16, Math.min(72, Math.round(targetSize / 2))); // Reasonable font size range
+                    obj.updateMetrics();
+                } else if (obj.type === 'circle') {
+                    // For circles, scale the radius
+                    const oldRadius = obj.width / 2;
+                    if (oldRadius > 0) {
+                        const scale = targetSize / obj.width;
+                        obj.width = targetSize;
+                        obj.height = targetSize;
+                    } else {
+                        obj.width = targetSize;
+                        obj.height = targetSize;
+                    }
+                } else if (obj.type === 'shape') {
+                    // For shapes, scale proportionally
+                    const oldWidth = obj.width || targetSize;
+                    const oldHeight = obj.height || targetSize;
+                    const aspectRatio = oldHeight / oldWidth;
+
+                    obj.width = targetSize;
+                    obj.height = targetSize * aspectRatio;
+                } else if (obj.type === 'image' || obj.type === 'video') {
+                    // For images/videos, maintain aspect ratio
+                    const oldWidth = obj.width || targetSize;
+                    const oldHeight = obj.height || targetSize;
+                    const aspectRatio = oldHeight / oldWidth;
+
+                    obj.width = targetSize;
+                    obj.height = targetSize * aspectRatio;
+                }
+            }
+
             function snapObjectCenterToGrid(obj, isShiftHeld = false) {
                 if (!obj || !currentGrid || isShiftHeld) return;
                 
@@ -8023,6 +8067,9 @@ This software is provided "as is" without warranty of any kind.`);
                 // Arrange as many objects as we have space for
                 objectsWeWillArrange.forEach((obj, i) => {
                     const frame = availableFrames[i];
+                    // Resize object to fit the grid frame (using shorter dimension)
+                    resizeObjectToGridFrame(obj, frame);
+                    // Position object at center of grid frame
                     setObjectCenterPosition(obj, frame.x, frame.y);
                 });
 
@@ -8503,7 +8550,7 @@ This software is provided "as is" without warranty of any kind.`);
                 img.src = imgSrc;
                 img.dataset.name = name;
                 img.onload = () => {
-                    const w = 150;
+                    const w = 250;
                     const h = (img.height / img.width) * w;
                     const { width: canvasWidth, height: canvasHeight } = getCanvasDimensions();
                     const finalX = (x === undefined) ? (canvasWidth / 2) - (w / 2) : x - (w/2);
@@ -8532,11 +8579,11 @@ This software is provided "as is" without warranty of any kind.`);
                 video.loop = true;
                 video.playsInline = true;
                 video.onloadedmetadata = () => { 
-                    const w = 150; 
-                    const h = (video.videoHeight / video.videoWidth) * w; 
+                    const w = 250;
+                    const h = (video.videoHeight / video.videoWidth) * w;
                     const { width: canvasWidth, height: canvasHeight } = getCanvasDimensions();
-                    const finalX = (x === undefined) ? (canvasWidth / 2) - (w / 2) : x - (w/2); 
-                    const finalY = (y === undefined) ? (canvasHeight / 2) - (h / 2) : y - (h/2); 
+                    const finalX = (x === undefined) ? (canvasWidth / 2) - (w / 2) : x - (w/2);
+                    const finalY = (y === undefined) ? (canvasHeight / 2) - (h / 2) : y - (h/2);
                     const newObj = new VideoObject(video, finalX, finalY, w, h, getNextZIndex()); 
                     objects.push(newObj); 
                     setSelectedObject(newObj); 
