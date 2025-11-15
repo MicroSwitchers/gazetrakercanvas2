@@ -4891,8 +4891,8 @@ This software is provided "as is" without warranty of any kind.`);
 
             // --- Canvas Setup ---
             function getCanvasDimensions() {
-                const rect = canvasContainer.getBoundingClientRect();
-                return { width: rect.width, height: rect.height };
+                // Return the fixed canvas dimensions (1920x1080) for consistent grid and object positioning
+                return { width: CANVAS_WIDTH, height: CANVAS_HEIGHT };
             }
             
             function resizeCanvas() {
