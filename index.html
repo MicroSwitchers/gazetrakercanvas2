@@ -5360,7 +5360,7 @@ This software is provided "as is" without warranty of any kind.`);
                 }
 
                 if (foregroundImage) {
-                    drawCoverImage(foregroundImage.img, canvasWidth, canvasHeight);
+                    drawCoverImage(foregroundImage.img, CANVAS_WIDTH, CANVAS_HEIGHT);
                 }
 
                 // Draw active drag indicator on top (above objects)
@@ -10306,8 +10306,9 @@ This software is provided "as is" without warranty of any kind.`);
                             selectedObject.animationPath.removeNode(selectedPathNode.nodeIndex);
                             selectedPathNode = null;
                             draw();
+                            return;
                         }
-                        return;
+                        // If no path node selected, fall through to regular delete handler below
                     }
                 }
 
@@ -10352,9 +10353,10 @@ This software is provided "as is" without warranty of any kind.`);
                     }
                 }
 
-                if (e.key === 'v') setActiveTool('select'); 
-                if ((e.key === 'Delete' || e.key === 'Backspace') && selectedObject) { 
-                    deleteObject(selectedObject); 
+                if (e.key === 'v') setActiveTool('select');
+                if ((e.key === 'Delete' || e.key === 'Backspace') && selectedObject) {
+                    e.preventDefault();
+                    deleteObject(selectedObject);
                 } 
             });
 
