@@ -8995,7 +8995,16 @@ This software is provided "as is" without warranty of any kind.`);
                     selectedObject.animationCycles = val;
                 }
             });
-            function getMousePos(e) { const rect = canvas.getBoundingClientRect(); return { x: e.clientX - rect.left, y: e.clientY - rect.top }; }
+            function getMousePos(e) {
+                const rect = canvasContainer.getBoundingClientRect();
+                // Get position relative to container
+                const containerX = e.clientX - rect.left;
+                const containerY = e.clientY - rect.top;
+                // Apply inverse pan and zoom transformation to get canvas coordinates
+                const canvasX = (containerX - canvasPanX) / canvasZoom;
+                const canvasY = (containerY - canvasPanY) / canvasZoom;
+                return { x: canvasX, y: canvasY };
+            }
             function getObjectAt(x, y) { const sorted = [...objects].sort((a, b) => b.zIndex - a.zIndex); for (const obj of sorted) { if (obj.visible && obj.isPointInside(x, y)) { return obj; } } return null; }
             // Upgrade to Pointer Events (covers mouse + touch + pen)
             canvas.addEventListener('pointerdown', (e) => {
