@@ -4644,6 +4644,21 @@ This software is provided "as is" without warranty of any kind.`);
             let isSnapping = false;
             let snapAnimation = null;
             let tempGridVisibility = false; // Track if grid was temporarily shown during drag
+
+            // Canvas Pan and Zoom State
+            const CANVAS_WIDTH = 1920; // Fixed canvas size for consistency across devices
+            const CANVAS_HEIGHT = 1080;
+            let canvasZoom = 1.0; // Current zoom level
+            let canvasPanX = 0; // Current pan offset X
+            let canvasPanY = 0; // Current pan offset Y
+            let isPanningCanvas = false; // Whether currently panning
+            let panStartX = 0; // Pan start mouse position
+            let panStartY = 0;
+            let initialPanX = 0; // Pan position when pan started
+            let initialPanY = 0;
+            const MIN_ZOOM = 0.1; // Minimum zoom level
+            const MAX_ZOOM = 5; // Maximum zoom level
+            const ZOOM_SPEED = 0.1; // Zoom speed factor for scroll wheel
             
             // Shape Creation State
             // Color harmony palettes - each palette contains harmonious colors
@@ -4883,17 +4898,34 @@ This software is provided "as is" without warranty of any kind.`);
             function resizeCanvas() {
                 const rect = canvasContainer.getBoundingClientRect();
                 const dpr = window.devicePixelRatio || 1;
+                const margin = 20; // Margin from screen edge in pixels
 
-                // Set the canvas internal size accounting for device pixel ratio
-                canvas.width = rect.width * dpr;
-                canvas.height = rect.height * dpr;
+                // Set the canvas internal size to fixed 1920x1080
+                canvas.width = CANVAS_WIDTH * dpr;
+                canvas.height = CANVAS_HEIGHT * dpr;
 
-                // Set the canvas CSS size to the display size
-                canvas.style.width = rect.width + 'px';
-                canvas.style.height = rect.height + 'px';
+                // Set the canvas CSS size to fixed dimensions
+                canvas.style.width = CANVAS_WIDTH + 'px';
+                canvas.style.height = CANVAS_HEIGHT + 'px';
 
                 // Scale the context to match device pixel ratio
                 ctx.scale(dpr, dpr);
+
+                // Calculate initial zoom to fit canvas in viewport with margin
+                if (canvasZoom === 1.0 && canvasPanX === 0 && canvasPanY === 0) {
+                    // First time initialization - fit to screen
+                    const availableWidth = rect.width - (margin * 2);
+                    const availableHeight = rect.height - (margin * 2);
+                    const zoomX = availableWidth / CANVAS_WIDTH;
+                    const zoomY = availableHeight / CANVAS_HEIGHT;
+                    canvasZoom = Math.min(zoomX, zoomY);
+
+                    // Center the canvas
+                    const scaledWidth = CANVAS_WIDTH * canvasZoom;
+                    const scaledHeight = CANVAS_HEIGHT * canvasZoom;
+                    canvasPanX = (availableWidth - scaledWidth) / 2 + margin;
+                    canvasPanY = (availableHeight - scaledHeight) / 2 + margin;
+                }
 
                 // Recalculate grid frames and reposition objects if a grid is active
                 if (currentGrid) {
@@ -5107,24 +5139,31 @@ This software is provided "as is" without warranty of any kind.`);
             // --- Drawing Engine ---
             function draw() {
                 const dpr = window.devicePixelRatio || 1;
-                const { width: canvasWidth, height: canvasHeight } = getCanvasDimensions();
-                
+                const { width: containerWidth, height: containerHeight } = getCanvasDimensions();
+
                 // Reset transform to clear any previous scaling
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
-                
+
                 // Apply device pixel ratio scaling
                 ctx.scale(dpr, dpr);
-                
+
+                // Clear the entire container area
+                ctx.clearRect(0, 0, containerWidth, containerHeight);
+
+                // Apply pan and zoom transformation
+                ctx.translate(canvasPanX, canvasPanY);
+                ctx.scale(canvasZoom, canvasZoom);
+
                 // Configure image smoothing for crisp rendering
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = 'high';
 
-                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                // Draw background
                 ctx.fillStyle = backgroundColor;
-                ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
                 if (backgroundImage) {
-                    drawCoverImage(backgroundImage.img, canvasWidth, canvasHeight);
+                    drawCoverImage(backgroundImage.img, CANVAS_WIDTH, CANVAS_HEIGHT);
                 }
 
                 // Draw grid overlay (below objects, above background)
@@ -10015,7 +10054,73 @@ This software is provided "as is" without warranty of any kind.`);
             // --- Event Listeners ---
             document.addEventListener('click', hideContextMenu);
             canvas.addEventListener('contextmenu', e => e.preventDefault());
-            
+
+            // --- Canvas Pan and Zoom Controls ---
+            // Zoom with mouse wheel
+            canvasContainer.addEventListener('wheel', (e) => {
+                e.preventDefault();
+
+                // Get mouse position in canvas coordinates (container space)
+                const rect = canvasContainer.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                // Calculate old canvas position in canvas space (before scaling)
+                const canvasX = (mouseX - canvasPanX) / canvasZoom;
+                const canvasY = (mouseY - canvasPanY) / canvasZoom;
+
+                // Update zoom level
+                const zoomFactor = e.deltaY > 0 ? 1 - ZOOM_SPEED : 1 + ZOOM_SPEED;
+                canvasZoom *= zoomFactor;
+
+                // Clamp zoom level
+                canvasZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, canvasZoom));
+
+                // Calculate new pan position to keep the mouse point fixed
+                canvasPanX = mouseX - canvasX * canvasZoom;
+                canvasPanY = mouseY - canvasY * canvasZoom;
+
+                draw();
+            }, { passive: false });
+
+            // Pan with middle mouse button drag
+            canvasContainer.addEventListener('mousedown', (e) => {
+                // Only pan with middle mouse button (button 1) or Ctrl+left click
+                if ((e.button === 1) || (e.button === 0 && e.ctrlKey)) {
+                    isPanningCanvas = true;
+                    panStartX = e.clientX;
+                    panStartY = e.clientY;
+                    initialPanX = canvasPanX;
+                    initialPanY = canvasPanY;
+                    canvasContainer.style.cursor = 'grabbing';
+                    e.preventDefault();
+                }
+            });
+
+            canvasContainer.addEventListener('mousemove', (e) => {
+                if (isPanningCanvas) {
+                    const deltaX = e.clientX - panStartX;
+                    const deltaY = e.clientY - panStartY;
+                    canvasPanX = initialPanX + deltaX;
+                    canvasPanY = initialPanY + deltaY;
+                    draw();
+                }
+            });
+
+            canvasContainer.addEventListener('mouseup', (e) => {
+                if (isPanningCanvas) {
+                    isPanningCanvas = false;
+                    canvasContainer.style.cursor = 'default';
+                }
+            });
+
+            canvasContainer.addEventListener('mouseleave', (e) => {
+                if (isPanningCanvas) {
+                    isPanningCanvas = false;
+                    canvasContainer.style.cursor = 'default';
+                }
+            });
+
             document.getElementById('ctx-delete').addEventListener('click', () => { 
                 if (selectedObject) deleteObject(selectedObject); 
             });
