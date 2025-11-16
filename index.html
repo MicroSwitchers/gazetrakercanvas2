@@ -5378,8 +5378,6 @@ This software is provided "as is" without warranty of any kind.`);
             // Continuous render loop to keep video frames updating
             let continuousLoop = false;
             let needsRender = false; // Flag to batch render updates
-            let objectsSortedByZ = []; // Cache for Z-sorted objects
-            let wheelEventPending = false; // Flag for RAF-batched wheel events
 
             function ensureRenderLoop() {
                 if (continuousLoop) return;
@@ -9121,15 +9119,16 @@ This software is provided "as is" without warranty of any kind.`);
                 const canvasY = (containerY - canvasPanY) / canvasZoom;
                 return { x: canvasX, y: canvasY };
             }
-            let objectsZIndexDirty = true; // Flag to invalidate Z-order cache
-            function invalidateObjectsZIndex() { objectsZIndexDirty = true; }
             function getObjectAt(x, y) {
-                // Update cache if objects changed
-                if (objectsZIndexDirty) {
-                    objectsSortedByZ = [...objects].sort((a, b) => b.zIndex - a.zIndex);
-                    objectsZIndexDirty = false;
+                // Sort objects by Z-index and find first visible object at position
+                // We rebuild the sorted list each time to ensure we have current objects
+                const sorted = [...objects].sort((a, b) => b.zIndex - a.zIndex);
+                for (const obj of sorted) {
+                    if (obj.visible && obj.isPointInside(x, y)) {
+                        return obj;
+                    }
                 }
-                for (const obj of objectsSortedByZ) { if (obj.visible && obj.isPointInside(x, y)) { return obj; } } return null;
+                return null;
             }
             // Upgrade to Pointer Events (covers mouse + touch + pen)
             canvas.addEventListener('pointerdown', (e) => {
@@ -9866,7 +9865,6 @@ This software is provided "as is" without warranty of any kind.`);
                     let tempZ = sorted[currentIndex].zIndex;
                     sorted[currentIndex].zIndex = sorted[swapIndex].zIndex;
                     sorted[swapIndex].zIndex = tempZ;
-                    invalidateObjectsZIndex();
                 }
                 draw(); 
                 updateLayerList(); 
@@ -10268,7 +10266,6 @@ This software is provided "as is" without warranty of any kind.`);
             document.getElementById('ctx-bring-to-front').addEventListener('click', () => {
                 if(selectedObject) {
                     selectedObject.zIndex = getNextZIndex();
-                    invalidateObjectsZIndex();
                     draw();
                     updateLayerList();
                 }
@@ -10278,7 +10275,6 @@ This software is provided "as is" without warranty of any kind.`);
                 if(selectedObject) {
                     const minZ = Math.min(...objects.map(o => o.zIndex).filter(z => z > 0));
                     selectedObject.zIndex = minZ - 1;
-                    invalidateObjectsZIndex();
                     draw();
                     updateLayerList();
                 }
@@ -10505,16 +10501,20 @@ This software is provided "as is" without warranty of any kind.`);
             const originalPush = objects.push;
             objects.push = function(...items) {
                 trackObjectChanges();
-                invalidateObjectsZIndex();
                 return originalPush.apply(this, items);
             };
-            
-            // Track deletions
+
+            // Track deletions and reapply push wrapper (in case array is reassigned)
             const originalDeleteObject = deleteObject;
             window.deleteObject = (obj) => {
                 originalDeleteObject(obj);
                 trackObjectChanges();
-                invalidateObjectsZIndex();
+                // Reapply push wrapper since objects array may have been reassigned
+                const newPush = objects.push;
+                objects.push = function(...items) {
+                    trackObjectChanges();
+                    return newPush.apply(this, items);
+                };
             };
             
             // Warn before page unload
