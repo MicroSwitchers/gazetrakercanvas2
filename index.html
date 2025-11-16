@@ -9224,12 +9224,10 @@ This software is provided "as is" without warranty of any kind.`);
 
                     // Hover popup effect in play mode
                     if (enableHoverPopup && obj && obj !== hoveredObject) {
-                        console.log('[HOVER DEBUG] Play mode - Object detected:', obj.type, 'enableHoverPopup:', enableHoverPopup);
                         hoveredObject = obj;
                         hoverScale = 1.0; // Reset scale when new object is hovered
                         ensureRenderLoop(); // Start animation
                     } else if (!obj && hoveredObject) {
-                        console.log('[HOVER DEBUG] Play mode - Object left');
                         hoveredObject = null;
                         ensureRenderLoop(); // Animate back
                     }
@@ -9242,7 +9240,6 @@ This software is provided "as is" without warranty of any kind.`);
                 if (enableHoverPopup && currentTool !== 'pencil' && currentTool !== 'eraser' && !isResizing) {
                     const obj = getObjectAt(x, y);
                     if (obj !== hoveredObject) {
-                        console.log('[HOVER DEBUG] Edit mode - Object change:', obj?.type, 'currentTool:', currentTool, 'enableHoverPopup:', enableHoverPopup);
                         hoveredObject = obj;
                         if (obj) {
                             hoverScale = 1.0; // Reset scale when new object is hovered
@@ -9250,7 +9247,6 @@ This software is provided "as is" without warranty of any kind.`);
                         ensureRenderLoop(); // Start animation
                     }
                 } else if (hoveredObject && (currentTool === 'pencil' || currentTool === 'eraser' || isResizing)) {
-                    console.log('[HOVER DEBUG] Edit mode - Clearing hover (pencil/eraser/resize)');
                     hoveredObject = null;
                     ensureRenderLoop();
                 }
