@@ -7649,44 +7649,56 @@ This software is provided "as is" without warranty of any kind.`);
             function resizeObjectToGridFrame(obj, gridFrame) {
                 if (!obj || !gridFrame) return;
 
-                // Use the shorter dimension of the grid frame for object sizing
-                // This ensures objects fit nicely in grid boxes
-                const shorterDimension = Math.min(gridFrame.width, gridFrame.height);
-
-                // Add padding (80% of grid frame dimension to leave breathing room)
-                const targetSize = shorterDimension * 0.8;
+                // Calculate target dimensions (80% of grid frame to leave padding)
+                const targetWidth = gridFrame.width * 0.8;
+                const targetHeight = gridFrame.height * 0.8;
 
                 if (obj.type === 'text') {
-                    // For text, resize the font size
-                    obj.size = Math.max(16, Math.min(72, Math.round(targetSize / 2))); // Reasonable font size range
+                    // For text, resize the font size to fit within grid
+                    const maxFontSize = targetHeight * 0.6; // Use up to 60% of grid height for font
+                    obj.size = Math.max(16, Math.min(72, Math.round(maxFontSize))); // Reasonable font size range
                     obj.updateMetrics();
                 } else if (obj.type === 'circle') {
-                    // For circles, scale the radius
-                    const oldRadius = obj.width / 2;
-                    if (oldRadius > 0) {
-                        const scale = targetSize / obj.width;
-                        obj.width = targetSize;
-                        obj.height = targetSize;
-                    } else {
-                        obj.width = targetSize;
-                        obj.height = targetSize;
-                    }
+                    // For circles, fit within the smaller dimension
+                    const circleDimension = Math.min(targetWidth, targetHeight);
+                    obj.width = circleDimension;
+                    obj.height = circleDimension;
                 } else if (obj.type === 'shape') {
-                    // For shapes, scale proportionally
-                    const oldWidth = obj.width || targetSize;
-                    const oldHeight = obj.height || targetSize;
-                    const aspectRatio = oldHeight / oldWidth;
+                    // For shapes, scale to fit both dimensions
+                    const currentWidth = obj.width || targetWidth;
+                    const currentHeight = obj.height || targetHeight;
+                    const aspectRatio = currentHeight / currentWidth;
 
-                    obj.width = targetSize;
-                    obj.height = targetSize * aspectRatio;
+                    // Calculate scale that fits within target dimensions
+                    let newWidth = targetWidth;
+                    let newHeight = newWidth * aspectRatio;
+
+                    // If height exceeds target, scale based on height instead
+                    if (newHeight > targetHeight) {
+                        newHeight = targetHeight;
+                        newWidth = newHeight / aspectRatio;
+                    }
+
+                    obj.width = newWidth;
+                    obj.height = newHeight;
                 } else if (obj.type === 'image' || obj.type === 'video') {
-                    // For images/videos, maintain aspect ratio
-                    const oldWidth = obj.width || targetSize;
-                    const oldHeight = obj.height || targetSize;
-                    const aspectRatio = oldHeight / oldWidth;
+                    // For images/videos, maintain aspect ratio and fit within grid box
+                    const currentWidth = obj.width || targetWidth;
+                    const currentHeight = obj.height || targetHeight;
+                    const aspectRatio = currentHeight / currentWidth;
 
-                    obj.width = targetSize;
-                    obj.height = targetSize * aspectRatio;
+                    // Start with target width and calculate height
+                    let newWidth = targetWidth;
+                    let newHeight = newWidth * aspectRatio;
+
+                    // If height exceeds target, scale based on height instead
+                    if (newHeight > targetHeight) {
+                        newHeight = targetHeight;
+                        newWidth = newHeight / aspectRatio;
+                    }
+
+                    obj.width = newWidth;
+                    obj.height = newHeight;
                 }
             }
 
