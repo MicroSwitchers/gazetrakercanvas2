@@ -6274,8 +6274,8 @@ This software is provided "as is" without warranty of any kind.`);
                     downBtn.onclick = (e) => { e.stopPropagation(); moveObject(obj.id, 'down'); }; 
                     controls.appendChild(downBtn); 
                     
-                    const visibilityToggle = document.createElement('button'); 
-                    visibilityToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 616 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>';
+                    const visibilityToggle = document.createElement('button');
+                    visibilityToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>';
                     visibilityToggle.className = `layer-item-button ${!obj.visible ? 'layer-visibility-hidden' : ''}`;
                     visibilityToggle.title = obj.visible ? 'Hide' : 'Show'; 
                     visibilityToggle.onclick = (e) => { 
@@ -7086,10 +7086,10 @@ This software is provided "as is" without warranty of any kind.`);
                 }
                 
                 autoLoadToast.classList.remove('hidden');
-                
-                // Auto-hide for success and info messages (unless showing progress)
-                if (!showProgress && (type === 'success' || type === 'info')) {
-                    setTimeout(() => hideToast(), 5000);
+
+                // Auto-hide for success, info, and warning messages (unless showing progress)
+                if (!showProgress && (type === 'success' || type === 'info' || type === 'warning')) {
+                    setTimeout(() => hideToast(), 6000);
                 }
             }
             
