@@ -7767,11 +7767,11 @@ This software is provided "as is" without warranty of any kind.`);
             function drawGridOverlay() {
                 if (!currentGrid || !showGuides || gridFrames.length === 0) return;
 
-                // Create cache canvas if needed
+                // Create cache canvas if needed (at logical canvas size, not internal resolution)
                 if (!gridCacheCanvas) {
                     gridCacheCanvas = document.createElement('canvas');
-                    gridCacheCanvas.width = canvas.width;
-                    gridCacheCanvas.height = canvas.height;
+                    gridCacheCanvas.width = CANVAS_WIDTH;
+                    gridCacheCanvas.height = CANVAS_HEIGHT;
                     gridCacheCtx = gridCacheCanvas.getContext('2d');
                     gridCacheDirty = true;
                 }
@@ -7786,11 +7786,8 @@ This software is provided "as is" without warranty of any kind.`);
                     gridCacheDirty = false;
                 }
 
-                // Draw cached grid to main canvas
-                ctx.save();
-                ctx.resetTransform();
-                ctx.drawImage(gridCacheCanvas, 0, 0);
-                ctx.restore();
+                // Draw cached grid to main canvas (within the transformed coordinate space)
+                ctx.drawImage(gridCacheCanvas, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             }
 
             function drawGridToCache() {
