@@ -5138,237 +5138,240 @@ This software is provided "as is" without warranty of any kind.`);
 
             // --- Drawing Engine ---
             function draw() {
-                const dpr = window.devicePixelRatio || 1;
-                const { width: containerWidth, height: containerHeight } = getCanvasDimensions();
+                try {
+                    const dpr = window.devicePixelRatio || 1;
 
-                // Reset transform to clear any previous scaling
-                ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    // Reset transform to clear any previous scaling
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-                // Apply device pixel ratio scaling
-                ctx.scale(dpr, dpr);
+                    // Clear the entire canvas at full internal resolution
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // Clear the entire container area
-                ctx.clearRect(0, 0, containerWidth, containerHeight);
+                    // Apply device pixel ratio scaling
+                    ctx.scale(dpr, dpr);
 
-                // Apply pan and zoom transformation
-                ctx.translate(canvasPanX, canvasPanY);
-                ctx.scale(canvasZoom, canvasZoom);
+                    // Apply pan and zoom transformation
+                    ctx.translate(canvasPanX, canvasPanY);
+                    ctx.scale(canvasZoom, canvasZoom);
 
-                // Configure image smoothing for crisp rendering
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = 'high';
+                    // Configure image smoothing for crisp rendering
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
 
-                // Draw background
-                ctx.fillStyle = backgroundColor;
-                ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+                    // Draw background
+                    ctx.fillStyle = backgroundColor;
+                    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-                if (backgroundImage) {
-                    drawCoverImage(backgroundImage.img, CANVAS_WIDTH, CANVAS_HEIGHT);
-                }
-
-                // Draw grid overlay (below objects, above background)
-                drawGridOverlay();
-
-                // Animate hover scale
-                if (hoveredObject && enableHoverPopup) {
-                    hoverScale += (HOVER_SCALE_TARGET - hoverScale) * HOVER_ANIMATION_SPEED;
-                    if (Math.abs(HOVER_SCALE_TARGET - hoverScale) > 0.001) {
-                        ensureRenderLoop(); // Continue animation
+                    if (backgroundImage) {
+                        drawCoverImage(backgroundImage.img, CANVAS_WIDTH, CANVAS_HEIGHT);
                     }
-                } else if (hoverScale > 1.0) {
-                    hoverScale += (1.0 - hoverScale) * HOVER_ANIMATION_SPEED;
-                    if (Math.abs(1.0 - hoverScale) > 0.001) {
-                        ensureRenderLoop(); // Continue animation
-                    } else {
-                        hoverScale = 1.0; // Snap to final value
-                    }
-                }
 
-                objects.sort((a, b) => a.zIndex - b.zIndex).forEach(obj => {
-                    if (obj.visible) {
-                        // Apply hover scale effect
-                        if (obj === hoveredObject && enableHoverPopup && hoverScale > 1.0) {
-                            ctx.save();
+                    // Draw grid overlay (below objects, above background)
+                    drawGridOverlay();
 
-                            // Add shadow for pop-up effect
-                            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-                            ctx.shadowBlur = 15 * (hoverScale - 1.0) / 0.15; // Scale shadow with hover
-                            ctx.shadowOffsetX = 0;
-                            ctx.shadowOffsetY = 5 * (hoverScale - 1.0) / 0.15;
-
-                            const centerX = obj.x + obj.width / 2;
-                            const centerY = obj.y + obj.height / 2;
-                            ctx.translate(centerX, centerY);
-                            ctx.scale(hoverScale, hoverScale);
-                            ctx.translate(-centerX, -centerY);
-                            obj.draw(ctx);
-                            ctx.restore();
+                    // Animate hover scale
+                    if (hoveredObject && enableHoverPopup) {
+                        hoverScale += (HOVER_SCALE_TARGET - hoverScale) * HOVER_ANIMATION_SPEED;
+                        if (Math.abs(HOVER_SCALE_TARGET - hoverScale) > 0.001) {
+                            ensureRenderLoop(); // Continue animation
+                        }
+                    } else if (hoverScale > 1.0) {
+                        hoverScale += (1.0 - hoverScale) * HOVER_ANIMATION_SPEED;
+                        if (Math.abs(1.0 - hoverScale) > 0.001) {
+                            ensureRenderLoop(); // Continue animation
                         } else {
-                            obj.draw(ctx);
+                            hoverScale = 1.0; // Snap to final value
                         }
                     }
-                });
 
-                // Draw path for selected object (in edit mode only)
-                if (interactionMode === 'edit' && selectedObject && selectedObject.animationPath) {
-                    const isActive = isDrawingPath;
-                    const selectedNodeIdx = selectedPathNode && selectedPathNode.path === selectedObject.animationPath ? selectedPathNode.nodeIndex : -1;
-                    selectedObject.animationPath.draw(ctx, isActive, selectedNodeIdx);
-                }
+                    objects.sort((a, b) => a.zIndex - b.zIndex).forEach(obj => {
+                        if (obj.visible) {
+                            // Apply hover scale effect
+                            if (obj === hoveredObject && enableHoverPopup && hoverScale > 1.0) {
+                                ctx.save();
 
-                // Draw pencil strokes with realistic marker/pen appearance (on top of objects, below foreground)
-                pencilStrokes.forEach(stroke => {
-                    const pointsToDraw = stroke.smoothedPoints || stroke.points;
-                    if (pointsToDraw.length < 2) return;
+                                // Add shadow for pop-up effect
+                                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                                ctx.shadowBlur = 15 * (hoverScale - 1.0) / 0.15; // Scale shadow with hover
+                                ctx.shadowOffsetX = 0;
+                                ctx.shadowOffsetY = 5 * (hoverScale - 1.0) / 0.15;
 
-                    ctx.save();
-                    const baseOpacity = stroke.opacity !== undefined ? stroke.opacity : 0.95;
+                                const centerX = obj.x + obj.width / 2;
+                                const centerY = obj.y + obj.height / 2;
+                                ctx.translate(centerX, centerY);
+                                ctx.scale(hoverScale, hoverScale);
+                                ctx.translate(-centerX, -centerY);
+                                obj.draw(ctx);
+                                ctx.restore();
+                            } else {
+                                obj.draw(ctx);
+                            }
+                        }
+                    });
 
-                    ctx.strokeStyle = stroke.color;
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-
-                    // Layer 1: Subtle base layer for slight edge softness (very subtle)
-                    ctx.shadowColor = stroke.color;
-                    ctx.shadowBlur = stroke.width * 0.25;
-                    ctx.lineWidth = stroke.width * 1.05;
-                    ctx.globalAlpha = baseOpacity * 0.15;
-
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                    // Draw path for selected object (in edit mode only)
+                    if (interactionMode === 'edit' && selectedObject && selectedObject.animationPath) {
+                        const isActive = isDrawingPath;
+                        const selectedNodeIdx = selectedPathNode && selectedPathNode.path === selectedObject.animationPath ? selectedPathNode.nodeIndex : -1;
+                        selectedObject.animationPath.draw(ctx, isActive, selectedNodeIdx);
                     }
-                    ctx.stroke();
 
-                    // Layer 2: Main solid stroke body
-                    ctx.shadowBlur = stroke.width * 0.08; // Minimal blur for crisp edges
-                    ctx.lineWidth = stroke.width;
-                    ctx.globalAlpha = baseOpacity * 0.88;
+                    // Draw pencil strokes with realistic marker/pen appearance (on top of objects, below foreground)
+                    pencilStrokes.forEach(stroke => {
+                        const pointsToDraw = stroke.smoothedPoints || stroke.points;
+                        if (pointsToDraw.length < 2) return;
 
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    // Layer 3: Inner texture passes for depth (multiple thin lines)
-                    ctx.shadowBlur = 0;
-                    ctx.globalAlpha = baseOpacity * 0.25;
-
-                    // First texture pass (slightly offset)
-                    ctx.lineWidth = stroke.width * 0.45;
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    // Second texture pass (center highlight)
-                    ctx.lineWidth = stroke.width * 0.25;
-                    ctx.globalAlpha = baseOpacity * 0.35;
-                    ctx.globalCompositeOperation = 'overlay'; // Natural blending
-
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    ctx.restore();
-                });
-
-                // Draw current stroke being drawn with realistic marker/pen effect (live preview)
-                if (isDrawingPencil && currentPencilStroke && currentPencilStroke.points.length > 1) {
-                    const pointsToDraw = currentPencilStroke.points;
-
-                    ctx.save();
-                    const baseOpacity = currentPencilStroke.opacity !== undefined ? currentPencilStroke.opacity : 0.95;
-
-                    ctx.strokeStyle = currentPencilStroke.color;
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-
-                    // Subtle base layer
-                    ctx.shadowColor = currentPencilStroke.color;
-                    ctx.shadowBlur = currentPencilStroke.width * 0.25;
-                    ctx.lineWidth = currentPencilStroke.width * 1.05;
-                    ctx.globalAlpha = baseOpacity * 0.15;
-
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    // Main solid body
-                    ctx.shadowBlur = currentPencilStroke.width * 0.08;
-                    ctx.lineWidth = currentPencilStroke.width;
-                    ctx.globalAlpha = baseOpacity * 0.88;
-
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    // Inner texture
-                    ctx.shadowBlur = 0;
-                    ctx.globalAlpha = baseOpacity * 0.25;
-                    ctx.lineWidth = currentPencilStroke.width * 0.45;
-
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    // Center highlight
-                    ctx.lineWidth = currentPencilStroke.width * 0.25;
-                    ctx.globalAlpha = baseOpacity * 0.35;
-                    ctx.globalCompositeOperation = 'overlay';
-
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    ctx.restore();
-                }
-
-                // Draw eraser preview circle
-                if (isErasing && currentPencilStroke) {
-                    const lastPoint = currentPencilStroke.points[currentPencilStroke.points.length - 1];
-                    if (lastPoint) {
                         ctx.save();
-                        ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
-                        ctx.lineWidth = 2;
-                        ctx.setLineDash([4, 4]);
+                        const baseOpacity = stroke.opacity !== undefined ? stroke.opacity : 0.95;
+
+                        ctx.strokeStyle = stroke.color;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+
+                        // Layer 1: Subtle base layer for slight edge softness (very subtle)
+                        ctx.shadowColor = stroke.color;
+                        ctx.shadowBlur = stroke.width * 0.25;
+                        ctx.lineWidth = stroke.width * 1.05;
+                        ctx.globalAlpha = baseOpacity * 0.15;
+
                         ctx.beginPath();
-                        ctx.arc(lastPoint.x, lastPoint.y, eraserWidth, 0, Math.PI * 2);
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
                         ctx.stroke();
+
+                        // Layer 2: Main solid stroke body
+                        ctx.shadowBlur = stroke.width * 0.08; // Minimal blur for crisp edges
+                        ctx.lineWidth = stroke.width;
+                        ctx.globalAlpha = baseOpacity * 0.88;
+
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
+                        // Layer 3: Inner texture passes for depth (multiple thin lines)
+                        ctx.shadowBlur = 0;
+                        ctx.globalAlpha = baseOpacity * 0.25;
+
+                        // First texture pass (slightly offset)
+                        ctx.lineWidth = stroke.width * 0.45;
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
+                        // Second texture pass (center highlight)
+                        ctx.lineWidth = stroke.width * 0.25;
+                        ctx.globalAlpha = baseOpacity * 0.35;
+                        ctx.globalCompositeOperation = 'overlay'; // Natural blending
+
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
+                        ctx.restore();
+                    });
+
+                    // Draw current stroke being drawn with realistic marker/pen effect (live preview)
+                    if (isDrawingPencil && currentPencilStroke && currentPencilStroke.points.length > 1) {
+                        const pointsToDraw = currentPencilStroke.points;
+
+                        ctx.save();
+                        const baseOpacity = currentPencilStroke.opacity !== undefined ? currentPencilStroke.opacity : 0.95;
+
+                        ctx.strokeStyle = currentPencilStroke.color;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+
+                        // Subtle base layer
+                        ctx.shadowColor = currentPencilStroke.color;
+                        ctx.shadowBlur = currentPencilStroke.width * 0.25;
+                        ctx.lineWidth = currentPencilStroke.width * 1.05;
+                        ctx.globalAlpha = baseOpacity * 0.15;
+
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
+                        // Main solid body
+                        ctx.shadowBlur = currentPencilStroke.width * 0.08;
+                        ctx.lineWidth = currentPencilStroke.width;
+                        ctx.globalAlpha = baseOpacity * 0.88;
+
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
+                        // Inner texture
+                        ctx.shadowBlur = 0;
+                        ctx.globalAlpha = baseOpacity * 0.25;
+                        ctx.lineWidth = currentPencilStroke.width * 0.45;
+
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
+                        // Center highlight
+                        ctx.lineWidth = currentPencilStroke.width * 0.25;
+                        ctx.globalAlpha = baseOpacity * 0.35;
+                        ctx.globalCompositeOperation = 'overlay';
+
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
                         ctx.restore();
                     }
-                }
 
-                if (foregroundImage) {
-                    drawCoverImage(foregroundImage.img, CANVAS_WIDTH, CANVAS_HEIGHT);
-                }
+                    // Draw eraser preview circle
+                    if (isErasing && currentPencilStroke) {
+                        const lastPoint = currentPencilStroke.points[currentPencilStroke.points.length - 1];
+                        if (lastPoint) {
+                            ctx.save();
+                            ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
+                            ctx.lineWidth = 2;
+                            ctx.setLineDash([4, 4]);
+                            ctx.beginPath();
+                            ctx.arc(lastPoint.x, lastPoint.y, eraserWidth, 0, Math.PI * 2);
+                            ctx.stroke();
+                            ctx.restore();
+                        }
+                    }
 
-                // Draw active drag indicator on top (above objects)
-                drawGridDragIndicator();
+                    if (foregroundImage) {
+                        drawCoverImage(foregroundImage.img, CANVAS_WIDTH, CANVAS_HEIGHT);
+                    }
 
-                // Only show selection handles in Edit mode (but not while dragging)
-                if (interactionMode === 'edit' && selectedObject && currentTool === 'select' && !isDragging) {
-                    drawSelectionHandles(selectedObject);
+                    // Draw active drag indicator on top (above objects)
+                    drawGridDragIndicator();
+
+                    // Only show selection handles in Edit mode (but not while dragging)
+                    if (interactionMode === 'edit' && selectedObject && currentTool === 'select' && !isDragging) {
+                        drawSelectionHandles(selectedObject);
+                    }
+                } catch (err) {
+                    console.error('Draw function error:', err);
                 }
             }
 
