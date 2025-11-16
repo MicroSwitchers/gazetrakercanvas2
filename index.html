@@ -5377,6 +5377,10 @@ This software is provided "as is" without warranty of any kind.`);
 
             // Continuous render loop to keep video frames updating
             let continuousLoop = false;
+            let needsRender = false; // Flag to batch render updates
+            let objectsSortedByZ = []; // Cache for Z-sorted objects
+            let wheelEventPending = false; // Flag for RAF-batched wheel events
+
             function ensureRenderLoop() {
                 if (continuousLoop) return;
                 continuousLoop = true;
@@ -5386,7 +5390,8 @@ This software is provided "as is" without warranty of any kind.`);
                     const animating = objects.some(o => o.isAnimating);
                     const snapping = isSnapping;
                     const hoverAnimating = enableHoverPopup && (hoveredObject !== null || Math.abs(hoverScale - 1.0) > 0.001);
-                    if (hasVideo || dragging || animating || snapping || hoverAnimating) {
+                    if (hasVideo || dragging || animating || snapping || hoverAnimating || needsRender) {
+                        if (needsRender) needsRender = false;
                         draw();
                         requestAnimationFrame(loop);
                     } else {
@@ -8158,7 +8163,8 @@ This software is provided "as is" without warranty of any kind.`);
                 invalidateGridCache();
             }
             
-            function recomputeGridOccupancy() {
+            let gridOccupancyTimeout = null;
+            function recomputeGridOccupancyImpl() {
                 clearGridOccupancy();
                 // Mark frames as occupied based on object proximity
                 objects.forEach(obj => {
@@ -8176,9 +8182,18 @@ This software is provided "as is" without warranty of any kind.`);
                         }
                     }
                 });
-                
+
                 // Force a redraw to update occupancy indicators
                 requestAnimationFrame(draw);
+            }
+
+            function recomputeGridOccupancy() {
+                // Debounce grid occupancy recomputation (50ms delay)
+                if (gridOccupancyTimeout !== null) clearTimeout(gridOccupancyTimeout);
+                gridOccupancyTimeout = setTimeout(() => {
+                    recomputeGridOccupancyImpl();
+                    gridOccupancyTimeout = null;
+                }, 50);
             }
 
             // --- Media Handling ---
@@ -9106,7 +9121,16 @@ This software is provided "as is" without warranty of any kind.`);
                 const canvasY = (containerY - canvasPanY) / canvasZoom;
                 return { x: canvasX, y: canvasY };
             }
-            function getObjectAt(x, y) { const sorted = [...objects].sort((a, b) => b.zIndex - a.zIndex); for (const obj of sorted) { if (obj.visible && obj.isPointInside(x, y)) { return obj; } } return null; }
+            let objectsZIndexDirty = true; // Flag to invalidate Z-order cache
+            function invalidateObjectsZIndex() { objectsZIndexDirty = true; }
+            function getObjectAt(x, y) {
+                // Update cache if objects changed
+                if (objectsZIndexDirty) {
+                    objectsSortedByZ = [...objects].sort((a, b) => b.zIndex - a.zIndex);
+                    objectsZIndexDirty = false;
+                }
+                for (const obj of objectsSortedByZ) { if (obj.visible && obj.isPointInside(x, y)) { return obj; } } return null;
+            }
             // Upgrade to Pointer Events (covers mouse + touch + pen)
             canvas.addEventListener('pointerdown', (e) => {
                 canvas.setPointerCapture(e.pointerId);
@@ -9304,12 +9328,14 @@ This software is provided "as is" without warranty of any kind.`);
                         // Apply stabilization
                         const stabilizedPoint = stabilizePoint({ x, y, pressure });
                         currentPencilStroke.points.push(stabilizedPoint);
-                        draw();
+                        needsRender = true;
+                        ensureRenderLoop();
                     } else if (isErasing && currentPencilStroke) {
                         // Right-click erasing in pencil mode
                         currentPencilStroke.points.push({ x, y, pressure });
                         eraseStrokesAtPoint(x, y, eraserWidth);
-                        draw();
+                        needsRender = true;
+                        ensureRenderLoop();
                     }
                     return; // Block all other interactions in pencil mode
                 }
@@ -9320,7 +9346,8 @@ This software is provided "as is" without warranty of any kind.`);
                     if (isErasing && currentPencilStroke) {
                         currentPencilStroke.points.push({ x, y });
                         eraseStrokesAtPoint(x, y, eraserWidth);
-                        draw();
+                        needsRender = true;
+                        ensureRenderLoop();
                     }
                     return; // Block all other interactions in eraser mode
                 }
@@ -9328,7 +9355,8 @@ This software is provided "as is" without warranty of any kind.`);
                 // Path node dragging
                 if (isDraggingPathNode && selectedPathNode) {
                     selectedPathNode.path.updateNode(selectedPathNode.nodeIndex, x, y);
-                    draw();
+                    needsRender = true;
+                    ensureRenderLoop();
                     return;
                 }
 
@@ -9834,11 +9862,12 @@ This software is provided "as is" without warranty of any kind.`);
                 } else { 
                     swapIndex = currentIndex - 1; 
                 } 
-                if (swapIndex >= 0 && swapIndex < sorted.length) { 
-                    let tempZ = sorted[currentIndex].zIndex; 
-                    sorted[currentIndex].zIndex = sorted[swapIndex].zIndex; 
-                    sorted[swapIndex].zIndex = tempZ; 
-                } 
+                if (swapIndex >= 0 && swapIndex < sorted.length) {
+                    let tempZ = sorted[currentIndex].zIndex;
+                    sorted[currentIndex].zIndex = sorted[swapIndex].zIndex;
+                    sorted[swapIndex].zIndex = tempZ;
+                    invalidateObjectsZIndex();
+                }
                 draw(); 
                 updateLayerList(); 
             }
@@ -10189,7 +10218,9 @@ This software is provided "as is" without warranty of any kind.`);
                 canvasPanX = mouseX - canvasX * canvasZoom;
                 canvasPanY = mouseY - canvasY * canvasZoom;
 
-                draw();
+                // Batch wheel event with RAF instead of immediate draw
+                needsRender = true;
+                ensureRenderLoop();
             }, { passive: false });
 
             // Pan with middle mouse button drag
@@ -10234,20 +10265,22 @@ This software is provided "as is" without warranty of any kind.`);
                 if (selectedObject) deleteObject(selectedObject); 
             });
             
-            document.getElementById('ctx-bring-to-front').addEventListener('click', () => { 
-                if(selectedObject) { 
-                    selectedObject.zIndex = getNextZIndex(); 
-                    draw(); 
-                    updateLayerList(); 
+            document.getElementById('ctx-bring-to-front').addEventListener('click', () => {
+                if(selectedObject) {
+                    selectedObject.zIndex = getNextZIndex();
+                    invalidateObjectsZIndex();
+                    draw();
+                    updateLayerList();
                 }
             });
             
-            document.getElementById('ctx-send-to-back').addEventListener('click', () => { 
-                if(selectedObject) { 
-                    const minZ = Math.min(...objects.map(o => o.zIndex).filter(z => z > 0)); 
-                    selectedObject.zIndex = minZ - 1; 
-                    draw(); 
-                    updateLayerList(); 
+            document.getElementById('ctx-send-to-back').addEventListener('click', () => {
+                if(selectedObject) {
+                    const minZ = Math.min(...objects.map(o => o.zIndex).filter(z => z > 0));
+                    selectedObject.zIndex = minZ - 1;
+                    invalidateObjectsZIndex();
+                    draw();
+                    updateLayerList();
                 }
             });
             
@@ -10472,6 +10505,7 @@ This software is provided "as is" without warranty of any kind.`);
             const originalPush = objects.push;
             objects.push = function(...items) {
                 trackObjectChanges();
+                invalidateObjectsZIndex();
                 return originalPush.apply(this, items);
             };
             
@@ -10480,6 +10514,7 @@ This software is provided "as is" without warranty of any kind.`);
             window.deleteObject = (obj) => {
                 originalDeleteObject(obj);
                 trackObjectChanges();
+                invalidateObjectsZIndex();
             };
             
             // Warn before page unload
