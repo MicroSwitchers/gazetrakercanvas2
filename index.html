@@ -7766,8 +7766,37 @@ This software is provided "as is" without warranty of any kind.`);
             
             function drawGridOverlay() {
                 if (!currentGrid || !showGuides || gridFrames.length === 0) return;
-                
+
+                // Create cache canvas if needed
+                if (!gridCacheCanvas) {
+                    gridCacheCanvas = document.createElement('canvas');
+                    gridCacheCanvas.width = canvas.width;
+                    gridCacheCanvas.height = canvas.height;
+                    gridCacheCtx = gridCacheCanvas.getContext('2d');
+                    gridCacheDirty = true;
+                }
+
+                // Rebuild cache only if grid changed
+                if (gridCacheDirty) {
+                    // Clear cache canvas
+                    gridCacheCtx.clearRect(0, 0, gridCacheCanvas.width, gridCacheCanvas.height);
+
+                    // Draw grid to cache
+                    drawGridToCache();
+                    gridCacheDirty = false;
+                }
+
+                // Draw cached grid to main canvas
                 ctx.save();
+                ctx.resetTransform();
+                ctx.drawImage(gridCacheCanvas, 0, 0);
+                ctx.restore();
+            }
+
+            function drawGridToCache() {
+                if (!gridCacheCtx || gridFrames.length === 0) return;
+
+                gridCacheCtx.save();
                 
                 // Draw position guides with elegant styling
                 gridFrames.forEach((frame, index) => {
@@ -7778,60 +7807,60 @@ This software is provided "as is" without warranty of any kind.`);
                     const radius = 20; // Smooth rounded corners
                     
                     // Create smooth rounded rectangle path
-                    ctx.beginPath();
-                    ctx.moveTo(left + radius, top);
-                    ctx.lineTo(left + width - radius, top);
-                    ctx.arcTo(left + width, top, left + width, top + radius, radius);
-                    ctx.lineTo(left + width, top + height - radius);
-                    ctx.arcTo(left + width, top + height, left + width - radius, top + height, radius);
-                    ctx.lineTo(left + radius, top + height);
-                    ctx.arcTo(left, top + height, left, top + height - radius, radius);
-                    ctx.lineTo(left, top + radius);
-                    ctx.arcTo(left, top, left + radius, top, radius);
-                    ctx.closePath();
+                    gridCacheCtx.beginPath();
+                    gridCacheCtx.moveTo(left + radius, top);
+                    gridCacheCtx.lineTo(left + width - radius, top);
+                    gridCacheCtx.arcTo(left + width, top, left + width, top + radius, radius);
+                    gridCacheCtx.lineTo(left + width, top + height - radius);
+                    gridCacheCtx.arcTo(left + width, top + height, left + width - radius, top + height, radius);
+                    gridCacheCtx.lineTo(left + radius, top + height);
+                    gridCacheCtx.arcTo(left, top + height, left, top + height - radius, radius);
+                    gridCacheCtx.lineTo(left, top + radius);
+                    gridCacheCtx.arcTo(left, top, left + radius, top, radius);
+                    gridCacheCtx.closePath();
                     
                     // Subtle outer glow
-                    ctx.strokeStyle = 'rgba(8, 145, 178, 0.12)'; // Cyan from app theme
-                    ctx.lineWidth = 6;
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                    ctx.stroke();
+                    gridCacheCtx.strokeStyle = 'rgba(8, 145, 178, 0.12)'; // Cyan from app theme
+                    gridCacheCtx.lineWidth = 6;
+                    gridCacheCtx.lineCap = 'round';
+                    gridCacheCtx.lineJoin = 'round';
+                    gridCacheCtx.stroke();
                     
                     // Main frame stroke with app's primary color
-                    ctx.strokeStyle = 'rgba(8, 145, 178, 0.3)'; // Cyan from app theme
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
+                    gridCacheCtx.strokeStyle = 'rgba(8, 145, 178, 0.3)'; // Cyan from app theme
+                    gridCacheCtx.lineWidth = 2;
+                    gridCacheCtx.stroke();
                     
                     // Inner highlight for depth
-                    ctx.strokeStyle = 'rgba(8, 145, 178, 0.15)';
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
+                    gridCacheCtx.strokeStyle = 'rgba(8, 145, 178, 0.15)';
+                    gridCacheCtx.lineWidth = 1;
+                    gridCacheCtx.stroke();
                     
                     // Draw position dot with app-integrated colors
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
+                    gridCacheCtx.lineCap = 'round';
+                    gridCacheCtx.lineJoin = 'round';
                     
                     // Subtle outer glow
-                    const outerGlow = ctx.createRadialGradient(frame.x, frame.y, 5, frame.x, frame.y, 18);
+                    const outerGlow = gridCacheCtx.createRadialGradient(frame.x, frame.y, 5, frame.x, frame.y, 18);
                     outerGlow.addColorStop(0, 'rgba(8, 145, 178, 0.15)');
                     outerGlow.addColorStop(1, 'rgba(8, 145, 178, 0)');
-                    ctx.fillStyle = outerGlow;
-                    ctx.beginPath();
-                    ctx.arc(frame.x, frame.y, 18, 0, Math.PI * 2);
-                    ctx.fill();
+                    gridCacheCtx.fillStyle = outerGlow;
+                    gridCacheCtx.beginPath();
+                    gridCacheCtx.arc(frame.x, frame.y, 18, 0, Math.PI * 2);
+                    gridCacheCtx.fill();
                     
                     // Draw occupancy indicator based on frame.occupied status
                     if (frame.occupied) {
                         // Occupied - filled dot with clean styling
                         // Outer glow ring
-                        ctx.strokeStyle = 'rgba(34, 197, 94, 0.25)';
-                        ctx.lineWidth = 4;
-                        ctx.beginPath();
-                        ctx.arc(frame.x, frame.y, 11, 0, Math.PI * 2);
-                        ctx.stroke();
+                        gridCacheCtx.strokeStyle = 'rgba(34, 197, 94, 0.25)';
+                        gridCacheCtx.lineWidth = 4;
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x, frame.y, 11, 0, Math.PI * 2);
+                        gridCacheCtx.stroke();
                         
                         // Main filled circle with gradient
-                        const fillGradient = ctx.createRadialGradient(
+                        const fillGradient = gridCacheCtx.createRadialGradient(
                             frame.x - 2, frame.y - 2, 0,
                             frame.x, frame.y, 10
                         );
@@ -7839,59 +7868,59 @@ This software is provided "as is" without warranty of any kind.`);
                         fillGradient.addColorStop(0.6, 'rgba(34, 197, 94, 1)');
                         fillGradient.addColorStop(1, 'rgba(22, 163, 74, 1)');
                         
-                        ctx.fillStyle = fillGradient;
-                        ctx.beginPath();
-                        ctx.arc(frame.x, frame.y, 10, 0, Math.PI * 2);
-                        ctx.fill();
+                        gridCacheCtx.fillStyle = fillGradient;
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x, frame.y, 10, 0, Math.PI * 2);
+                        gridCacheCtx.fill();
                         
                         // Crisp border
-                        ctx.strokeStyle = 'rgba(21, 128, 61, 0.6)';
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
+                        gridCacheCtx.strokeStyle = 'rgba(21, 128, 61, 0.6)';
+                        gridCacheCtx.lineWidth = 1;
+                        gridCacheCtx.stroke();
                         
                         // Subtle highlight
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-                        ctx.beginPath();
-                        ctx.arc(frame.x - 2, frame.y - 2, 3, 0, Math.PI * 2);
-                        ctx.fill();
+                        gridCacheCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x - 2, frame.y - 2, 3, 0, Math.PI * 2);
+                        gridCacheCtx.fill();
                     } else {
                         // Empty - hollow ring with app theme colors
                         // Outer soft ring
-                        ctx.strokeStyle = 'rgba(8, 145, 178, 0.2)';
-                        ctx.lineWidth = 4;
-                        ctx.beginPath();
-                        ctx.arc(frame.x, frame.y, 11, 0, Math.PI * 2);
-                        ctx.stroke();
+                        gridCacheCtx.strokeStyle = 'rgba(8, 145, 178, 0.2)';
+                        gridCacheCtx.lineWidth = 4;
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x, frame.y, 11, 0, Math.PI * 2);
+                        gridCacheCtx.stroke();
                         
                         // Main ring
-                        ctx.strokeStyle = 'rgba(8, 145, 178, 0.5)';
-                        ctx.lineWidth = 2.5;
-                        ctx.beginPath();
-                        ctx.arc(frame.x, frame.y, 9, 0, Math.PI * 2);
-                        ctx.stroke();
+                        gridCacheCtx.strokeStyle = 'rgba(8, 145, 178, 0.5)';
+                        gridCacheCtx.lineWidth = 2.5;
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x, frame.y, 9, 0, Math.PI * 2);
+                        gridCacheCtx.stroke();
                         
                         // Inner fill
-                        const innerFill = ctx.createRadialGradient(
+                        const innerFill = gridCacheCtx.createRadialGradient(
                             frame.x, frame.y, 0,
                             frame.x, frame.y, 7
                         );
                         innerFill.addColorStop(0, 'rgba(236, 254, 255, 0.15)');
                         innerFill.addColorStop(1, 'rgba(207, 250, 254, 0.05)');
-                        ctx.fillStyle = innerFill;
-                        ctx.beginPath();
-                        ctx.arc(frame.x, frame.y, 7, 0, Math.PI * 2);
-                        ctx.fill();
+                        gridCacheCtx.fillStyle = innerFill;
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x, frame.y, 7, 0, Math.PI * 2);
+                        gridCacheCtx.fill();
                         
                         // Subtle highlight arc
-                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-                        ctx.lineWidth = 1.5;
-                        ctx.beginPath();
-                        ctx.arc(frame.x, frame.y, 9, Math.PI * 1.2, Math.PI * 1.8);
-                        ctx.stroke();
+                        gridCacheCtx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                        gridCacheCtx.lineWidth = 1.5;
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x, frame.y, 9, Math.PI * 1.2, Math.PI * 1.8);
+                        gridCacheCtx.stroke();
                     }
                 });
                 
-                ctx.restore();
+                gridCacheCtx.restore();
             }
 
             // Draw active drag indicator on top layer (above objects)
@@ -7944,11 +7973,14 @@ This software is provided "as is" without warranty of any kind.`);
             }
             
         function setGrid(frameCount) {
+                // Invalidate grid cache when changing grids
+                invalidateGridCache();
+
                 // Remove selection from all grid buttons
                 document.querySelectorAll('.grid-button').forEach(btn => {
                     btn.classList.remove('selected');
                 });
-                
+
                 if (frameCount === currentGrid) {
                     // Deselect current grid
                     currentGrid = null;
@@ -8114,9 +8146,19 @@ This software is provided "as is" without warranty of any kind.`);
                 setGrid(null);
             });
 
+            // Grid caching for performance
+            let gridCacheCanvas = null;
+            let gridCacheCtx = null;
+            let gridCacheDirty = true;
+
+            function invalidateGridCache() {
+                gridCacheDirty = true;
+            }
+
             // Simple grid helpers
             function clearGridOccupancy() {
                 gridFrames.forEach(f => f.occupied = false);
+                invalidateGridCache();
             }
             
             function recomputeGridOccupancy() {
