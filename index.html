@@ -452,7 +452,7 @@
             width: 100%;
             height: 100vh;
             position: relative;
-            background: #ffffff;
+            background: #3a3a3a;
             overflow: hidden;
             border-left: 1px solid var(--md-outline);
             border-right: 1px solid var(--md-outline);
@@ -4644,6 +4644,21 @@ This software is provided "as is" without warranty of any kind.`);
             let isSnapping = false;
             let snapAnimation = null;
             let tempGridVisibility = false; // Track if grid was temporarily shown during drag
+
+            // Canvas Pan and Zoom State
+            const CANVAS_WIDTH = 1920; // Fixed canvas size for consistency across devices
+            const CANVAS_HEIGHT = 1080;
+            let canvasZoom = 1.0; // Current zoom level
+            let canvasPanX = 0; // Current pan offset X
+            let canvasPanY = 0; // Current pan offset Y
+            let isPanningCanvas = false; // Whether currently panning
+            let panStartX = 0; // Pan start mouse position
+            let panStartY = 0;
+            let initialPanX = 0; // Pan position when pan started
+            let initialPanY = 0;
+            const MIN_ZOOM = 0.1; // Minimum zoom level
+            const MAX_ZOOM = 5; // Maximum zoom level
+            const ZOOM_SPEED = 0.1; // Zoom speed factor for scroll wheel
             
             // Shape Creation State
             // Color harmony palettes - each palette contains harmonious colors
@@ -4876,24 +4891,41 @@ This software is provided "as is" without warranty of any kind.`);
 
             // --- Canvas Setup ---
             function getCanvasDimensions() {
-                const rect = canvasContainer.getBoundingClientRect();
-                return { width: rect.width, height: rect.height };
+                // Return the fixed canvas dimensions (1920x1080) for consistent grid and object positioning
+                return { width: CANVAS_WIDTH, height: CANVAS_HEIGHT };
             }
             
             function resizeCanvas() {
                 const rect = canvasContainer.getBoundingClientRect();
                 const dpr = window.devicePixelRatio || 1;
+                const margin = 20; // Margin from screen edge in pixels
 
-                // Set the canvas internal size accounting for device pixel ratio
-                canvas.width = rect.width * dpr;
-                canvas.height = rect.height * dpr;
+                // Set the canvas internal size to fixed 1920x1080
+                canvas.width = CANVAS_WIDTH * dpr;
+                canvas.height = CANVAS_HEIGHT * dpr;
 
-                // Set the canvas CSS size to the display size
-                canvas.style.width = rect.width + 'px';
-                canvas.style.height = rect.height + 'px';
+                // Set the canvas CSS size to fixed dimensions
+                canvas.style.width = CANVAS_WIDTH + 'px';
+                canvas.style.height = CANVAS_HEIGHT + 'px';
 
                 // Scale the context to match device pixel ratio
                 ctx.scale(dpr, dpr);
+
+                // Calculate initial zoom to fit canvas in viewport with margin
+                if (canvasZoom === 1.0 && canvasPanX === 0 && canvasPanY === 0) {
+                    // First time initialization - fit to screen
+                    const availableWidth = rect.width - (margin * 2);
+                    const availableHeight = rect.height - (margin * 2);
+                    const zoomX = availableWidth / CANVAS_WIDTH;
+                    const zoomY = availableHeight / CANVAS_HEIGHT;
+                    canvasZoom = Math.min(zoomX, zoomY);
+
+                    // Center the canvas
+                    const scaledWidth = CANVAS_WIDTH * canvasZoom;
+                    const scaledHeight = CANVAS_HEIGHT * canvasZoom;
+                    canvasPanX = (availableWidth - scaledWidth) / 2 + margin;
+                    canvasPanY = (availableHeight - scaledHeight) / 2 + margin;
+                }
 
                 // Recalculate grid frames and reposition objects if a grid is active
                 if (currentGrid) {
@@ -5106,230 +5138,240 @@ This software is provided "as is" without warranty of any kind.`);
 
             // --- Drawing Engine ---
             function draw() {
-                const dpr = window.devicePixelRatio || 1;
-                const { width: canvasWidth, height: canvasHeight } = getCanvasDimensions();
-                
-                // Reset transform to clear any previous scaling
-                ctx.setTransform(1, 0, 0, 1, 0, 0);
-                
-                // Apply device pixel ratio scaling
-                ctx.scale(dpr, dpr);
-                
-                // Configure image smoothing for crisp rendering
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = 'high';
+                try {
+                    const dpr = window.devicePixelRatio || 1;
 
-                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-                ctx.fillStyle = backgroundColor;
-                ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                    // Reset transform to clear any previous scaling
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-                if (backgroundImage) {
-                    drawCoverImage(backgroundImage.img, canvasWidth, canvasHeight);
-                }
+                    // Clear the entire canvas at full internal resolution
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // Draw grid overlay (below objects, above background)
-                drawGridOverlay();
+                    // Apply device pixel ratio scaling
+                    ctx.scale(dpr, dpr);
 
-                // Animate hover scale
-                if (hoveredObject && enableHoverPopup) {
-                    hoverScale += (HOVER_SCALE_TARGET - hoverScale) * HOVER_ANIMATION_SPEED;
-                    if (Math.abs(HOVER_SCALE_TARGET - hoverScale) > 0.001) {
-                        ensureRenderLoop(); // Continue animation
+                    // Apply pan and zoom transformation
+                    ctx.translate(canvasPanX, canvasPanY);
+                    ctx.scale(canvasZoom, canvasZoom);
+
+                    // Configure image smoothing for crisp rendering
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+
+                    // Draw background
+                    ctx.fillStyle = backgroundColor;
+                    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+                    if (backgroundImage) {
+                        drawCoverImage(backgroundImage.img, CANVAS_WIDTH, CANVAS_HEIGHT);
                     }
-                } else if (hoverScale > 1.0) {
-                    hoverScale += (1.0 - hoverScale) * HOVER_ANIMATION_SPEED;
-                    if (Math.abs(1.0 - hoverScale) > 0.001) {
-                        ensureRenderLoop(); // Continue animation
-                    } else {
-                        hoverScale = 1.0; // Snap to final value
-                    }
-                }
 
-                objects.sort((a, b) => a.zIndex - b.zIndex).forEach(obj => {
-                    if (obj.visible) {
-                        // Apply hover scale effect
-                        if (obj === hoveredObject && enableHoverPopup && hoverScale > 1.0) {
-                            ctx.save();
+                    // Draw grid overlay (below objects, above background)
+                    drawGridOverlay();
 
-                            // Add shadow for pop-up effect
-                            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-                            ctx.shadowBlur = 15 * (hoverScale - 1.0) / 0.15; // Scale shadow with hover
-                            ctx.shadowOffsetX = 0;
-                            ctx.shadowOffsetY = 5 * (hoverScale - 1.0) / 0.15;
-
-                            const centerX = obj.x + obj.width / 2;
-                            const centerY = obj.y + obj.height / 2;
-                            ctx.translate(centerX, centerY);
-                            ctx.scale(hoverScale, hoverScale);
-                            ctx.translate(-centerX, -centerY);
-                            obj.draw(ctx);
-                            ctx.restore();
+                    // Animate hover scale
+                    if (hoveredObject && enableHoverPopup) {
+                        hoverScale += (HOVER_SCALE_TARGET - hoverScale) * HOVER_ANIMATION_SPEED;
+                        if (Math.abs(HOVER_SCALE_TARGET - hoverScale) > 0.001) {
+                            ensureRenderLoop(); // Continue animation
+                        }
+                    } else if (hoverScale > 1.0) {
+                        hoverScale += (1.0 - hoverScale) * HOVER_ANIMATION_SPEED;
+                        if (Math.abs(1.0 - hoverScale) > 0.001) {
+                            ensureRenderLoop(); // Continue animation
                         } else {
-                            obj.draw(ctx);
+                            hoverScale = 1.0; // Snap to final value
                         }
                     }
-                });
 
-                // Draw path for selected object (in edit mode only)
-                if (interactionMode === 'edit' && selectedObject && selectedObject.animationPath) {
-                    const isActive = isDrawingPath;
-                    const selectedNodeIdx = selectedPathNode && selectedPathNode.path === selectedObject.animationPath ? selectedPathNode.nodeIndex : -1;
-                    selectedObject.animationPath.draw(ctx, isActive, selectedNodeIdx);
-                }
+                    objects.sort((a, b) => a.zIndex - b.zIndex).forEach(obj => {
+                        if (obj.visible) {
+                            // Apply hover scale effect
+                            if (obj === hoveredObject && enableHoverPopup && hoverScale > 1.0) {
+                                ctx.save();
 
-                // Draw pencil strokes with realistic marker/pen appearance (on top of objects, below foreground)
-                pencilStrokes.forEach(stroke => {
-                    const pointsToDraw = stroke.smoothedPoints || stroke.points;
-                    if (pointsToDraw.length < 2) return;
+                                // Add shadow for pop-up effect
+                                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                                ctx.shadowBlur = 15 * (hoverScale - 1.0) / 0.15; // Scale shadow with hover
+                                ctx.shadowOffsetX = 0;
+                                ctx.shadowOffsetY = 5 * (hoverScale - 1.0) / 0.15;
 
-                    ctx.save();
-                    const baseOpacity = stroke.opacity !== undefined ? stroke.opacity : 0.95;
+                                const centerX = obj.x + obj.width / 2;
+                                const centerY = obj.y + obj.height / 2;
+                                ctx.translate(centerX, centerY);
+                                ctx.scale(hoverScale, hoverScale);
+                                ctx.translate(-centerX, -centerY);
+                                obj.draw(ctx);
+                                ctx.restore();
+                            } else {
+                                obj.draw(ctx);
+                            }
+                        }
+                    });
 
-                    ctx.strokeStyle = stroke.color;
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-
-                    // Layer 1: Subtle base layer for slight edge softness (very subtle)
-                    ctx.shadowColor = stroke.color;
-                    ctx.shadowBlur = stroke.width * 0.25;
-                    ctx.lineWidth = stroke.width * 1.05;
-                    ctx.globalAlpha = baseOpacity * 0.15;
-
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                    // Draw path for selected object (in edit mode only)
+                    if (interactionMode === 'edit' && selectedObject && selectedObject.animationPath) {
+                        const isActive = isDrawingPath;
+                        const selectedNodeIdx = selectedPathNode && selectedPathNode.path === selectedObject.animationPath ? selectedPathNode.nodeIndex : -1;
+                        selectedObject.animationPath.draw(ctx, isActive, selectedNodeIdx);
                     }
-                    ctx.stroke();
 
-                    // Layer 2: Main solid stroke body
-                    ctx.shadowBlur = stroke.width * 0.08; // Minimal blur for crisp edges
-                    ctx.lineWidth = stroke.width;
-                    ctx.globalAlpha = baseOpacity * 0.88;
+                    // Draw pencil strokes with realistic marker/pen appearance (on top of objects, below foreground)
+                    pencilStrokes.forEach(stroke => {
+                        const pointsToDraw = stroke.smoothedPoints || stroke.points;
+                        if (pointsToDraw.length < 2) return;
 
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    // Layer 3: Inner texture passes for depth (multiple thin lines)
-                    ctx.shadowBlur = 0;
-                    ctx.globalAlpha = baseOpacity * 0.25;
-
-                    // First texture pass (slightly offset)
-                    ctx.lineWidth = stroke.width * 0.45;
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    // Second texture pass (center highlight)
-                    ctx.lineWidth = stroke.width * 0.25;
-                    ctx.globalAlpha = baseOpacity * 0.35;
-                    ctx.globalCompositeOperation = 'overlay'; // Natural blending
-
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    ctx.restore();
-                });
-
-                // Draw current stroke being drawn with realistic marker/pen effect (live preview)
-                if (isDrawingPencil && currentPencilStroke && currentPencilStroke.points.length > 1) {
-                    const pointsToDraw = currentPencilStroke.points;
-
-                    ctx.save();
-                    const baseOpacity = currentPencilStroke.opacity !== undefined ? currentPencilStroke.opacity : 0.95;
-
-                    ctx.strokeStyle = currentPencilStroke.color;
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-
-                    // Subtle base layer
-                    ctx.shadowColor = currentPencilStroke.color;
-                    ctx.shadowBlur = currentPencilStroke.width * 0.25;
-                    ctx.lineWidth = currentPencilStroke.width * 1.05;
-                    ctx.globalAlpha = baseOpacity * 0.15;
-
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    // Main solid body
-                    ctx.shadowBlur = currentPencilStroke.width * 0.08;
-                    ctx.lineWidth = currentPencilStroke.width;
-                    ctx.globalAlpha = baseOpacity * 0.88;
-
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    // Inner texture
-                    ctx.shadowBlur = 0;
-                    ctx.globalAlpha = baseOpacity * 0.25;
-                    ctx.lineWidth = currentPencilStroke.width * 0.45;
-
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    // Center highlight
-                    ctx.lineWidth = currentPencilStroke.width * 0.25;
-                    ctx.globalAlpha = baseOpacity * 0.35;
-                    ctx.globalCompositeOperation = 'overlay';
-
-                    ctx.beginPath();
-                    ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
-                    for (let i = 1; i < pointsToDraw.length; i++) {
-                        ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
-                    }
-                    ctx.stroke();
-
-                    ctx.restore();
-                }
-
-                // Draw eraser preview circle
-                if (isErasing && currentPencilStroke) {
-                    const lastPoint = currentPencilStroke.points[currentPencilStroke.points.length - 1];
-                    if (lastPoint) {
                         ctx.save();
-                        ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
-                        ctx.lineWidth = 2;
-                        ctx.setLineDash([4, 4]);
+                        const baseOpacity = stroke.opacity !== undefined ? stroke.opacity : 0.95;
+
+                        ctx.strokeStyle = stroke.color;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+
+                        // Layer 1: Subtle base layer for slight edge softness (very subtle)
+                        ctx.shadowColor = stroke.color;
+                        ctx.shadowBlur = stroke.width * 0.25;
+                        ctx.lineWidth = stroke.width * 1.05;
+                        ctx.globalAlpha = baseOpacity * 0.15;
+
                         ctx.beginPath();
-                        ctx.arc(lastPoint.x, lastPoint.y, eraserWidth, 0, Math.PI * 2);
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
                         ctx.stroke();
+
+                        // Layer 2: Main solid stroke body
+                        ctx.shadowBlur = stroke.width * 0.08; // Minimal blur for crisp edges
+                        ctx.lineWidth = stroke.width;
+                        ctx.globalAlpha = baseOpacity * 0.88;
+
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
+                        // Layer 3: Inner texture passes for depth (multiple thin lines)
+                        ctx.shadowBlur = 0;
+                        ctx.globalAlpha = baseOpacity * 0.25;
+
+                        // First texture pass (slightly offset)
+                        ctx.lineWidth = stroke.width * 0.45;
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
+                        // Second texture pass (center highlight)
+                        ctx.lineWidth = stroke.width * 0.25;
+                        ctx.globalAlpha = baseOpacity * 0.35;
+                        ctx.globalCompositeOperation = 'overlay'; // Natural blending
+
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
+                        ctx.restore();
+                    });
+
+                    // Draw current stroke being drawn with realistic marker/pen effect (live preview)
+                    if (isDrawingPencil && currentPencilStroke && currentPencilStroke.points.length > 1) {
+                        const pointsToDraw = currentPencilStroke.points;
+
+                        ctx.save();
+                        const baseOpacity = currentPencilStroke.opacity !== undefined ? currentPencilStroke.opacity : 0.95;
+
+                        ctx.strokeStyle = currentPencilStroke.color;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+
+                        // Subtle base layer
+                        ctx.shadowColor = currentPencilStroke.color;
+                        ctx.shadowBlur = currentPencilStroke.width * 0.25;
+                        ctx.lineWidth = currentPencilStroke.width * 1.05;
+                        ctx.globalAlpha = baseOpacity * 0.15;
+
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
+                        // Main solid body
+                        ctx.shadowBlur = currentPencilStroke.width * 0.08;
+                        ctx.lineWidth = currentPencilStroke.width;
+                        ctx.globalAlpha = baseOpacity * 0.88;
+
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
+                        // Inner texture
+                        ctx.shadowBlur = 0;
+                        ctx.globalAlpha = baseOpacity * 0.25;
+                        ctx.lineWidth = currentPencilStroke.width * 0.45;
+
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
+                        // Center highlight
+                        ctx.lineWidth = currentPencilStroke.width * 0.25;
+                        ctx.globalAlpha = baseOpacity * 0.35;
+                        ctx.globalCompositeOperation = 'overlay';
+
+                        ctx.beginPath();
+                        ctx.moveTo(pointsToDraw[0].x, pointsToDraw[0].y);
+                        for (let i = 1; i < pointsToDraw.length; i++) {
+                            ctx.lineTo(pointsToDraw[i].x, pointsToDraw[i].y);
+                        }
+                        ctx.stroke();
+
                         ctx.restore();
                     }
-                }
 
-                if (foregroundImage) {
-                    drawCoverImage(foregroundImage.img, canvasWidth, canvasHeight);
-                }
+                    // Draw eraser preview circle
+                    if (isErasing && currentPencilStroke) {
+                        const lastPoint = currentPencilStroke.points[currentPencilStroke.points.length - 1];
+                        if (lastPoint) {
+                            ctx.save();
+                            ctx.strokeStyle = 'rgba(255, 0, 0, 0.5)';
+                            ctx.lineWidth = 2;
+                            ctx.setLineDash([4, 4]);
+                            ctx.beginPath();
+                            ctx.arc(lastPoint.x, lastPoint.y, eraserWidth, 0, Math.PI * 2);
+                            ctx.stroke();
+                            ctx.restore();
+                        }
+                    }
 
-                // Draw active drag indicator on top (above objects)
-                drawGridDragIndicator();
+                    if (foregroundImage) {
+                        drawCoverImage(foregroundImage.img, CANVAS_WIDTH, CANVAS_HEIGHT);
+                    }
 
-                // Only show selection handles in Edit mode (but not while dragging)
-                if (interactionMode === 'edit' && selectedObject && currentTool === 'select' && !isDragging) {
-                    drawSelectionHandles(selectedObject);
+                    // Draw active drag indicator on top (above objects)
+                    drawGridDragIndicator();
+
+                    // Only show selection handles in Edit mode (but not while dragging)
+                    if (interactionMode === 'edit' && selectedObject && currentTool === 'select' && !isDragging) {
+                        drawSelectionHandles(selectedObject);
+                    }
+                } catch (err) {
+                    console.error('Draw function error:', err);
                 }
             }
 
@@ -5647,9 +5689,9 @@ This software is provided "as is" without warranty of any kind.`);
     class TextObject extends CanvasObject { 
                 constructor(text, x, y, zIndex) { 
                     super(x, y, 0, 0, zIndex, 'text'); 
-                    this.text = text; 
-                    this.color = '#FFFFFF'; 
-                    this.size = 40; 
+                    this.text = text;
+                    this.color = '#FFFFFF';
+                    this.size = 60; 
             this.fontFamily = 'Luciole, "Atkinson Hyperlegible", Inter, system-ui, sans-serif';
         this.fontWeight = 400;
         this.fontStyle = 'normal';
@@ -5692,11 +5734,11 @@ This software is provided "as is" without warranty of any kind.`);
             class ShapeObject extends CanvasObject { 
                 constructor(shapeType, x, y, zIndex, color = '#FF5733') { 
                     // Set initial dimensions; make rectangles slightly wider than tall for recognizability
-                    let initWidth = 100;
-                    let initHeight = 100;
+                    let initWidth = 180;
+                    let initHeight = 180;
                     if (shapeType === 'rect') {
-                        initWidth = 120; // slightly longer on X axis
-                        initHeight = 100;
+                        initWidth = 220; // slightly longer on X axis
+                        initHeight = 180;
                     }
                     super(x - initWidth/2, y - initHeight/2, initWidth, initHeight, zIndex, 'shape'); 
                     this.shapeType = shapeType; 
@@ -6235,8 +6277,8 @@ This software is provided "as is" without warranty of any kind.`);
                     downBtn.onclick = (e) => { e.stopPropagation(); moveObject(obj.id, 'down'); }; 
                     controls.appendChild(downBtn); 
                     
-                    const visibilityToggle = document.createElement('button'); 
-                    visibilityToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 616 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>';
+                    const visibilityToggle = document.createElement('button');
+                    visibilityToggle.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>';
                     visibilityToggle.className = `layer-item-button ${!obj.visible ? 'layer-visibility-hidden' : ''}`;
                     visibilityToggle.title = obj.visible ? 'Hide' : 'Show'; 
                     visibilityToggle.onclick = (e) => { 
@@ -7047,10 +7089,10 @@ This software is provided "as is" without warranty of any kind.`);
                 }
                 
                 autoLoadToast.classList.remove('hidden');
-                
-                // Auto-hide for success and info messages (unless showing progress)
-                if (!showProgress && (type === 'success' || type === 'info')) {
-                    setTimeout(() => hideToast(), 5000);
+
+                // Auto-hide for success, info, and warning messages (unless showing progress)
+                if (!showProgress && (type === 'success' || type === 'info' || type === 'warning')) {
+                    setTimeout(() => hideToast(), 6000);
                 }
             }
             
@@ -7592,7 +7634,7 @@ This software is provided "as is" without warranty of any kind.`);
             
             function setObjectCenterPosition(obj, centerX, centerY) {
                 if (!obj) return;
-                
+
                 if (obj.type === 'circle') {
                     obj.x = centerX;
                     obj.y = centerY;
@@ -7606,7 +7648,63 @@ This software is provided "as is" without warranty of any kind.`);
                     obj.y = centerY - obj.height / 2;
                 }
             }
-            
+
+            function resizeObjectToGridFrame(obj, gridFrame) {
+                if (!obj || !gridFrame) return;
+
+                // Calculate target dimensions (80% of grid frame to leave padding)
+                const targetWidth = gridFrame.width * 0.8;
+                const targetHeight = gridFrame.height * 0.8;
+
+                if (obj.type === 'text') {
+                    // For text, resize the font size to fit within grid
+                    const maxFontSize = targetHeight * 0.6; // Use up to 60% of grid height for font
+                    obj.size = Math.max(16, Math.min(72, Math.round(maxFontSize))); // Reasonable font size range
+                    obj.updateMetrics();
+                } else if (obj.type === 'circle') {
+                    // For circles, fit within the smaller dimension
+                    const circleDimension = Math.min(targetWidth, targetHeight);
+                    obj.width = circleDimension;
+                    obj.height = circleDimension;
+                } else if (obj.type === 'shape') {
+                    // For shapes, scale to fit both dimensions
+                    const currentWidth = obj.width || targetWidth;
+                    const currentHeight = obj.height || targetHeight;
+                    const aspectRatio = currentHeight / currentWidth;
+
+                    // Calculate scale that fits within target dimensions
+                    let newWidth = targetWidth;
+                    let newHeight = newWidth * aspectRatio;
+
+                    // If height exceeds target, scale based on height instead
+                    if (newHeight > targetHeight) {
+                        newHeight = targetHeight;
+                        newWidth = newHeight / aspectRatio;
+                    }
+
+                    obj.width = newWidth;
+                    obj.height = newHeight;
+                } else if (obj.type === 'image' || obj.type === 'video') {
+                    // For images/videos, maintain aspect ratio and fit within grid box
+                    const currentWidth = obj.width || targetWidth;
+                    const currentHeight = obj.height || targetHeight;
+                    const aspectRatio = currentHeight / currentWidth;
+
+                    // Start with target width and calculate height
+                    let newWidth = targetWidth;
+                    let newHeight = newWidth * aspectRatio;
+
+                    // If height exceeds target, scale based on height instead
+                    if (newHeight > targetHeight) {
+                        newHeight = targetHeight;
+                        newWidth = newHeight / aspectRatio;
+                    }
+
+                    obj.width = newWidth;
+                    obj.height = newHeight;
+                }
+            }
+
             function snapObjectCenterToGrid(obj, isShiftHeld = false) {
                 if (!obj || !currentGrid || isShiftHeld) return;
                 
@@ -7668,8 +7766,34 @@ This software is provided "as is" without warranty of any kind.`);
             
             function drawGridOverlay() {
                 if (!currentGrid || !showGuides || gridFrames.length === 0) return;
-                
-                ctx.save();
+
+                // Create cache canvas if needed (at logical canvas size, not internal resolution)
+                if (!gridCacheCanvas) {
+                    gridCacheCanvas = document.createElement('canvas');
+                    gridCacheCanvas.width = CANVAS_WIDTH;
+                    gridCacheCanvas.height = CANVAS_HEIGHT;
+                    gridCacheCtx = gridCacheCanvas.getContext('2d');
+                    gridCacheDirty = true;
+                }
+
+                // Rebuild cache only if grid changed
+                if (gridCacheDirty) {
+                    // Clear cache canvas
+                    gridCacheCtx.clearRect(0, 0, gridCacheCanvas.width, gridCacheCanvas.height);
+
+                    // Draw grid to cache
+                    drawGridToCache();
+                    gridCacheDirty = false;
+                }
+
+                // Draw cached grid to main canvas (within the transformed coordinate space)
+                ctx.drawImage(gridCacheCanvas, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            }
+
+            function drawGridToCache() {
+                if (!gridCacheCtx || gridFrames.length === 0) return;
+
+                gridCacheCtx.save();
                 
                 // Draw position guides with elegant styling
                 gridFrames.forEach((frame, index) => {
@@ -7680,60 +7804,60 @@ This software is provided "as is" without warranty of any kind.`);
                     const radius = 20; // Smooth rounded corners
                     
                     // Create smooth rounded rectangle path
-                    ctx.beginPath();
-                    ctx.moveTo(left + radius, top);
-                    ctx.lineTo(left + width - radius, top);
-                    ctx.arcTo(left + width, top, left + width, top + radius, radius);
-                    ctx.lineTo(left + width, top + height - radius);
-                    ctx.arcTo(left + width, top + height, left + width - radius, top + height, radius);
-                    ctx.lineTo(left + radius, top + height);
-                    ctx.arcTo(left, top + height, left, top + height - radius, radius);
-                    ctx.lineTo(left, top + radius);
-                    ctx.arcTo(left, top, left + radius, top, radius);
-                    ctx.closePath();
+                    gridCacheCtx.beginPath();
+                    gridCacheCtx.moveTo(left + radius, top);
+                    gridCacheCtx.lineTo(left + width - radius, top);
+                    gridCacheCtx.arcTo(left + width, top, left + width, top + radius, radius);
+                    gridCacheCtx.lineTo(left + width, top + height - radius);
+                    gridCacheCtx.arcTo(left + width, top + height, left + width - radius, top + height, radius);
+                    gridCacheCtx.lineTo(left + radius, top + height);
+                    gridCacheCtx.arcTo(left, top + height, left, top + height - radius, radius);
+                    gridCacheCtx.lineTo(left, top + radius);
+                    gridCacheCtx.arcTo(left, top, left + radius, top, radius);
+                    gridCacheCtx.closePath();
                     
                     // Subtle outer glow
-                    ctx.strokeStyle = 'rgba(8, 145, 178, 0.12)'; // Cyan from app theme
-                    ctx.lineWidth = 6;
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                    ctx.stroke();
+                    gridCacheCtx.strokeStyle = 'rgba(8, 145, 178, 0.12)'; // Cyan from app theme
+                    gridCacheCtx.lineWidth = 6;
+                    gridCacheCtx.lineCap = 'round';
+                    gridCacheCtx.lineJoin = 'round';
+                    gridCacheCtx.stroke();
                     
                     // Main frame stroke with app's primary color
-                    ctx.strokeStyle = 'rgba(8, 145, 178, 0.3)'; // Cyan from app theme
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
+                    gridCacheCtx.strokeStyle = 'rgba(8, 145, 178, 0.3)'; // Cyan from app theme
+                    gridCacheCtx.lineWidth = 2;
+                    gridCacheCtx.stroke();
                     
                     // Inner highlight for depth
-                    ctx.strokeStyle = 'rgba(8, 145, 178, 0.15)';
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
+                    gridCacheCtx.strokeStyle = 'rgba(8, 145, 178, 0.15)';
+                    gridCacheCtx.lineWidth = 1;
+                    gridCacheCtx.stroke();
                     
                     // Draw position dot with app-integrated colors
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
+                    gridCacheCtx.lineCap = 'round';
+                    gridCacheCtx.lineJoin = 'round';
                     
                     // Subtle outer glow
-                    const outerGlow = ctx.createRadialGradient(frame.x, frame.y, 5, frame.x, frame.y, 18);
+                    const outerGlow = gridCacheCtx.createRadialGradient(frame.x, frame.y, 5, frame.x, frame.y, 18);
                     outerGlow.addColorStop(0, 'rgba(8, 145, 178, 0.15)');
                     outerGlow.addColorStop(1, 'rgba(8, 145, 178, 0)');
-                    ctx.fillStyle = outerGlow;
-                    ctx.beginPath();
-                    ctx.arc(frame.x, frame.y, 18, 0, Math.PI * 2);
-                    ctx.fill();
+                    gridCacheCtx.fillStyle = outerGlow;
+                    gridCacheCtx.beginPath();
+                    gridCacheCtx.arc(frame.x, frame.y, 18, 0, Math.PI * 2);
+                    gridCacheCtx.fill();
                     
                     // Draw occupancy indicator based on frame.occupied status
                     if (frame.occupied) {
                         // Occupied - filled dot with clean styling
                         // Outer glow ring
-                        ctx.strokeStyle = 'rgba(34, 197, 94, 0.25)';
-                        ctx.lineWidth = 4;
-                        ctx.beginPath();
-                        ctx.arc(frame.x, frame.y, 11, 0, Math.PI * 2);
-                        ctx.stroke();
+                        gridCacheCtx.strokeStyle = 'rgba(34, 197, 94, 0.25)';
+                        gridCacheCtx.lineWidth = 4;
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x, frame.y, 11, 0, Math.PI * 2);
+                        gridCacheCtx.stroke();
                         
                         // Main filled circle with gradient
-                        const fillGradient = ctx.createRadialGradient(
+                        const fillGradient = gridCacheCtx.createRadialGradient(
                             frame.x - 2, frame.y - 2, 0,
                             frame.x, frame.y, 10
                         );
@@ -7741,59 +7865,59 @@ This software is provided "as is" without warranty of any kind.`);
                         fillGradient.addColorStop(0.6, 'rgba(34, 197, 94, 1)');
                         fillGradient.addColorStop(1, 'rgba(22, 163, 74, 1)');
                         
-                        ctx.fillStyle = fillGradient;
-                        ctx.beginPath();
-                        ctx.arc(frame.x, frame.y, 10, 0, Math.PI * 2);
-                        ctx.fill();
+                        gridCacheCtx.fillStyle = fillGradient;
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x, frame.y, 10, 0, Math.PI * 2);
+                        gridCacheCtx.fill();
                         
                         // Crisp border
-                        ctx.strokeStyle = 'rgba(21, 128, 61, 0.6)';
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
+                        gridCacheCtx.strokeStyle = 'rgba(21, 128, 61, 0.6)';
+                        gridCacheCtx.lineWidth = 1;
+                        gridCacheCtx.stroke();
                         
                         // Subtle highlight
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-                        ctx.beginPath();
-                        ctx.arc(frame.x - 2, frame.y - 2, 3, 0, Math.PI * 2);
-                        ctx.fill();
+                        gridCacheCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x - 2, frame.y - 2, 3, 0, Math.PI * 2);
+                        gridCacheCtx.fill();
                     } else {
                         // Empty - hollow ring with app theme colors
                         // Outer soft ring
-                        ctx.strokeStyle = 'rgba(8, 145, 178, 0.2)';
-                        ctx.lineWidth = 4;
-                        ctx.beginPath();
-                        ctx.arc(frame.x, frame.y, 11, 0, Math.PI * 2);
-                        ctx.stroke();
+                        gridCacheCtx.strokeStyle = 'rgba(8, 145, 178, 0.2)';
+                        gridCacheCtx.lineWidth = 4;
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x, frame.y, 11, 0, Math.PI * 2);
+                        gridCacheCtx.stroke();
                         
                         // Main ring
-                        ctx.strokeStyle = 'rgba(8, 145, 178, 0.5)';
-                        ctx.lineWidth = 2.5;
-                        ctx.beginPath();
-                        ctx.arc(frame.x, frame.y, 9, 0, Math.PI * 2);
-                        ctx.stroke();
+                        gridCacheCtx.strokeStyle = 'rgba(8, 145, 178, 0.5)';
+                        gridCacheCtx.lineWidth = 2.5;
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x, frame.y, 9, 0, Math.PI * 2);
+                        gridCacheCtx.stroke();
                         
                         // Inner fill
-                        const innerFill = ctx.createRadialGradient(
+                        const innerFill = gridCacheCtx.createRadialGradient(
                             frame.x, frame.y, 0,
                             frame.x, frame.y, 7
                         );
                         innerFill.addColorStop(0, 'rgba(236, 254, 255, 0.15)');
                         innerFill.addColorStop(1, 'rgba(207, 250, 254, 0.05)');
-                        ctx.fillStyle = innerFill;
-                        ctx.beginPath();
-                        ctx.arc(frame.x, frame.y, 7, 0, Math.PI * 2);
-                        ctx.fill();
+                        gridCacheCtx.fillStyle = innerFill;
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x, frame.y, 7, 0, Math.PI * 2);
+                        gridCacheCtx.fill();
                         
                         // Subtle highlight arc
-                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-                        ctx.lineWidth = 1.5;
-                        ctx.beginPath();
-                        ctx.arc(frame.x, frame.y, 9, Math.PI * 1.2, Math.PI * 1.8);
-                        ctx.stroke();
+                        gridCacheCtx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                        gridCacheCtx.lineWidth = 1.5;
+                        gridCacheCtx.beginPath();
+                        gridCacheCtx.arc(frame.x, frame.y, 9, Math.PI * 1.2, Math.PI * 1.8);
+                        gridCacheCtx.stroke();
                     }
                 });
                 
-                ctx.restore();
+                gridCacheCtx.restore();
             }
 
             // Draw active drag indicator on top layer (above objects)
@@ -7846,11 +7970,14 @@ This software is provided "as is" without warranty of any kind.`);
             }
             
         function setGrid(frameCount) {
+                // Invalidate grid cache when changing grids
+                invalidateGridCache();
+
                 // Remove selection from all grid buttons
                 document.querySelectorAll('.grid-button').forEach(btn => {
                     btn.classList.remove('selected');
                 });
-                
+
                 if (frameCount === currentGrid) {
                     // Deselect current grid
                     currentGrid = null;
@@ -7984,6 +8111,9 @@ This software is provided "as is" without warranty of any kind.`);
                 // Arrange as many objects as we have space for
                 objectsWeWillArrange.forEach((obj, i) => {
                     const frame = availableFrames[i];
+                    // Resize object to fit the grid frame (using shorter dimension)
+                    resizeObjectToGridFrame(obj, frame);
+                    // Position object at center of grid frame
                     setObjectCenterPosition(obj, frame.x, frame.y);
                 });
 
@@ -8013,9 +8143,19 @@ This software is provided "as is" without warranty of any kind.`);
                 setGrid(null);
             });
 
+            // Grid caching for performance
+            let gridCacheCanvas = null;
+            let gridCacheCtx = null;
+            let gridCacheDirty = true;
+
+            function invalidateGridCache() {
+                gridCacheDirty = true;
+            }
+
             // Simple grid helpers
             function clearGridOccupancy() {
                 gridFrames.forEach(f => f.occupied = false);
+                invalidateGridCache();
             }
             
             function recomputeGridOccupancy() {
@@ -8464,7 +8604,7 @@ This software is provided "as is" without warranty of any kind.`);
                 img.src = imgSrc;
                 img.dataset.name = name;
                 img.onload = () => {
-                    const w = 150;
+                    const w = 250;
                     const h = (img.height / img.width) * w;
                     const { width: canvasWidth, height: canvasHeight } = getCanvasDimensions();
                     const finalX = (x === undefined) ? (canvasWidth / 2) - (w / 2) : x - (w/2);
@@ -8493,11 +8633,11 @@ This software is provided "as is" without warranty of any kind.`);
                 video.loop = true;
                 video.playsInline = true;
                 video.onloadedmetadata = () => { 
-                    const w = 150; 
-                    const h = (video.videoHeight / video.videoWidth) * w; 
+                    const w = 250;
+                    const h = (video.videoHeight / video.videoWidth) * w;
                     const { width: canvasWidth, height: canvasHeight } = getCanvasDimensions();
-                    const finalX = (x === undefined) ? (canvasWidth / 2) - (w / 2) : x - (w/2); 
-                    const finalY = (y === undefined) ? (canvasHeight / 2) - (h / 2) : y - (h/2); 
+                    const finalX = (x === undefined) ? (canvasWidth / 2) - (w / 2) : x - (w/2);
+                    const finalY = (y === undefined) ? (canvasHeight / 2) - (h / 2) : y - (h/2);
                     const newObj = new VideoObject(video, finalX, finalY, w, h, getNextZIndex()); 
                     objects.push(newObj); 
                     setSelectedObject(newObj); 
@@ -8956,7 +9096,16 @@ This software is provided "as is" without warranty of any kind.`);
                     selectedObject.animationCycles = val;
                 }
             });
-            function getMousePos(e) { const rect = canvas.getBoundingClientRect(); return { x: e.clientX - rect.left, y: e.clientY - rect.top }; }
+            function getMousePos(e) {
+                const rect = canvasContainer.getBoundingClientRect();
+                // Get position relative to container
+                const containerX = e.clientX - rect.left;
+                const containerY = e.clientY - rect.top;
+                // Apply inverse pan and zoom transformation to get canvas coordinates
+                const canvasX = (containerX - canvasPanX) / canvasZoom;
+                const canvasY = (containerY - canvasPanY) / canvasZoom;
+                return { x: canvasX, y: canvasY };
+            }
             function getObjectAt(x, y) { const sorted = [...objects].sort((a, b) => b.zIndex - a.zIndex); for (const obj of sorted) { if (obj.visible && obj.isPointInside(x, y)) { return obj; } } return null; }
             // Upgrade to Pointer Events (covers mouse + touch + pen)
             canvas.addEventListener('pointerdown', (e) => {
@@ -9117,12 +9266,10 @@ This software is provided "as is" without warranty of any kind.`);
 
                     // Hover popup effect in play mode
                     if (enableHoverPopup && obj && obj !== hoveredObject) {
-                        console.log('[HOVER DEBUG] Play mode - Object detected:', obj.type, 'enableHoverPopup:', enableHoverPopup);
                         hoveredObject = obj;
                         hoverScale = 1.0; // Reset scale when new object is hovered
                         ensureRenderLoop(); // Start animation
                     } else if (!obj && hoveredObject) {
-                        console.log('[HOVER DEBUG] Play mode - Object left');
                         hoveredObject = null;
                         ensureRenderLoop(); // Animate back
                     }
@@ -9135,7 +9282,6 @@ This software is provided "as is" without warranty of any kind.`);
                 if (enableHoverPopup && currentTool !== 'pencil' && currentTool !== 'eraser' && !isResizing) {
                     const obj = getObjectAt(x, y);
                     if (obj !== hoveredObject) {
-                        console.log('[HOVER DEBUG] Edit mode - Object change:', obj?.type, 'currentTool:', currentTool, 'enableHoverPopup:', enableHoverPopup);
                         hoveredObject = obj;
                         if (obj) {
                             hoverScale = 1.0; // Reset scale when new object is hovered
@@ -9143,7 +9289,6 @@ This software is provided "as is" without warranty of any kind.`);
                         ensureRenderLoop(); // Start animation
                     }
                 } else if (hoveredObject && (currentTool === 'pencil' || currentTool === 'eraser' || isResizing)) {
-                    console.log('[HOVER DEBUG] Edit mode - Clearing hover (pencil/eraser/resize)');
                     hoveredObject = null;
                     ensureRenderLoop();
                 }
@@ -9212,27 +9357,21 @@ This software is provided "as is" without warranty of any kind.`);
                     draw(); 
                     return; 
                 }
-                if (isResizing) { resizeObject(x, y); return; } 
-                if (isDragging && selectedObject) { 
-                    // First, move object to follow mouse normally
-                    const newX = x - dragStartX; 
+                if (isResizing) { resizeObject(x, y); return; }
+                if (isDragging && selectedObject) {
+                    // Move object to follow mouse (smooth movement without grid snapping during drag)
+                    const newX = x - dragStartX;
                     const newY = y - dragStartY;
                     selectedObject.x = newX;
                     selectedObject.y = newY;
-                    
-                    // Then check if center should snap to grid
-                    const center = getObjectCenter(selectedObject);
-                    const snappedCenter = snapToGrid(center.x, center.y, e.shiftKey);
-                    
-                    // If snapping occurred, adjust object position so center is at snap point
-                    if (snappedCenter.x !== center.x || snappedCenter.y !== center.y) {
-                        setObjectCenterPosition(selectedObject, snappedCenter.x, snappedCenter.y);
-                    }
-                    
-                    draw(); 
-                    return; 
-                } 
-                const handle = getResizeHandleAt(x, y); 
+
+                    // Use requestAnimationFrame instead of immediate draw for smoother performance
+                    ensureRenderLoop();
+                    return;
+                }
+
+                // Only update cursor when not dragging (much less frequent computation)
+                const handle = getResizeHandleAt(x, y);
                 if (handle) { canvas.style.cursor = handle.cursor; } else if (getObjectAt(x, y)) { canvas.style.cursor = 'move'; } else { canvas.style.cursor = 'default'; }
             });
             function cancelLongPress() { clearTimeout(longPressTimer); longPressTimer = null; }
@@ -9338,6 +9477,15 @@ This software is provided "as is" without warranty of any kind.`);
                 activePointers.delete(e.pointerId);
                 if (activePointers.size < 2) pinchStartInfo = null;
                 isDragging = false; isResizing = false; resizeHandle = null;
+
+                // Apply grid snapping after drag ends
+                if (wasDragging && selectedObject && currentGrid) {
+                    const center = getObjectCenter(selectedObject);
+                    const snappedCenter = snapToGrid(center.x, center.y, e.shiftKey);
+                    if (snappedCenter.x !== center.x || snappedCenter.y !== center.y) {
+                        setObjectCenterPosition(selectedObject, snappedCenter.x, snappedCenter.y);
+                    }
+                }
 
                 // Redraw to show selection box after dragging ends
                 if (wasDragging || wasResizing) {
@@ -10015,7 +10163,73 @@ This software is provided "as is" without warranty of any kind.`);
             // --- Event Listeners ---
             document.addEventListener('click', hideContextMenu);
             canvas.addEventListener('contextmenu', e => e.preventDefault());
-            
+
+            // --- Canvas Pan and Zoom Controls ---
+            // Zoom with mouse wheel
+            canvasContainer.addEventListener('wheel', (e) => {
+                e.preventDefault();
+
+                // Get mouse position in canvas coordinates (container space)
+                const rect = canvasContainer.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                // Calculate old canvas position in canvas space (before scaling)
+                const canvasX = (mouseX - canvasPanX) / canvasZoom;
+                const canvasY = (mouseY - canvasPanY) / canvasZoom;
+
+                // Update zoom level
+                const zoomFactor = e.deltaY > 0 ? 1 - ZOOM_SPEED : 1 + ZOOM_SPEED;
+                canvasZoom *= zoomFactor;
+
+                // Clamp zoom level
+                canvasZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, canvasZoom));
+
+                // Calculate new pan position to keep the mouse point fixed
+                canvasPanX = mouseX - canvasX * canvasZoom;
+                canvasPanY = mouseY - canvasY * canvasZoom;
+
+                draw();
+            }, { passive: false });
+
+            // Pan with middle mouse button drag
+            canvasContainer.addEventListener('mousedown', (e) => {
+                // Only pan with middle mouse button (button 1) or Ctrl+left click
+                if ((e.button === 1) || (e.button === 0 && e.ctrlKey)) {
+                    isPanningCanvas = true;
+                    panStartX = e.clientX;
+                    panStartY = e.clientY;
+                    initialPanX = canvasPanX;
+                    initialPanY = canvasPanY;
+                    canvasContainer.style.cursor = 'grabbing';
+                    e.preventDefault();
+                }
+            });
+
+            canvasContainer.addEventListener('mousemove', (e) => {
+                if (isPanningCanvas) {
+                    const deltaX = e.clientX - panStartX;
+                    const deltaY = e.clientY - panStartY;
+                    canvasPanX = initialPanX + deltaX;
+                    canvasPanY = initialPanY + deltaY;
+                    draw();
+                }
+            });
+
+            canvasContainer.addEventListener('mouseup', (e) => {
+                if (isPanningCanvas) {
+                    isPanningCanvas = false;
+                    canvasContainer.style.cursor = 'default';
+                }
+            });
+
+            canvasContainer.addEventListener('mouseleave', (e) => {
+                if (isPanningCanvas) {
+                    isPanningCanvas = false;
+                    canvasContainer.style.cursor = 'default';
+                }
+            });
+
             document.getElementById('ctx-delete').addEventListener('click', () => { 
                 if (selectedObject) deleteObject(selectedObject); 
             });
@@ -10192,8 +10406,9 @@ This software is provided "as is" without warranty of any kind.`);
                             selectedObject.animationPath.removeNode(selectedPathNode.nodeIndex);
                             selectedPathNode = null;
                             draw();
+                            return;
                         }
-                        return;
+                        // If no path node selected, fall through to regular delete handler below
                     }
                 }
 
@@ -10238,9 +10453,10 @@ This software is provided "as is" without warranty of any kind.`);
                     }
                 }
 
-                if (e.key === 'v') setActiveTool('select'); 
-                if ((e.key === 'Delete' || e.key === 'Backspace') && selectedObject) { 
-                    deleteObject(selectedObject); 
+                if (e.key === 'v') setActiveTool('select');
+                if ((e.key === 'Delete' || e.key === 'Backspace') && selectedObject) {
+                    e.preventDefault();
+                    deleteObject(selectedObject);
                 } 
             });
 
