@@ -9315,27 +9315,21 @@ This software is provided "as is" without warranty of any kind.`);
                     draw(); 
                     return; 
                 }
-                if (isResizing) { resizeObject(x, y); return; } 
-                if (isDragging && selectedObject) { 
-                    // First, move object to follow mouse normally
-                    const newX = x - dragStartX; 
+                if (isResizing) { resizeObject(x, y); return; }
+                if (isDragging && selectedObject) {
+                    // Move object to follow mouse (smooth movement without grid snapping during drag)
+                    const newX = x - dragStartX;
                     const newY = y - dragStartY;
                     selectedObject.x = newX;
                     selectedObject.y = newY;
-                    
-                    // Then check if center should snap to grid
-                    const center = getObjectCenter(selectedObject);
-                    const snappedCenter = snapToGrid(center.x, center.y, e.shiftKey);
-                    
-                    // If snapping occurred, adjust object position so center is at snap point
-                    if (snappedCenter.x !== center.x || snappedCenter.y !== center.y) {
-                        setObjectCenterPosition(selectedObject, snappedCenter.x, snappedCenter.y);
-                    }
-                    
-                    draw(); 
-                    return; 
-                } 
-                const handle = getResizeHandleAt(x, y); 
+
+                    // Use requestAnimationFrame instead of immediate draw for smoother performance
+                    ensureRenderLoop();
+                    return;
+                }
+
+                // Only update cursor when not dragging (much less frequent computation)
+                const handle = getResizeHandleAt(x, y);
                 if (handle) { canvas.style.cursor = handle.cursor; } else if (getObjectAt(x, y)) { canvas.style.cursor = 'move'; } else { canvas.style.cursor = 'default'; }
             });
             function cancelLongPress() { clearTimeout(longPressTimer); longPressTimer = null; }
@@ -9441,6 +9435,15 @@ This software is provided "as is" without warranty of any kind.`);
                 activePointers.delete(e.pointerId);
                 if (activePointers.size < 2) pinchStartInfo = null;
                 isDragging = false; isResizing = false; resizeHandle = null;
+
+                // Apply grid snapping after drag ends
+                if (wasDragging && selectedObject && currentGrid) {
+                    const center = getObjectCenter(selectedObject);
+                    const snappedCenter = snapToGrid(center.x, center.y, e.shiftKey);
+                    if (snappedCenter.x !== center.x || snappedCenter.y !== center.y) {
+                        setObjectCenterPosition(selectedObject, snappedCenter.x, snappedCenter.y);
+                    }
+                }
 
                 // Redraw to show selection box after dragging ends
                 if (wasDragging || wasResizing) {
