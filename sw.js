@@ -1,5 +1,5 @@
-const CACHE_NAME = 'gaze-tracker-v2024.10.03.001'; // Update this with each deployment
-const APP_VERSION = '2024.10.03.001'; // Keep in sync with main app version
+const CACHE_NAME = 'gaze-tracker-v2024.10.03.002'; // Update this with each deployment
+const APP_VERSION = '2024.10.03.002'; // Keep in sync with main app version
 const urlsToCache = [
   './',
   './index.html',
@@ -37,8 +37,6 @@ const urlsToCache = [
 // Install Service Worker
 self.addEventListener('install', (event) => {
   console.log('[Service Worker] Installing version:', APP_VERSION);
-  // Skip waiting to activate immediately when new version is available
-  self.skipWaiting();
   
   event.waitUntil(
     caches.open(CACHE_NAME)

@@ -2718,8 +2718,33 @@
             <canvas id="main-canvas"></canvas>
         </main>
 
+        <!-- Mobile Drawer Backdrop -->
+        <div id="drawer-backdrop" class="drawer-backdrop"></div>
+
+        <!-- Mobile Floating Action Buttons -->
+        <button id="mobile-fab-left" class="mobile-fab mobile-fab-left" aria-label="Open tools panel">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"></path>
+                <path d="M17.5 2.5a2.121 2.121 0 013 3L12 14l-4 1 1-4 8.5-8.5z"></path>
+            </svg>
+        </button>
+        <button id="mobile-fab-right" class="mobile-fab mobile-fab-right" aria-label="Open media library">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+        </button>
+
         <!-- Left Controls Drawer -->
         <aside id="controls-drawer" class="drawer drawer-left w-80 overflow-y-auto">
+            <!-- Mobile Close Button -->
+            <button id="close-left-drawer" class="drawer-close-btn" aria-label="Close tools panel">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
             <div class="flex-1 overflow-y-auto p-3">
                 <div class="drawer-header">
                     <div class="flex items-center">
@@ -3405,6 +3430,13 @@
 
         <!-- Right Media Drawer -->
         <div id="media-library" class="drawer drawer-right w-80">
+            <!-- Mobile Close Button -->
+            <button id="close-right-drawer" class="drawer-close-btn" aria-label="Close media library">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
             <div class="p-3 flex-shrink-0">
                 <div class="drawer-header">
                     <h2 class="drawer-title">Media Library</h2>
@@ -3904,6 +3936,193 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
+            // --- Device Detection and Mobile Setup ---
+            const DeviceDetector = {
+                isIOS: /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1),
+                isAndroid: /Android/.test(navigator.userAgent),
+                isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+                isTablet: /iPad|Android(?!.*Mobile)/i.test(navigator.userAgent),
+                isTouchDevice: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
+                supportsWebkitDirectory: 'webkitdirectory' in document.createElement('input'),
+
+                init() {
+                    // Add device classes to body
+                    const html = document.documentElement;
+
+                    if (this.isIOS) {
+                        html.classList.add('ios-device');
+                    }
+                    if (this.isAndroid) {
+                        html.classList.add('android-device');
+                    }
+                    if (this.isMobile) {
+                        html.classList.add('mobile-device');
+                    } else {
+                        html.classList.add('desktop-device');
+                    }
+                    if (this.isTablet) {
+                        html.classList.add('tablet-device');
+                    }
+                    if (this.isTouchDevice) {
+                        html.classList.add('touch-device');
+                    }
+
+                    // Handle iOS folder upload limitation
+                    if (this.isIOS || !this.supportsWebkitDirectory) {
+                        this.handleFolderUploadFallback();
+                    }
+
+                    // Setup mobile UI
+                    this.setupMobileUI();
+                },
+
+                handleFolderUploadFallback() {
+                    // iOS doesn't support webkitdirectory - hide folder upload buttons
+                    // They're already hidden via CSS with .ios-device class
+                    // But we can also add helpful hints
+                    const folderLabels = document.querySelectorAll('[for="folder-upload"], [for="bg-folder-upload"], [for="fg-folder-upload"]');
+                    folderLabels.forEach(label => {
+                        label.style.display = 'none';
+                    });
+
+                    // Add hint text for mobile users about selecting multiple files
+                    const imageUploadLabel = document.querySelector('[for="image-upload"]');
+                    if (imageUploadLabel && this.isMobile) {
+                        const hint = document.createElement('div');
+                        hint.className = 'multi-file-hint';
+                        hint.textContent = 'Tip: Select multiple files at once';
+                        imageUploadLabel.parentNode.insertBefore(hint, imageUploadLabel.nextSibling);
+                    }
+                },
+
+                setupMobileUI() {
+                    // Mobile drawer functionality - works alongside existing drawer code
+                    const leftDrawer = document.getElementById('controls-drawer');
+                    const rightDrawer = document.getElementById('media-library');
+                    const backdrop = document.getElementById('drawer-backdrop');
+                    const leftFab = document.getElementById('mobile-fab-left');
+                    const rightFab = document.getElementById('mobile-fab-right');
+                    const closeLeftBtn = document.getElementById('close-left-drawer');
+                    const closeRightBtn = document.getElementById('close-right-drawer');
+
+                    // Function to close all drawers and backdrop
+                    const closeAllDrawers = () => {
+                        leftDrawer?.classList.remove('open');
+                        rightDrawer?.classList.remove('open');
+                        backdrop?.classList.remove('visible');
+                        document.body.style.overflow = '';
+                    };
+
+                    // Function to show backdrop on mobile when drawer opens
+                    const showBackdropIfMobile = () => {
+                        if (window.innerWidth <= 768) {
+                            backdrop?.classList.add('visible');
+                            document.body.style.overflow = 'hidden';
+                        }
+                    };
+
+                    // Mobile FAB handlers - directly toggle drawers
+                    leftFab?.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        rightDrawer?.classList.remove('open');
+                        leftDrawer?.classList.toggle('open');
+                    });
+
+                    rightFab?.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        leftDrawer?.classList.remove('open');
+                        rightDrawer?.classList.toggle('open');
+                    });
+
+                    // Close button handlers
+                    closeLeftBtn?.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        closeAllDrawers();
+                    });
+
+                    closeRightBtn?.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        closeAllDrawers();
+                    });
+
+                    // Backdrop click handler
+                    backdrop?.addEventListener('click', closeAllDrawers);
+
+                    // Monitor drawer state changes to show/hide backdrop
+                    const observeDrawer = (drawer) => {
+                        if (!drawer) return;
+                        const observer = new MutationObserver((mutations) => {
+                            mutations.forEach((mutation) => {
+                                if (mutation.attributeName === 'class') {
+                                    const isOpen = drawer.classList.contains('open');
+                                    if (isOpen) {
+                                        showBackdropIfMobile();
+                                    } else if (!leftDrawer?.classList.contains('open') && !rightDrawer?.classList.contains('open')) {
+                                        backdrop?.classList.remove('visible');
+                                        document.body.style.overflow = '';
+                                    }
+                                }
+                            });
+                        });
+                        observer.observe(drawer, { attributes: true });
+                    };
+
+                    observeDrawer(leftDrawer);
+                    observeDrawer(rightDrawer);
+
+                    // Swipe to close drawers (mobile)
+                    if (this.isTouchDevice) {
+                        let touchStartX = 0;
+                        let touchStartY = 0;
+                        const minSwipeDistance = 50;
+
+                        const handleTouchStart = (e) => {
+                            touchStartX = e.touches[0].clientX;
+                            touchStartY = e.touches[0].clientY;
+                        };
+
+                        const handleTouchEnd = (e, drawer, direction) => {
+                            const touchEndX = e.changedTouches[0].clientX;
+                            const touchEndY = e.changedTouches[0].clientY;
+                            const deltaX = touchEndX - touchStartX;
+                            const deltaY = Math.abs(touchEndY - touchStartY);
+
+                            // Only trigger if horizontal swipe is greater than vertical
+                            if (Math.abs(deltaX) > deltaY && Math.abs(deltaX) > minSwipeDistance) {
+                                if (direction === 'left' && deltaX < 0) {
+                                    closeAllDrawers();
+                                } else if (direction === 'right' && deltaX > 0) {
+                                    closeAllDrawers();
+                                }
+                            }
+                        };
+
+                        leftDrawer?.addEventListener('touchstart', handleTouchStart, { passive: true });
+                        leftDrawer?.addEventListener('touchend', (e) => handleTouchEnd(e, leftDrawer, 'left'), { passive: true });
+
+                        rightDrawer?.addEventListener('touchstart', handleTouchStart, { passive: true });
+                        rightDrawer?.addEventListener('touchend', (e) => handleTouchEnd(e, rightDrawer, 'right'), { passive: true });
+                    }
+
+                    // Handle orientation change
+                    window.addEventListener('orientationchange', () => {
+                        // Close drawers on orientation change to prevent layout issues
+                        setTimeout(closeAllDrawers, 100);
+                    });
+
+                    // Handle resize - hide backdrop on larger screens
+                    window.addEventListener('resize', () => {
+                        if (window.innerWidth > 768) {
+                            backdrop?.classList.remove('visible');
+                            document.body.style.overflow = '';
+                        }
+                    });
+                }
+            };
+
+            // Initialize device detection
+            DeviceDetector.init();
+
             // --- Version Management & Cache Busting ---
             const APP_VERSION = '2024.10.03.002'; // Update this when deploying new versions
             const VERSION_KEY = 'eyeTrackingAppVersion';
@@ -9732,21 +9951,31 @@ This software is provided "as is" without warranty of any kind.`);
 
                     case 'image':
                     case 'foreground':
-                        // For images, extract filename without extension
+                        // For images, extract filename without extension, stop at first dash
                         if (obj.name) {
                             // Remove [FG] prefix if present
                             let name = obj.name.replace(/^\[FG\]\s*/, '');
                             // Remove file extension
                             name = name.replace(/\.[^/.]+$/, '');
-                            return name;
+                            // Stop at first dash (e.g., "cat-001" becomes "cat")
+                            const dashIndex = name.indexOf('-');
+                            if (dashIndex > 0) {
+                                name = name.substring(0, dashIndex);
+                            }
+                            return name.trim();
                         }
                         return 'image';
 
                     case 'video':
-                        // For videos, extract filename without extension
+                        // For videos, extract filename without extension, stop at first dash
                         if (obj.name) {
                             let name = obj.name.replace(/\.[^/.]+$/, '');
-                            return name;
+                            // Stop at first dash (e.g., "dog-running-001" becomes "dog")
+                            const dashIndex = name.indexOf('-');
+                            if (dashIndex > 0) {
+                                name = name.substring(0, dashIndex);
+                            }
+                            return name.trim();
                         }
                         return 'video';
 
@@ -10258,6 +10487,137 @@ This software is provided "as is" without warranty of any kind.`);
                     canvasContainer.style.cursor = 'default';
                 }
             });
+
+            // --- Mobile Touch: Two-finger pan and pinch-to-zoom for canvas ---
+            let touchPanState = {
+                isPanning: false,
+                lastTouchCenter: null,
+                lastPinchDistance: null,
+                initialPanX: 0,
+                initialPanY: 0,
+                initialZoom: 1
+            };
+
+            function getTouchCenter(touches) {
+                if (touches.length === 0) return null;
+                if (touches.length === 1) {
+                    return { x: touches[0].clientX, y: touches[0].clientY };
+                }
+                return {
+                    x: (touches[0].clientX + touches[1].clientX) / 2,
+                    y: (touches[0].clientY + touches[1].clientY) / 2
+                };
+            }
+
+            function getPinchDistance(touches) {
+                if (touches.length < 2) return 0;
+                const dx = touches[1].clientX - touches[0].clientX;
+                const dy = touches[1].clientY - touches[0].clientY;
+                return Math.sqrt(dx * dx + dy * dy);
+            }
+
+            canvasContainer.addEventListener('touchstart', (e) => {
+                // Two-finger touch: prepare for pan/zoom
+                if (e.touches.length === 2) {
+                    // Check if an object is selected - if so, let the pointer events handle pinch resizing
+                    if (selectedObject) return;
+
+                    e.preventDefault(); // Prevent page zoom/scroll
+                    touchPanState.isPanning = true;
+                    touchPanState.lastTouchCenter = getTouchCenter(e.touches);
+                    touchPanState.lastPinchDistance = getPinchDistance(e.touches);
+                    touchPanState.initialPanX = canvasPanX;
+                    touchPanState.initialPanY = canvasPanY;
+                    touchPanState.initialZoom = canvasZoom;
+                }
+            }, { passive: false });
+
+            canvasContainer.addEventListener('touchmove', (e) => {
+                // Two-finger touch move: pan and zoom canvas
+                if (e.touches.length === 2 && touchPanState.isPanning) {
+                    // Check if an object is selected - if so, let the pointer events handle pinch resizing
+                    if (selectedObject) return;
+
+                    e.preventDefault(); // Prevent page zoom/scroll
+
+                    const currentCenter = getTouchCenter(e.touches);
+                    const currentDistance = getPinchDistance(e.touches);
+
+                    // Calculate pan delta
+                    if (touchPanState.lastTouchCenter) {
+                        const panDeltaX = currentCenter.x - touchPanState.lastTouchCenter.x;
+                        const panDeltaY = currentCenter.y - touchPanState.lastTouchCenter.y;
+                        canvasPanX += panDeltaX;
+                        canvasPanY += panDeltaY;
+                    }
+
+                    // Calculate zoom delta (pinch)
+                    if (touchPanState.lastPinchDistance > 0) {
+                        const zoomDelta = currentDistance / touchPanState.lastPinchDistance;
+
+                        // Get the center point in canvas coordinates before zoom
+                        const rect = canvasContainer.getBoundingClientRect();
+                        const canvasX = (currentCenter.x - rect.left - canvasPanX) / canvasZoom;
+                        const canvasY = (currentCenter.y - rect.top - canvasPanY) / canvasZoom;
+
+                        // Apply zoom
+                        const newZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, canvasZoom * zoomDelta));
+
+                        // Adjust pan to keep the pinch center point stable
+                        canvasPanX = (currentCenter.x - rect.left) - canvasX * newZoom;
+                        canvasPanY = (currentCenter.y - rect.top) - canvasY * newZoom;
+
+                        canvasZoom = newZoom;
+                    }
+
+                    // Update for next iteration
+                    touchPanState.lastTouchCenter = currentCenter;
+                    touchPanState.lastPinchDistance = currentDistance;
+
+                    draw();
+                }
+            }, { passive: false });
+
+            canvasContainer.addEventListener('touchend', (e) => {
+                // End pan/zoom when touches are removed
+                if (e.touches.length < 2) {
+                    touchPanState.isPanning = false;
+                    touchPanState.lastTouchCenter = null;
+                    touchPanState.lastPinchDistance = null;
+                }
+            }, { passive: true });
+
+            canvasContainer.addEventListener('touchcancel', (e) => {
+                touchPanState.isPanning = false;
+                touchPanState.lastTouchCenter = null;
+                touchPanState.lastPinchDistance = null;
+            }, { passive: true });
+
+            // Double-tap to reset canvas zoom (mobile gesture)
+            let lastCanvasTapTime = 0;
+            canvasContainer.addEventListener('touchend', (e) => {
+                if (e.touches.length === 0 && e.changedTouches.length === 1) {
+                    const now = Date.now();
+                    if (now - lastCanvasTapTime < 300) {
+                        // Double tap detected - reset zoom and center canvas
+                        const rect = canvasContainer.getBoundingClientRect();
+                        const margin = 20;
+                        const availableWidth = rect.width - (margin * 2);
+                        const availableHeight = rect.height - (margin * 2);
+                        const zoomX = availableWidth / CANVAS_WIDTH;
+                        const zoomY = availableHeight / CANVAS_HEIGHT;
+                        canvasZoom = Math.min(zoomX, zoomY);
+
+                        const scaledWidth = CANVAS_WIDTH * canvasZoom;
+                        const scaledHeight = CANVAS_HEIGHT * canvasZoom;
+                        canvasPanX = (availableWidth - scaledWidth) / 2 + margin;
+                        canvasPanY = (availableHeight - scaledHeight) / 2 + margin;
+
+                        draw();
+                    }
+                    lastCanvasTapTime = now;
+                }
+            }, { passive: true });
 
             document.getElementById('ctx-delete').addEventListener('click', () => { 
                 if (selectedObject) deleteObject(selectedObject); 
