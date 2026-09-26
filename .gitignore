@@ -35,3 +35,6 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Screenshots written by the browser tests
+tests/screenshots/

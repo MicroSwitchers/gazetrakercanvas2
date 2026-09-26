@@ -1,16 +1,39 @@
 {
-  "name": "Gaze Tracking Canvas - Cortical Visual Impairment Assessment",
+  "id": "./",
+  "name": "Gaze Tracking Canvas",
   "short_name": "Gaze Tracker",
   "description": "Visual Target Management System for Cortical Visual Impairment Functional Assessment by Niall Brown - ECVC",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "display_override": ["fullscreen", "standalone"],
-  "background_color": "#0f172a",
-  "theme_color": "#0891b2",
-  "orientation": "any",
+  "start_url": "./?source=pwa",
   "scope": "./",
-  "categories": ["medical", "education", "accessibility"],
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
+  "background_color": "#101722",
+  "theme_color": "#101722",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "medical",
+    "education",
+    "accessibility"
+  ],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": [
+      "focus-existing",
+      "auto"
+    ]
+  },
   "icons": [
+    {
+      "src": "icons/icon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "icons/icon-72x72.png",
       "sizes": "72x72",
@@ -48,10 +71,10 @@
       "purpose": "any"
     },
     {
-      "src": "icons/icon-192x192.png",
-      "sizes": "192x192",
+      "src": "icons/icon-256x256.png",
+      "sizes": "256x256",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any"
     },
     {
       "src": "icons/icon-384x384.png",
@@ -66,19 +89,84 @@
       "purpose": "any"
     },
     {
-      "src": "icons/icon-512x512.png",
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-maskable-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
+  "screenshots": [
+    {
+      "src": "icons/screenshot-wide.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Gaze Tracking Canvas on a computer or tablet"
+    },
+    {
+      "src": "icons/screenshot-tall.png",
+      "sizes": "800x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Gaze Tracking Canvas on a tablet in portrait"
+    }
+  ],
   "shortcuts": [
     {
-      "name": "New Session",
+      "name": "New canvas",
       "short_name": "New",
-      "description": "Start a new assessment session",
-      "url": "./index.html",
-      "icons": [{ "src": "icons/icon-96x96.png", "sizes": "96x96" }]
+      "description": "Set up a blank canvas",
+      "url": "./?source=shortcut&start=new",
+      "icons": [
+        {
+          "src": "icons/icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Saved projects",
+      "short_name": "Saved",
+      "description": "Open a saved project",
+      "url": "./?source=shortcut&start=saved",
+      "icons": [
+        {
+          "src": "icons/icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "./?source=file",
+      "accept": {
+        "application/json": [
+          ".json"
+        ]
+      },
+      "icons": [
+        {
+          "src": "icons/icon-256x256.png",
+          "sizes": "256x256",
+          "type": "image/png"
+        }
+      ],
+      "launch_type": "single-client"
     }
   ]
 }
