@@ -4,6 +4,8 @@ Run `node tests/layer-controls.cjs` for the Slate default with saved-choice pres
 
 Run `node tests/menu-colour.cjs` for the Display menu-colour palette: six presets, popup bounds, keyboard dismissal, native touch selection, focus restoration, persisted preferences, light/dark adaptation, and unchanged canvas pixels.
 
+Run `node tests/background-foreground.cjs` with the dedicated browser setup below to check that importing a background or foreground puts it on the canvas straight away, that clicking a library picture switches to it, and that Clear removes it.
+
 Run `node tests/project-portability.cjs` with the dedicated browser setup below to check that saves capture every target type (picture, video, shape, text, highlight) and every target and page setting, that slot and canvas exports match the save exactly, and that an exported project file imports on a wiped browser (no saves, media library or preferences) with identical settings, embedded media bytes and canvas pixels. It also checks that projects opened in a different window size fit the canvas to the screen, and that non-project files are refused.
 
 Run `node tests/project-layout.cjs` with the dedicated browser setup below to check saved, active and empty project cards, wrapped long names, and non-overlapping buttons at desktop, phone and landscape sizes.
