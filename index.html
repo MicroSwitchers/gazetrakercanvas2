@@ -1418,6 +1418,7 @@
     <script src="./js/animation-motion.js"></script>
     <script src="./js/media-store.js"></script>
     <script src="./js/media-library.js"></script>
+    <script src="./js/gaze-bridge.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
             // --- Device Detection and Mobile Setup ---
@@ -1630,7 +1631,7 @@
             DeviceDetector.init();
 
             // --- Version Management & Cache Busting ---
-            const APP_VERSION = '2026.09.25.007'; // Update this when deploying new versions
+            const APP_VERSION = '2026.10.10.001'; // Update this when deploying new versions
             const VERSION_KEY = 'eyeTrackingAppVersion';
             const SETTINGS_BACKUP_KEY = 'eyeTrackingAppSettingsBackup';
             
@@ -9856,6 +9857,48 @@
                 };
             };
             
+            // --- Gaze link (optional) ---------------------------------------------------------------------
+            // Lets the child's eye gaze drive Play mode: looking at a target hovers it, looking long enough "taps" it.
+            // Needs js/gaze-bridge.js and the Gaze Assessment Tools running on this computer (viewer.py), with the
+            // gaze link switched on and this site allowed. Off unless the page is opened with ?gaze (then remembered);
+            // Ctrl+Alt+L turns it on/off. Nothing is requested from localhost otherwise.
+            if (window.GazeBridge) {
+                let gazeLink = null;
+                const startGazeLink = () => {
+                    if (gazeLink) return;
+                    gazeLink = GazeBridge.create({
+                        // gaze-bridge hands us page pixels; reuse the page's own pointer maths and hit test
+                        pick: (cx, cy) => {
+                            if (interactionMode !== 'play') return null;
+                            const p = getMousePos({ clientX: cx, clientY: cy });
+                            return getObjectAt(p.x, p.y);
+                        },
+                        onHover: obj => {
+                            if (!enableHoverPopup) return;
+                            if (obj && obj !== hoveredObject) { hoveredObject = obj; hoverScale = 1.0; ensureRenderLoop(); }
+                            else if (!obj && hoveredObject) { hoveredObject = null; ensureRenderLoop(); }
+                        },
+                        // a dwell is treated exactly like a tap (a per-target "looks at it" option could be added later)
+                        onDwell: obj => {
+                            if (interactionMode !== 'play') return;
+                            speakObjectName(obj);
+                            if ((obj.triggerOnGaze !== undefined ? obj.triggerOnGaze : obj.triggerOnPress) && obj.animationType) triggerAnimation(obj);
+                        },
+                    }).start();
+                };
+                const gazeFlag = () => { try { return localStorage.getItem('gazeLink.v1') === 'on'; } catch { return false; } };
+                const setGazeFlag = on => { try { localStorage.setItem('gazeLink.v1', on ? 'on' : 'off'); } catch {} };
+                if (new URLSearchParams(location.search).has('gaze')) setGazeFlag(true);
+                if (gazeFlag()) startGazeLink();
+                window.addEventListener('keydown', e => {
+                    if (!(e.ctrlKey && e.altKey && e.code === 'KeyL')) return;
+                    e.preventDefault();
+                    if (gazeLink) { gazeLink.stop(); gazeLink = null; setGazeFlag(false); showToast('Gaze link off', '', 'info'); }
+                    else { setGazeFlag(true); startGazeLink(); showToast('Gaze link on', 'Needs the gaze tools running on this computer.', 'info'); }
+                }, true);
+            }
+
+
             // Warn before page unload
             window.addEventListener('beforeunload', (e) => {
                 if (hasUnsavedChanges && objects.length > 0) {
