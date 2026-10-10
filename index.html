@@ -1117,7 +1117,30 @@
                         <div class="gaze-sub"><label>Look for <input type="range" id="gaze-select-sec" min="0.3" max="3" step="0.1" aria-label="Seconds of looking before it is selected"><b id="gaze-select-sec-v"></b></label>
                             <label><input type="checkbox" id="gaze-anim"> start its animation</label><label><input type="checkbox" id="gaze-speak"> say its name</label></div>
                         <div class="gaze-sub"><label>Forgiveness <input type="range" id="gaze-tol" min="0" max="60" step="2" aria-label="How far from a target the gaze can be and still count"><b id="gaze-tol-v"></b></label>
-                            <label><input type="checkbox" id="gaze-dot"> show the gaze dot (for the adult)</label></div>
+</div>
+                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="grid-option__text">Say the name of what the child looks at<small>Reads the target’s name aloud once the child has looked at it for a moment (its custom speech text if it has one).</small></span><input type="checkbox" id="gaze-name" class="grid-switch"></label>
+                        <div class="gaze-sub"><label>After looking for <input type="range" id="gaze-name-sec" min="0.2" max="2" step="0.1" aria-label="Seconds of looking before the name is said"><b id="gaze-name-sec-v"></b></label></div>
+                        <span class="panel-label" style="margin-top:10px">Gaze pointer (what you can see)</span>
+                        <div class="gaze-sub"><label>Show <select id="gaze-pointer" aria-label="Gaze pointer style"><option value="off">Nothing — only the targets react</option><option value="dot">Small dot</option><option value="circle">Broad circle</option></select></label></div>
+                        <div class="gaze-sub"><label>Dot size <input type="range" id="gaze-dot-px" min="6" max="60" step="1" aria-label="Small dot size"><b id="gaze-dot-px-v"></b></label>
+                            <label>Circle size <input type="range" id="gaze-circle-in" min="0.5" max="4" step="0.1" aria-label="Broad circle size in inches"><b id="gaze-circle-in-v"></b></label></div>
+                        <div class="gaze-sub"><label>Colour <input type="color" id="gaze-pointer-color"></label>
+                            <label>Transparency <input type="range" id="gaze-transparency" min="0" max="90" step="5" aria-label="Pointer transparency"><b id="gaze-transparency-v"></b></label></div>
+                    </div>
+                    <div class="page-options grid-main-options" id="gaze-log-box">
+                        <style>
+                            #gaze-log-box .gaze-log { display: grid; gap: 5px; margin: 4px 0 8px; font-size: 12.5px; }
+                            #gaze-log-box .gaze-log-empty { color: var(--md-on-surface-muted); line-height: 1.4; }
+                            #gaze-log-box .gaze-log-row { position: relative; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 4px 8px; border-radius: 8px; overflow: hidden; background: color-mix(in srgb, var(--md-surface) 80%, transparent); }
+                            #gaze-log-box .gaze-log-bar { position: absolute; inset: 0 auto 0 0; background: color-mix(in srgb, #7c3aed 30%, transparent); z-index: 0; transition: width .3s; }
+                            #gaze-log-box .gaze-log-row > span, #gaze-log-box .gaze-log-row > b { position: relative; z-index: 1; }
+                            #gaze-log-box .gaze-log-row > b { font-variant-numeric: tabular-nums; }
+                            #gaze-log-box .gaze-log-row small { color: var(--md-on-surface-muted); margin-left: 6px; }
+                            #gaze-log-box .gaze-sub { gap: 8px; }
+                        </style>
+                        <span class="panel-label">Where the child looked</span>
+                        <div id="gaze-log-list" class="gaze-log" aria-live="off"><span class="gaze-log-empty">Nothing yet. Turn on eye gaze and switch to Play — the list fills in as the child looks at targets.</span></div>
+                        <div class="gaze-sub" style="margin-left:0"><button type="button" id="gaze-log-clear" class="tool-button px-3 py-1.5 rounded text-xs">Clear list</button><button type="button" id="gaze-log-save" class="tool-button px-3 py-1.5 rounded text-xs">Save as spreadsheet (CSV)</button></div>
                     </div>
                 </div>
                  <!-- Layer Management -->
@@ -1654,7 +1677,7 @@
             DeviceDetector.init();
 
             // --- Version Management & Cache Busting ---
-            const APP_VERSION = '2026.10.10.002'; // Update this when deploying new versions
+            const APP_VERSION = '2026.10.10.003'; // Update this when deploying new versions
             const VERSION_KEY = 'eyeTrackingAppVersion';
             const SETTINGS_BACKUP_KEY = 'eyeTrackingAppSettingsBackup';
             
@@ -2288,10 +2311,16 @@
 
             // Eye-gaze interaction state (optional; driven by js/gaze-bridge.js, see the "Eye gaze" settings)
             const GAZE_DEFAULTS = { enabled: false, lift: true, liftPct: 15, glow: false, glowColor: '#ffd24a', glowSize: 18,
-                                    select: false, selectSec: 0.9, anim: true, speak: true, tolerance: 22, dot: false };
+                                    select: false, selectSec: 0.9, anim: true, speak: true, tolerance: 22,
+                                    pointer: 'off', dotPx: 22, circleIn: 1.5, pointerColor: '#ffd24a', transparency: 20,   // what the adult/child can see of the gaze
+                                    nameOn: false, nameSec: 0.5 };                                                          // say the name of what the child looks at
             let gazeSettings = { ...GAZE_DEFAULTS };
             try { Object.assign(gazeSettings, JSON.parse(localStorage.getItem('gazeInteraction.v1') || '{}')); } catch {}
-            let gazeObject = null;          // target the child is currently looking at
+            if (gazeSettings.dot === true && gazeSettings.pointer === 'off') gazeSettings.pointer = 'dot';   // setting from the first version
+            delete gazeSettings.dot;
+            let gazeObject = null;          // target the child is currently looking at (only set when lift/glow is on)
+            let lookObject = null;          // target the child is looking at, whatever the settings (drives the log and naming)
+            const lookLog = new Map();      // target -> { name, ms, looks, longest, cur }  (how long each target was looked at)
             const gazeFx = new Map();       // target -> { lift: 0..1, glow: 0..1 } (eased so effects fade in and out)
             let gazeFxBusy = false;         // true while an effect is still easing
             function gazeFxUpdate() {
@@ -9951,14 +9980,19 @@
                 const $g = id => document.getElementById(id);
                 const saveGaze = () => { try { localStorage.setItem('gazeInteraction.v1', JSON.stringify(gazeSettings)); } catch {} };
                 const setGazeStatus = (text, cls) => { const el = $g('gaze-status'); if (el) { el.textContent = text; el.className = cls || ''; } };
-                const bridgeOpts = () => ({ dwellMs: Math.round(gazeSettings.selectSec * 1000), tolerancePx: gazeSettings.tolerance, overlay: gazeSettings.dot, persist: false });
+                const bridgeOpts = () => ({ dwellMs: Math.round(gazeSettings.selectSec * 1000), tolerancePx: gazeSettings.tolerance, pointer: gazeSettings.pointer, dotPx: gazeSettings.dotPx, circleInches: gazeSettings.circleIn,
+                                              pointerColor: gazeSettings.pointerColor, pointerOpacity: 1 - gazeSettings.transparency / 100, persist: false });
                 function syncGazeUi() {
                     $g('gaze-enable').checked = gazeSettings.enabled; $g('gaze-lift').checked = gazeSettings.lift; $g('gaze-glow').checked = gazeSettings.glow;
-                    $g('gaze-select').checked = gazeSettings.select; $g('gaze-anim').checked = gazeSettings.anim; $g('gaze-speak').checked = gazeSettings.speak; $g('gaze-dot').checked = gazeSettings.dot;
+                    $g('gaze-select').checked = gazeSettings.select; $g('gaze-anim').checked = gazeSettings.anim; $g('gaze-speak').checked = gazeSettings.speak; $g('gaze-name').checked = gazeSettings.nameOn; $g('gaze-pointer').value = gazeSettings.pointer;
                     $g('gaze-lift-pct').value = gazeSettings.liftPct; $g('gaze-glow-color').value = gazeSettings.glowColor; $g('gaze-glow-size').value = gazeSettings.glowSize;
                     $g('gaze-select-sec').value = gazeSettings.selectSec; $g('gaze-tol').value = gazeSettings.tolerance;
+                    $g('gaze-name-sec').value = gazeSettings.nameSec; $g('gaze-dot-px').value = gazeSettings.dotPx; $g('gaze-circle-in').value = gazeSettings.circleIn;
+                    $g('gaze-pointer-color').value = gazeSettings.pointerColor; $g('gaze-transparency').value = gazeSettings.transparency;
                     $g('gaze-lift-pct-v').textContent = gazeSettings.liftPct + '%'; $g('gaze-glow-size-v').textContent = gazeSettings.glowSize + ' px';
                     $g('gaze-select-sec-v').textContent = gazeSettings.selectSec.toFixed(1) + ' s'; $g('gaze-tol-v').textContent = gazeSettings.tolerance + ' px';
+                    $g('gaze-name-sec-v').textContent = gazeSettings.nameSec.toFixed(1) + ' s'; $g('gaze-dot-px-v').textContent = gazeSettings.dotPx + ' px';
+                    $g('gaze-circle-in-v').textContent = gazeSettings.circleIn.toFixed(1) + ' in'; $g('gaze-transparency-v').textContent = gazeSettings.transparency + '%';
                 }
                 function applyGaze() {
                     if (gazeLink) { gazeLink.setOptions(bridgeOpts()); gazeLink.setDwellEnabled(gazeSettings.select); }
@@ -9975,7 +10009,7 @@
                             const p = getMousePos({ clientX: cx, clientY: cy });
                             return getObjectAt(p.x, p.y);
                         },
-                        onHover: obj => { gazeObject = (gazeSettings.lift || gazeSettings.glow) ? obj : null; ensureRenderLoop(); },
+                        onHover: obj => { noteLook(obj); gazeObject = (gazeSettings.lift || gazeSettings.glow) ? obj : null; ensureRenderLoop(); },
                         onDwell: obj => {
                             if (interactionMode !== 'play') return;
                             if (gazeSettings.speak) speakObjectName(obj);
@@ -9984,7 +10018,7 @@
                     }).start();
                     gazeLink.setDwellEnabled(gazeSettings.select);
                 }
-                function stopGaze() { if (gazeLink) { gazeLink.stop(); gazeLink = null; } gazeObject = null; setGazeStatus('Off'); ensureRenderLoop(); }
+                function stopGaze() { if (gazeLink) { gazeLink.stop(); gazeLink = null; } noteLook(null); gazeObject = null; setGazeStatus('Off'); ensureRenderLoop(); }
                 function setGazeEnabled(on) { gazeSettings.enabled = on; saveGaze(); syncGazeUi(); if (on) { setGazeStatus('Connecting…', 'wait'); startGaze(); } else stopGaze(); }
 
                 window.addEventListener('gazebridge:status', e => {
@@ -10000,7 +10034,71 @@
                 bindChange('gaze-glow-size', t => { gazeSettings.glowSize = +t.value; }); bindChange('gaze-select', t => { gazeSettings.select = t.checked; });
                 bindChange('gaze-select-sec', t => { gazeSettings.selectSec = +t.value; }); bindChange('gaze-anim', t => { gazeSettings.anim = t.checked; });
                 bindChange('gaze-speak', t => { gazeSettings.speak = t.checked; });       bindChange('gaze-tol', t => { gazeSettings.tolerance = +t.value; });
-                bindChange('gaze-dot', t => { gazeSettings.dot = t.checked; });
+                bindChange('gaze-name', t => { gazeSettings.nameOn = t.checked; });         bindChange('gaze-name-sec', t => { gazeSettings.nameSec = +t.value; });
+                bindChange('gaze-pointer', t => { gazeSettings.pointer = t.value; });       bindChange('gaze-dot-px', t => { gazeSettings.dotPx = +t.value; });
+                bindChange('gaze-circle-in', t => { gazeSettings.circleIn = +t.value; });   bindChange('gaze-pointer-color', t => { gazeSettings.pointerColor = t.value; });
+                bindChange('gaze-transparency', t => { gazeSettings.transparency = +t.value; });
+                // the adult's hotkeys inside the bridge (Ctrl+Alt+G pointer style, Ctrl+Alt+Up/Down dwell time) keep these settings in step
+                window.addEventListener('gazebridge:option', e => {
+                    if (e.detail.pointer) gazeSettings.pointer = e.detail.pointer;
+                    if (e.detail.dwellMs) gazeSettings.selectSec = e.detail.dwellMs / 1000;
+                    saveGaze(); syncGazeUi();
+                });
+
+                // --- what the child looked at: log + name reading ---
+                const targetLabel = obj => (obj.name && String(obj.name).trim()) || getDefaultSpeechText(obj) || 'Target';
+                const lookEntry = obj => { let e = lookLog.get(obj); if (!e) { e = { name: '', ms: 0, looks: 0, longest: 0, cur: 0, counted: false }; lookLog.set(obj, e); } e.name = targetLabel(obj); return e; };
+                let nameTimer = 0, lastNamed = null, lastNamedAt = 0, lastLookTick = performance.now();
+                function sayTargetName(obj) {
+                    const text = (obj.speechMode === 'custom' && obj.customSpeechText) ? obj.customSpeechText : (getDefaultSpeechText(obj) || obj.name || '');
+                    if (text) speakText(text);
+                }
+                function noteLook(obj) {                    // called whenever the looked-at target changes (or becomes nothing)
+                    if (obj === lookObject) return;
+                    const prev = lookLog.get(lookObject); if (prev) { prev.cur = 0; prev.counted = false; }
+                    lookObject = obj; clearTimeout(nameTimer);
+                    if (!obj) return;
+                    lookEntry(obj);
+                    if (gazeSettings.nameOn) nameTimer = setTimeout(() => {
+                        if (lookObject !== obj || interactionMode !== 'play') return;
+                        const now = performance.now();
+                        if (obj === lastNamed && now - lastNamedAt < 4000) return;   // glancing away and straight back doesn't repeat it
+                        lastNamed = obj; lastNamedAt = now; sayTargetName(obj);
+                    }, Math.round(gazeSettings.nameSec * 1000));
+                }
+                setInterval(() => {                         // add up the time spent looking at the current target
+                    const now = performance.now(), dt = Math.min(250, now - lastLookTick); lastLookTick = now;
+                    if (lookObject && interactionMode === 'play') {
+                        const e = lookEntry(lookObject); e.ms += dt; e.cur += dt; if (e.cur > e.longest) e.longest = e.cur;
+                        if (!e.counted && e.cur >= 150) { e.counted = true; e.looks++; }      // a look = gaze that rested here; a flick across a target on the way elsewhere doesn't count
+                    }
+                }, 100);
+                function lookRows() {                       // names made unique when several targets share one ("Circle", "Circle (2)")
+                    const totals = {}, seen = {};
+                    objects.forEach(o => { const n = targetLabel(o); totals[n] = (totals[n] || 0) + 1; });
+                    objects.forEach(o => { const n = targetLabel(o); seen[n] = (seen[n] || 0) + 1; if (lookLog.has(o)) lookLog.get(o).label = totals[n] > 1 ? `${n} (${seen[n]})` : n; });
+                    return [...lookLog.values()].filter(e => e.looks > 0).map(e => ({ ...e, label: e.label || e.name })).sort((a, b) => b.ms - a.ms);
+                }
+                function renderLookLog() {
+                    const list = $g('gaze-log-list'); if (!list || !list.offsetParent) return;
+                    const rows = lookRows(); list.textContent = '';
+                    if (!rows.length) { const sp = document.createElement('span'); sp.className = 'gaze-log-empty'; sp.textContent = 'Nothing yet. Turn on eye gaze and switch to Play — the list fills in as the child looks at targets.'; list.appendChild(sp); return; }
+                    const max = Math.max(...rows.map(r => r.ms), 1);
+                    rows.forEach(r => {
+                        const row = document.createElement('div'); row.className = 'gaze-log-row'; row.title = `Longest single look: ${(r.longest / 1000).toFixed(1)} s`;
+                        const bar = document.createElement('div'); bar.className = 'gaze-log-bar'; bar.style.width = (100 * r.ms / max) + '%';
+                        const name = document.createElement('span'); name.textContent = r.label; const small = document.createElement('small'); small.textContent = `${r.looks} look${r.looks === 1 ? '' : 's'}`; name.appendChild(small);
+                        const t = document.createElement('b'); t.textContent = (r.ms / 1000).toFixed(1) + ' s';
+                        row.append(bar, name, t); list.appendChild(row);
+                    });
+                }
+                setInterval(renderLookLog, 500);
+                $g('gaze-log-clear').addEventListener('click', () => { lookLog.clear(); renderLookLog(); });
+                $g('gaze-log-save').addEventListener('click', () => {
+                    const rows = lookRows(); if (!rows.length) { showToast('Nothing to save yet', '', 'info'); return; }
+                    const csv = 'target,seconds_looked,number_of_looks,longest_look_seconds\n' + rows.map(r => `"${r.label.replace(/"/g, '""')}",${(r.ms / 1000).toFixed(2)},${r.looks},${(r.longest / 1000).toFixed(2)}`).join('\n') + '\n';
+                    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'where-the-child-looked.csv'; document.body.appendChild(a); a.click(); a.remove();
+                });
 
                 if (new URLSearchParams(location.search).has('gaze')) { gazeSettings.enabled = true; saveGaze(); }
                 syncGazeUi();
