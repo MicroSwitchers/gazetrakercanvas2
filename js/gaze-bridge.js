@@ -12,7 +12,8 @@
  *   gaze.start();
  *
  * It also fires window events: 'gazebridge:gaze' (every sample) and 'gazebridge:dwell'.
- * Hotkeys (examiner): Ctrl+Alt+G show/hide the gaze dot + status, Ctrl+Alt+D dwell on/off, Ctrl+Alt+ArrowUp/Down dwell time ±100 ms.
+ * Pointer: options pointer ('off' | 'dot' | 'circle'), dotPx, circleInches (real inches), pointerColor, pointerOpacity.
+ * Hotkeys (examiner): Ctrl+Alt+G cycle pointer off → dot → circle, Ctrl+Alt+D dwell on/off, Ctrl+Alt+ArrowUp/Down dwell time ±100 ms.
  *
  * Gaze arrives as fractions of the SCREEN (0..1). It is mapped to page pixels exactly when the page is full-screen (F11 / fullscreen API);
  * in a normal window the mapping uses the window position and is approximate.
@@ -29,7 +30,12 @@
     tolerancePx: 22,         // gaze is only ~1° accurate: also test points this far around the gaze point
     smooth: 0.35,            // 0..1 exponential smoothing of the gaze point (1 = none)
     staleMs: 700,            // no sample for this long = tracker lost
-    overlay: false,          // gaze dot + status pill visible (toggle with Ctrl+Alt+G)
+    pointer: null,           // what the child's gaze looks like on screen: 'off' | 'dot' | 'circle' (default 'off', or 'dot' if overlay:true)
+    dotPx: 22,               // diameter of the small dot, CSS pixels
+    circleInches: 1.5,       // diameter of the broad circle in real inches (uses the screen size the tracker server reports)
+    pointerColor: '#ffd24a',
+    pointerOpacity: 0.8,     // 0.1 .. 1
+    overlay: false,          // legacy: same as pointer:'dot'
     hotkeys: true,
     map: null,               // optional (x, y) => [clientX, clientY] to override the screen→page mapping
     persist: true,           // remember dwellMs / tolerancePx / overlay in localStorage
@@ -41,6 +47,7 @@
     const o = Object.assign({}, DEFAULTS, saved, userOpts || {});
     if (!o.server) o.server = new URLSearchParams(location.search).get('gazeServer') || saved.server || 'http://localhost:8765';
     o.server = o.server.replace(/\/+$/, '');
+    if (!o.pointer) o.pointer = o.overlay ? 'dot' : 'off';
 
     const st = {
       es: null, status: 'idle', detail: '', hello: null, lastAt: 0, last: null, sx: null, sy: null, onPage: false,
@@ -49,7 +56,7 @@
     };
     let ui = null, pillUntil = 0, timer = 0;
 
-    const persist = () => { if (!o.persist) return; try { localStorage.setItem(o.storageKey, JSON.stringify({ dwellMs: o.dwellMs, tolerancePx: o.tolerancePx, overlay: o.overlay, server: o.server })); } catch (_) { /* private mode */ } };
+    const persist = () => { if (!o.persist) return; try { localStorage.setItem(o.storageKey, JSON.stringify({ dwellMs: o.dwellMs, tolerancePx: o.tolerancePx, pointer: o.pointer, dotPx: o.dotPx, circleInches: o.circleInches, pointerColor: o.pointerColor, pointerOpacity: o.pointerOpacity, server: o.server })); } catch (_) { /* private mode */ } };
     const emit = (name, detail) => { try { root.dispatchEvent(new CustomEvent('gazebridge:' + name, { detail })); } catch (_) { /* old browser */ } };
 
     /* ---- screen fraction -> page (client) pixels ---- */
@@ -133,34 +140,47 @@
       es.onerror = () => { if (st.status === 'live' || st.status === 'idle') setStatus('connecting', 'waiting for the tracker server…'); diagnose(); };
     }
 
-    /* ---- examiner overlay (hidden by default; the child should not see a cursor) ---- */
+    /* ---- on-screen pointer: off / small dot / broad circle (hidden by default; the child may not need to see it) ---- */
+    const hexRgba = (hex, a) => { const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex || ''); return m ? 'rgba(' + parseInt(m[1], 16) + ',' + parseInt(m[2], 16) + ',' + parseInt(m[3], 16) + ',' + a + ')' : 'rgba(255,210,74,' + a + ')'; };
+    // real millimetres per CSS pixel, from the physical screen size the tracker server reports (so "1.5 inch" really is 1.5 inch)
+    const mmPerPx = () => { const mm = st.hello && st.hello.screen_mm; return mm && screen.width ? mm[0] / screen.width : 25.4 / 96; };
+    const pointerPx = () => (o.pointer === 'circle' ? Math.max(12, o.circleInches * 25.4 / mmPerPx()) : o.dotPx);
+    let pillPinned = false;
     function ensureUI() {
       if (ui) return ui; const d = document.createElement('div'); d.setAttribute('aria-hidden', 'true');
-      d.innerHTML = '<div data-k="dot" style="position:fixed;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:3px solid #ffd24a;background:rgba(255,210,74,.25);pointer-events:none;display:none;z-index:2147483000"></div>' +
-        '<div data-k="ring" style="position:fixed;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;pointer-events:none;display:none;z-index:2147482999"></div>' +
+      d.innerHTML = '<div data-k="ptr" style="position:fixed;border-radius:50%;pointer-events:none;display:none;z-index:2147483000;box-sizing:border-box"></div>' +
+        '<div data-k="ring" style="position:fixed;border-radius:50%;pointer-events:none;display:none;z-index:2147482999"></div>' +
         '<div data-k="pill" style="position:fixed;left:10px;bottom:10px;padding:5px 12px;border-radius:99px;background:rgba(0,0,0,.72);color:#fff;font:12px system-ui,sans-serif;pointer-events:none;display:none;z-index:2147483001;max-width:70vw"></div>';
-      document.body.appendChild(d); ui = { dot: d.querySelector('[data-k=dot]'), ring: d.querySelector('[data-k=ring]'), pill: d.querySelector('[data-k=pill]') }; return ui;
+      document.body.appendChild(d); ui = { ptr: d.querySelector('[data-k=ptr]'), ring: d.querySelector('[data-k=ring]'), pill: d.querySelector('[data-k=pill]') }; return ui;
     }
-    function flashRing() { if (!o.overlay) return; const u = ensureUI(); u.ring.style.background = 'rgba(75,227,138,.55)'; u.ring.style.display = 'block'; setTimeout(() => { u.ring.style.display = 'none'; }, 300); }
+    function flashRing() {
+      if (o.pointer === 'off' || !ui) return; const u = ui, d = pointerPx() + 16;
+      Object.assign(u.ring.style, { width: d + 'px', height: d + 'px', margin: (-d / 2) + 'px 0 0 ' + (-d / 2) + 'px', left: st.sx + 'px', top: st.sy + 'px', background: 'rgba(75,227,138,.55)', display: 'block', opacity: Math.max(.35, o.pointerOpacity) });
+      setTimeout(() => { u.ring.style.display = 'none'; }, 300);
+    }
     function draw() {
-      const now = performance.now(), pillOn = o.overlay || now < pillUntil;
-      if (!ui && !pillOn && !o.overlay) return; const u = ensureUI();
+      const now = performance.now(), pillOn = pillPinned || now < pillUntil;
+      if (!ui && !pillOn && o.pointer === 'off') return; const u = ensureUI();
       const colour = { live: '#4be38a', connecting: '#ffd24a', off: '#ff9a3c', blocked: '#ff6b6b', unreachable: '#ff6b6b', idle: '#8b97a8' }[st.status] || '#8b97a8';
       u.pill.style.display = pillOn ? 'block' : 'none';
-      u.pill.innerHTML = '<span style="color:' + colour + '">●</span> gaze: ' + (st.status === 'live' ? 'live' : st.status) + (st.detail ? ' · ' + st.detail : '') + (o.overlay ? ' · dwell ' + (st.dwellOn ? o.dwellMs + ' ms' : 'off') : '');
-      const showDot = o.overlay && st.status === 'live' && st.onPage && now - st.lastAt < o.staleMs;
-      u.dot.style.display = showDot ? 'block' : 'none'; if (showDot) { u.dot.style.left = st.sx + 'px'; u.dot.style.top = st.sy + 'px'; }
-      if (showDot && st.cur && st.dwellOn && !st.fired) {
-        const f = Math.min(1, (now - st.curSince) / o.dwellMs);
-        u.ring.style.display = 'block'; u.ring.style.left = st.sx + 'px'; u.ring.style.top = st.sy + 'px';
-        u.ring.style.background = 'conic-gradient(rgba(75,227,138,.85) ' + f * 360 + 'deg, rgba(255,255,255,.15) 0)'; u.ring.style.webkitMask = u.ring.style.mask = 'radial-gradient(circle, transparent 58%, #000 60%)';
+      u.pill.innerHTML = '<span style="color:' + colour + '">●</span> gaze: ' + (st.status === 'live' ? 'live' : st.status) + (st.detail ? ' · ' + st.detail : '') + ' · pointer ' + o.pointer + ' · dwell ' + (st.dwellOn ? o.dwellMs + ' ms' : 'off');
+      const show = o.pointer !== 'off' && st.status === 'live' && st.onPage && now - st.lastAt < o.staleMs, p = u.ptr.style;
+      if (!show) { p.display = 'none'; if (!st.fired) u.ring.style.display = 'none'; return; }
+      const d = pointerPx(), c = o.pointerColor;
+      Object.assign(p, { display: 'block', width: d + 'px', height: d + 'px', margin: (-d / 2) + 'px 0 0 ' + (-d / 2) + 'px', left: st.sx + 'px', top: st.sy + 'px', opacity: Math.min(1, Math.max(.05, o.pointerOpacity)) });
+      if (o.pointer === 'circle') { p.border = '3px solid ' + c; p.background = 'radial-gradient(circle, ' + hexRgba(c, .55) + ' 0, ' + hexRgba(c, .55) + ' 3px, ' + hexRgba(c, .16) + ' 4px)'; }
+      else { p.border = '0'; p.background = c; }
+      if (st.cur && st.dwellOn && !st.fired) {
+        const f = Math.min(1, (now - st.curSince) / o.dwellMs), r = d + 14;
+        Object.assign(u.ring.style, { width: r + 'px', height: r + 'px', margin: (-r / 2) + 'px 0 0 ' + (-r / 2) + 'px', left: st.sx + 'px', top: st.sy + 'px', display: 'block', opacity: Math.min(1, Math.max(.35, o.pointerOpacity)),
+          background: 'conic-gradient(rgba(75,227,138,.9) ' + f * 360 + 'deg, rgba(255,255,255,.18) 0)', webkitMask: 'radial-gradient(circle, transparent 60%, #000 62%)', mask: 'radial-gradient(circle, transparent 60%, #000 62%)' });
       } else if (!st.fired) u.ring.style.display = 'none';
     }
     function keys(e) {
       if (!o.hotkeys || !e.ctrlKey || !e.altKey) return;
-      if (e.code === 'KeyG') { o.overlay = !o.overlay; pillUntil = performance.now() + 3000; persist(); draw(); }
+      if (e.code === 'KeyG') { o.pointer = o.pointer === 'off' ? 'dot' : o.pointer === 'dot' ? 'circle' : 'off'; pillUntil = performance.now() + 3000; persist(); emit('option', { pointer: o.pointer }); draw(); }
       else if (e.code === 'KeyD') { st.dwellOn = !st.dwellOn; pillUntil = performance.now() + 3000; draw(); }
-      else if (e.code === 'ArrowUp' || e.code === 'ArrowDown') { o.dwellMs = Math.max(200, Math.min(5000, o.dwellMs + (e.code === 'ArrowUp' ? 100 : -100))); pillUntil = performance.now() + 3000; persist(); draw(); }
+      else if (e.code === 'ArrowUp' || e.code === 'ArrowDown') { o.dwellMs = Math.max(200, Math.min(5000, o.dwellMs + (e.code === 'ArrowUp' ? 100 : -100))); pillUntil = performance.now() + 3000; persist(); emit('option', { dwellMs: o.dwellMs }); draw(); }
       else return; e.preventDefault();
     }
 
@@ -173,9 +193,10 @@
         if (o.hotkeys) root.addEventListener('keydown', keys, true);
         return api;
       },
-      stop() { if (st.es) st.es.close(); st.es = null; clearInterval(timer); root.removeEventListener('keydown', keys, true); st.started = false; setStatus('idle', ''); if (ui) { ui.dot.style.display = ui.pill.style.display = ui.ring.style.display = 'none'; } return api; },
+      stop() { if (st.es) st.es.close(); st.es = null; clearInterval(timer); root.removeEventListener('keydown', keys, true); st.started = false; setStatus('idle', ''); if (ui) { ui.ptr.style.display = ui.pill.style.display = ui.ring.style.display = 'none'; } return api; },
       setOptions(p) { Object.assign(o, p); persist(); return api; },
       setDwellEnabled(b) { st.dwellOn = !!b; return api; },
+      showStatus(on) { pillPinned = !!on; draw(); return api; },
       status() { return { status: st.status, detail: st.detail, hello: st.hello, x: st.sx, y: st.sy, target: st.cur, dwellOn: st.dwellOn }; },
     };
     return api;
