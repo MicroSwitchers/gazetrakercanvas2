@@ -1,5 +1,5 @@
-const CACHE_NAME = 'gaze-tracker-v2026.10.10.001'; // Update this with each deployment
-const APP_VERSION = '2026.10.10.001'; // Keep in sync with main app version
+const CACHE_NAME = 'gaze-tracker-v2026.10.10.002'; // Update this with each deployment
+const APP_VERSION = '2026.10.10.002'; // Keep in sync with main app version
 const urlsToCache = [
   './',
   './index.html',

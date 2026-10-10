@@ -1096,6 +1096,29 @@
                         <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span><span class="grid-option__text">Hover pop-up effect<small>Targets grow slightly under the pointer in Play.</small></span><input type="checkbox" id="hover-popup-toggle" class="grid-switch"></label>
                         <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg></span><span class="grid-option__text">Remember target names<small>Targets you name (e.g. for text-to-speech) keep that name when the exact target is loaded again.</small></span><input type="checkbox" id="save-tts-settings" class="grid-switch"></label>
                     </div>
+                    <div class="page-options grid-main-options" id="gaze-options">
+                        <style>
+                            #gaze-options .gaze-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: -2px 0 8px 40px; font-size: 12px; font-weight: 500; color: var(--md-on-surface-muted); }
+                            #gaze-options .gaze-sub label { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+                            #gaze-options .gaze-sub input[type=range] { width: 96px; }
+                            #gaze-options .gaze-sub input[type=color] { width: 34px; height: 24px; padding: 0; border: 1px solid var(--md-outline); border-radius: 6px; background: none; }
+                            #gaze-options .gaze-sub b { min-width: 3.2em; color: var(--md-on-surface); font-weight: 600; }
+                            #gaze-status { margin: 0 0 8px 40px; font-size: 12px; font-weight: 600; }
+                            #gaze-status.ok { color: #34d399; } #gaze-status.bad { color: #f87171; } #gaze-status.wait { color: #fbbf24; }
+                        </style>
+                        <span class="panel-label">Eye gaze (optional)</span>
+                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="grid-option__text">Use eye gaze in Play<small>Needs the Gaze Assessment Tools running on this computer, with the gaze link switched on.</small></span><input type="checkbox" id="gaze-enable" class="grid-switch"></label>
+                        <div id="gaze-status" aria-live="polite">Off</div>
+                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="grid-option__text">Lift it when looked at<small>The target grows slightly, so you can see the child is aware of it.</small></span><input type="checkbox" id="gaze-lift" class="grid-switch"></label>
+                        <div class="gaze-sub"><label>How much <input type="range" id="gaze-lift-pct" min="3" max="40" step="1" aria-label="How much a target lifts"><b id="gaze-lift-pct-v"></b></label></div>
+                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="grid-option__text">Glow around its edges<small>A soft halo follows the edge of the target.</small></span><input type="checkbox" id="gaze-glow" class="grid-switch"></label>
+                        <div class="gaze-sub"><label>Colour <input type="color" id="gaze-glow-color"></label><label>Size <input type="range" id="gaze-glow-size" min="4" max="60" step="1" aria-label="Glow size"><b id="gaze-glow-size-v"></b></label></div>
+                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="grid-option__text">Select it after looking for a moment<small>Like a tap, but with the eyes. Choose what happens below.</small></span><input type="checkbox" id="gaze-select" class="grid-switch"></label>
+                        <div class="gaze-sub"><label>Look for <input type="range" id="gaze-select-sec" min="0.3" max="3" step="0.1" aria-label="Seconds of looking before it is selected"><b id="gaze-select-sec-v"></b></label>
+                            <label><input type="checkbox" id="gaze-anim"> start its animation</label><label><input type="checkbox" id="gaze-speak"> say its name</label></div>
+                        <div class="gaze-sub"><label>Forgiveness <input type="range" id="gaze-tol" min="0" max="60" step="2" aria-label="How far from a target the gaze can be and still count"><b id="gaze-tol-v"></b></label>
+                            <label><input type="checkbox" id="gaze-dot"> show the gaze dot (for the adult)</label></div>
+                    </div>
                 </div>
                  <!-- Layer Management -->
                 <div class="section-header">
@@ -1631,7 +1654,7 @@
             DeviceDetector.init();
 
             // --- Version Management & Cache Busting ---
-            const APP_VERSION = '2026.10.10.001'; // Update this when deploying new versions
+            const APP_VERSION = '2026.10.10.002'; // Update this when deploying new versions
             const VERSION_KEY = 'eyeTrackingAppVersion';
             const SETTINGS_BACKUP_KEY = 'eyeTrackingAppSettingsBackup';
             
@@ -2263,6 +2286,61 @@
             const HOVER_SCALE_TARGET = 1.15; // Target scale when hovered (15% larger - more noticeable)
             const HOVER_ANIMATION_SPEED = 0.25; // Animation interpolation speed (faster)
 
+            // Eye-gaze interaction state (optional; driven by js/gaze-bridge.js, see the "Eye gaze" settings)
+            const GAZE_DEFAULTS = { enabled: false, lift: true, liftPct: 15, glow: false, glowColor: '#ffd24a', glowSize: 18,
+                                    select: false, selectSec: 0.9, anim: true, speak: true, tolerance: 22, dot: false };
+            let gazeSettings = { ...GAZE_DEFAULTS };
+            try { Object.assign(gazeSettings, JSON.parse(localStorage.getItem('gazeInteraction.v1') || '{}')); } catch {}
+            let gazeObject = null;          // target the child is currently looking at
+            const gazeFx = new Map();       // target -> { lift: 0..1, glow: 0..1 } (eased so effects fade in and out)
+            let gazeFxBusy = false;         // true while an effect is still easing
+            function gazeFxUpdate() {
+                let busy = false;
+                if (gazeObject && !gazeFx.has(gazeObject)) gazeFx.set(gazeObject, { lift: 0, glow: 0 });
+                gazeFx.forEach((fx, obj) => {
+                    const on = obj === gazeObject && interactionMode === 'play';
+                    const tl = on && gazeSettings.lift ? 1 : 0, tg = on && gazeSettings.glow ? 1 : 0;
+                    fx.lift += (tl - fx.lift) * 0.22; fx.glow += (tg - fx.glow) * 0.22;
+                    if (Math.abs(tl - fx.lift) < 0.004) fx.lift = tl;
+                    if (Math.abs(tg - fx.glow) < 0.004) fx.glow = tg;
+                    if (fx.lift !== tl || fx.glow !== tg) busy = true;
+                    if (!on && fx.lift === 0 && fx.glow === 0) gazeFx.delete(obj);
+                });
+                return busy;
+            }
+            let gazeLayer = null;   // scratch canvas: lets the halo work whatever the target's own draw code does with shadows
+            // True while a gaze effect still needs frames drawn (starting, easing, or fading out), so the render loop keeps going.
+            function gazeFxPending() {
+                if (gazeObject && !gazeFx.has(gazeObject)) return true;
+                for (const [obj, fx] of gazeFx) {
+                    const on = obj === gazeObject && interactionMode === 'play';
+                    if (fx.lift !== (on && gazeSettings.lift ? 1 : 0) || fx.glow !== (on && gazeSettings.glow ? 1 : 0)) return true;
+                    if (!on && fx.lift === 0 && fx.glow === 0) return true;      // let draw() clean it up
+                }
+                return false;
+            }
+            function drawWithGazeFx(obj, fx) {
+                const pose = animationPose(obj), c = obj.getCenterPoint(), cx = c.x + pose.x, cy = c.y + pose.y;   // follow the target while it moves
+                const s = 1 + (gazeSettings.liftPct / 100) * fx.lift;
+                ctx.save();
+                ctx.translate(cx, cy); ctx.scale(s, s); ctx.translate(-cx, -cy);
+                if (fx.glow > 0.01) {
+                    // Draw the target alone on a scratch layer, then paste the layer with a blurred coloured shadow = a halo that follows its edge.
+                    if (!gazeLayer) gazeLayer = document.createElement('canvas');
+                    if (gazeLayer.width !== ctx.canvas.width || gazeLayer.height !== ctx.canvas.height) { gazeLayer.width = ctx.canvas.width; gazeLayer.height = ctx.canvas.height; }
+                    const lc = gazeLayer.getContext('2d'); lc.setTransform(1, 0, 0, 1, 0, 0); lc.clearRect(0, 0, gazeLayer.width, gazeLayer.height); lc.setTransform(ctx.getTransform());
+                    obj.draw(lc);
+                    const px = ctx.canvas.width / (ctx.canvas.getBoundingClientRect().width || ctx.canvas.width);
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+                    ctx.shadowColor = gazeSettings.glowColor; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0; ctx.shadowBlur = gazeSettings.glowSize * fx.glow * px;
+                    ctx.drawImage(gazeLayer, 0, 0); ctx.drawImage(gazeLayer, 0, 0);       // twice, so the halo is bold enough to notice
+                } else {
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'; ctx.shadowBlur = 15 * fx.lift * Math.min(1, gazeSettings.liftPct / 15); ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 5 * fx.lift * Math.min(1, gazeSettings.liftPct / 15);
+                    obj.draw(ctx);
+                }
+                ctx.restore();
+            }
+
             // Grid State
             let currentGrid = null; // null, 2, 4, 6, 9, or 12
             let gridFrames = [];
@@ -2717,8 +2795,14 @@
                         }
                     }
 
+                    gazeFxBusy = gazeFxUpdate();
+                    if (gazeFxBusy) ensureRenderLoop();
                     objects.sort((a, b) => a.zIndex - b.zIndex).forEach(obj => {
                         if (obj.visible) {
+                            const gfx = gazeFx.get(obj);
+                            if (gfx && (gfx.lift > 0 || gfx.glow > 0)) {
+                                drawWithGazeFx(obj, gfx);          // eye-gaze lift / glow
+                            } else
                             // Apply hover scale effect
                             if (obj === hoveredObject && enableHoverPopup && hoverScale > 1.0) {
                                 ctx.save();
@@ -2864,7 +2948,7 @@
                     const animating = objects.some(o => o.isAnimating || o.animationTransition);
                     const snapping = isSnapping;
                     const hoverAnimating = enableHoverPopup && (hoveredObject !== null || Math.abs(hoverScale - 1.0) > 0.001);
-                    if (hasVideo || dragging || animating || snapping || hoverAnimating || needsRender) {
+                    if (hasVideo || dragging || animating || snapping || hoverAnimating || gazeFxBusy || gazeFxPending() || needsRender) {
                         if (needsRender) needsRender = false;
                         draw();
                         requestAnimationFrame(loop);
@@ -9857,47 +9941,78 @@
                 };
             };
             
-            // --- Gaze link (optional) ---------------------------------------------------------------------
-            // Lets the child's eye gaze drive Play mode: looking at a target hovers it, looking long enough "taps" it.
-            // Needs js/gaze-bridge.js and the Gaze Assessment Tools running on this computer (viewer.py), with the
-            // gaze link switched on and this site allowed. Off unless the page is opened with ?gaze (then remembered);
-            // Ctrl+Alt+L turns it on/off. Nothing is requested from localhost otherwise.
+            // --- Eye gaze (optional) ------------------------------------------------------------------------
+            // Looking at a target can lift it, make it glow, and/or select it (start its animation, say its name).
+            // Needs js/gaze-bridge.js and the Gaze Assessment Tools on this computer (viewer.py) with the gaze link on and
+            // this site allowed. Switched on in Play settings > "Eye gaze"; also with ?gaze, or Ctrl+Alt+L. When it is off
+            // the page never contacts localhost.
             if (window.GazeBridge) {
                 let gazeLink = null;
-                const startGazeLink = () => {
+                const $g = id => document.getElementById(id);
+                const saveGaze = () => { try { localStorage.setItem('gazeInteraction.v1', JSON.stringify(gazeSettings)); } catch {} };
+                const setGazeStatus = (text, cls) => { const el = $g('gaze-status'); if (el) { el.textContent = text; el.className = cls || ''; } };
+                const bridgeOpts = () => ({ dwellMs: Math.round(gazeSettings.selectSec * 1000), tolerancePx: gazeSettings.tolerance, overlay: gazeSettings.dot, persist: false });
+                function syncGazeUi() {
+                    $g('gaze-enable').checked = gazeSettings.enabled; $g('gaze-lift').checked = gazeSettings.lift; $g('gaze-glow').checked = gazeSettings.glow;
+                    $g('gaze-select').checked = gazeSettings.select; $g('gaze-anim').checked = gazeSettings.anim; $g('gaze-speak').checked = gazeSettings.speak; $g('gaze-dot').checked = gazeSettings.dot;
+                    $g('gaze-lift-pct').value = gazeSettings.liftPct; $g('gaze-glow-color').value = gazeSettings.glowColor; $g('gaze-glow-size').value = gazeSettings.glowSize;
+                    $g('gaze-select-sec').value = gazeSettings.selectSec; $g('gaze-tol').value = gazeSettings.tolerance;
+                    $g('gaze-lift-pct-v').textContent = gazeSettings.liftPct + '%'; $g('gaze-glow-size-v').textContent = gazeSettings.glowSize + ' px';
+                    $g('gaze-select-sec-v').textContent = gazeSettings.selectSec.toFixed(1) + ' s'; $g('gaze-tol-v').textContent = gazeSettings.tolerance + ' px';
+                }
+                function applyGaze() {
+                    if (gazeLink) { gazeLink.setOptions(bridgeOpts()); gazeLink.setDwellEnabled(gazeSettings.select); }
+                    if (!gazeSettings.lift && !gazeSettings.glow) gazeObject = null;
+                    ensureRenderLoop();
+                }
+                function startGaze() {
                     if (gazeLink) return;
                     gazeLink = GazeBridge.create({
+                        ...bridgeOpts(),
                         // gaze-bridge hands us page pixels; reuse the page's own pointer maths and hit test
                         pick: (cx, cy) => {
                             if (interactionMode !== 'play') return null;
                             const p = getMousePos({ clientX: cx, clientY: cy });
                             return getObjectAt(p.x, p.y);
                         },
-                        onHover: obj => {
-                            if (!enableHoverPopup) return;
-                            if (obj && obj !== hoveredObject) { hoveredObject = obj; hoverScale = 1.0; ensureRenderLoop(); }
-                            else if (!obj && hoveredObject) { hoveredObject = null; ensureRenderLoop(); }
-                        },
-                        // a dwell is treated exactly like a tap (a per-target "looks at it" option could be added later)
+                        onHover: obj => { gazeObject = (gazeSettings.lift || gazeSettings.glow) ? obj : null; ensureRenderLoop(); },
                         onDwell: obj => {
                             if (interactionMode !== 'play') return;
-                            speakObjectName(obj);
-                            if ((obj.triggerOnGaze !== undefined ? obj.triggerOnGaze : obj.triggerOnPress) && obj.animationType) triggerAnimation(obj);
+                            if (gazeSettings.speak) speakObjectName(obj);
+                            if (gazeSettings.anim && obj.animationType) triggerAnimation(obj);
                         },
                     }).start();
-                };
-                const gazeFlag = () => { try { return localStorage.getItem('gazeLink.v1') === 'on'; } catch { return false; } };
-                const setGazeFlag = on => { try { localStorage.setItem('gazeLink.v1', on ? 'on' : 'off'); } catch {} };
-                if (new URLSearchParams(location.search).has('gaze')) setGazeFlag(true);
-                if (gazeFlag()) startGazeLink();
+                    gazeLink.setDwellEnabled(gazeSettings.select);
+                }
+                function stopGaze() { if (gazeLink) { gazeLink.stop(); gazeLink = null; } gazeObject = null; setGazeStatus('Off'); ensureRenderLoop(); }
+                function setGazeEnabled(on) { gazeSettings.enabled = on; saveGaze(); syncGazeUi(); if (on) { setGazeStatus('Connecting…', 'wait'); startGaze(); } else stopGaze(); }
+
+                window.addEventListener('gazebridge:status', e => {
+                    if (!gazeLink) return; const { status, detail } = e.detail;
+                    setGazeStatus(status === 'live' ? 'Eye gaze is live' + (detail && /NOT/.test(detail) ? ' — but not calibrated' : '') : status === 'off' ? 'The gaze link is switched off in the Gaze Assessment Tools'
+                        : status === 'blocked' ? 'This website is not allowed yet — in the Gaze Assessment Tools, Gaze tab, click “Allow microswitchers.github.io”' : status === 'unreachable' ? 'Can’t find the Gaze Assessment Tools — is it running on this computer?' : 'Connecting…',
+                        status === 'live' ? 'ok' : status === 'connecting' ? 'wait' : 'bad');
+                });
+                const bindChange = (id, fn) => $g(id).addEventListener('input', e => { fn(e.target); saveGaze(); syncGazeUi(); applyGaze(); });
+                $g('gaze-enable').addEventListener('change', e => setGazeEnabled(e.target.checked));
+                bindChange('gaze-lift', t => { gazeSettings.lift = t.checked; });         bindChange('gaze-lift-pct', t => { gazeSettings.liftPct = +t.value; });
+                bindChange('gaze-glow', t => { gazeSettings.glow = t.checked; });         bindChange('gaze-glow-color', t => { gazeSettings.glowColor = t.value; });
+                bindChange('gaze-glow-size', t => { gazeSettings.glowSize = +t.value; }); bindChange('gaze-select', t => { gazeSettings.select = t.checked; });
+                bindChange('gaze-select-sec', t => { gazeSettings.selectSec = +t.value; }); bindChange('gaze-anim', t => { gazeSettings.anim = t.checked; });
+                bindChange('gaze-speak', t => { gazeSettings.speak = t.checked; });       bindChange('gaze-tol', t => { gazeSettings.tolerance = +t.value; });
+                bindChange('gaze-dot', t => { gazeSettings.dot = t.checked; });
+
+                if (new URLSearchParams(location.search).has('gaze')) { gazeSettings.enabled = true; saveGaze(); }
+                syncGazeUi();
+                if (gazeSettings.enabled) { setGazeStatus('Connecting…', 'wait'); startGaze(); }
                 window.addEventListener('keydown', e => {
                     if (!(e.ctrlKey && e.altKey && e.code === 'KeyL')) return;
-                    e.preventDefault();
-                    if (gazeLink) { gazeLink.stop(); gazeLink = null; setGazeFlag(false); showToast('Gaze link off', '', 'info'); }
-                    else { setGazeFlag(true); startGazeLink(); showToast('Gaze link on', 'Needs the gaze tools running on this computer.', 'info'); }
+                    e.preventDefault(); setGazeEnabled(!gazeSettings.enabled);
+                    showToast(gazeSettings.enabled ? 'Eye gaze on' : 'Eye gaze off', gazeSettings.enabled ? 'Needs the gaze tools running on this computer.' : '', 'info');
                 }, true);
+            } else {
+                const el = document.getElementById('gaze-enable'); if (el) { el.disabled = true; }
             }
-
 
             // Warn before page unload
             window.addEventListener('beforeunload', (e) => {
