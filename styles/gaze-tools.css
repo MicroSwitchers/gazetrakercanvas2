@@ -1,0 +1,66 @@
+/* Calibration tools: the side panel (position guide, calibrate, check) and the hold-Ctrl position guide. Uses the app's theme variables. */
+.gt-panel { position: fixed; top: 12px; bottom: 12px; left: 12px; z-index: 60; display: flex; flex-direction: column; width: min(468px, calc(100vw - 24px)); box-sizing: border-box;
+    border-radius: 18px; border: 1px solid var(--md-outline); background: var(--md-surface); color: var(--md-on-surface); box-shadow: 0 18px 56px rgb(0 0 0 / 40%); font-family: Inter, "Segoe UI", system-ui, sans-serif; overflow: hidden; }
+.gt-panel[hidden], .gt-peek[hidden], .gt-page[hidden] { display: none; }
+.gt-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px 10px; }
+.gt-title b { display: block; font-size: 16px; font-weight: 700; letter-spacing: -.02em; }
+.gt-title span { font-size: 12px; color: var(--md-on-surface-muted); }
+.gt-x { flex: none; width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--md-outline); background: var(--md-surface-variant); color: var(--md-on-surface); font-size: 20px; line-height: 1; cursor: pointer; }
+.gt-x:hover { border-color: var(--md-primary); }
+.gt-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 0 16px 12px; border-bottom: 1px solid var(--md-outline); }
+.gt-step { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 38px; padding: 6px 8px; border-radius: 11px; border: 1px solid var(--md-outline); background: var(--md-surface-variant); color: var(--md-on-surface-muted); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.gt-step i { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--md-outline); color: var(--md-on-surface); font-style: normal; font-size: 11px; font-weight: 700; }
+.gt-step.done i { background: #34d399; color: #052e1f; font-size: 0; }
+.gt-step.done i::before { content: "✓"; font-size: 12px; }
+.gt-step[aria-selected=true] { border-color: var(--md-primary); background: var(--md-primary-container); color: var(--md-on-primary-container, var(--md-on-surface)); }
+.gt-step:focus-visible, .gt-btn:focus-visible, .gt-x:focus-visible { outline: 2px solid var(--md-primary); outline-offset: 2px; }
+.gt-body { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--md-outline) transparent; padding: 14px 16px 18px; }
+.gt-page { display: grid; gap: 12px; align-content: start; }
+
+.gt-view { position: relative; aspect-ratio: 1; border-radius: 14px; overflow: hidden; background: #05080a; border: 1px solid var(--md-outline); }
+.gt-view canvas { display: block; width: 100%; height: 100%; }
+.gt-viewmsg { position: absolute; inset: auto 0 14px; text-align: center; font-size: 12.5px; font-weight: 600; color: rgb(255 255 255 / 70%); pointer-events: none; }
+.gt-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 11.5px; color: var(--md-on-surface-muted); }
+.gt-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.gt-sw { display: inline-block; width: 12px; height: 12px; border-radius: 4px; }
+.gt-sw-box { border: 2px dashed currentColor; } .gt-sw-eye { border-radius: 50%; background: #34d399; } .gt-sw-skin { background: #ff9a3c; }
+.gt-state { display: grid; gap: 2px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--md-outline); background: var(--md-surface-variant); border-left-width: 4px; }
+.gt-state b { font-size: 14px; } .gt-state span { font-size: 12.5px; color: var(--md-on-surface-muted); line-height: 1.4; }
+.gt-state.good { border-left-color: #34d399; } .gt-state.warn { border-left-color: #fbbf24; } .gt-state.bad { border-left-color: #f87171; }
+.gt-ro { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.gt-ro div { display: grid; gap: 1px; padding: 6px 7px; border-radius: 9px; background: var(--md-surface-variant); border: 1px solid var(--md-outline); }
+.gt-ro span { font-size: 10.5px; color: var(--md-on-surface-muted); } .gt-ro b { font-size: 12px; font-variant-numeric: tabular-nums; }
+.gt-card { padding: 14px; border-radius: 14px; border: 1px solid var(--md-outline); background: var(--md-surface-variant); display: grid; gap: 10px; }
+.gt-card h3 { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: -.01em; }
+.gt-note { margin: 0; font-size: 12px; line-height: 1.45; color: var(--md-on-surface-muted); }
+.gt-sub { font-size: 11.5px; font-weight: 600; color: var(--md-on-surface-muted); }
+.gt-row { display: flex; gap: 8px; align-items: stretch; }
+.gt-input { min-width: 0; flex: 1; min-height: 36px; padding: 6px 10px; border-radius: 10px; border: 1px solid var(--md-outline); background: var(--md-surface); color: var(--md-on-surface); font: inherit; font-size: 12.5px; }
+.gt-btn { flex: none; min-height: 36px; padding: 6px 14px; border-radius: 10px; border: 1px solid var(--md-outline); background: var(--md-surface); color: var(--md-on-surface); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.gt-btn:hover:not(:disabled) { border-color: var(--md-primary); }
+.gt-btn:disabled { opacity: .45; cursor: default; }
+.gt-btn.primary { border-color: transparent; background: var(--md-primary); color: var(--md-on-primary); box-shadow: 0 4px 14px color-mix(in srgb, var(--md-primary) 28%, transparent); }
+.gt-del { color: #f87171; }
+.gt-check { display: flex; align-items: center; gap: 8px; font-size: 12.5px; cursor: pointer; }
+.gt-field { display: grid; gap: 4px; font-size: 12px; color: var(--md-on-surface-muted); } .gt-field input[type=range] { width: 100%; }
+.gt-tol { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.gt-list { display: grid; gap: 6px; }
+.gt-item { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 10px; border: 1px solid var(--md-outline); background: var(--md-surface); }
+.gt-item.on { border-color: var(--md-primary); }
+.gt-item span { flex: 1; min-width: 0; display: grid; } .gt-item b { font-size: 12.5px; } .gt-item small { font-size: 11px; color: var(--md-on-surface-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gt-item .gt-btn { min-height: 30px; padding: 4px 10px; font-size: 12px; }
+.gt-summary { padding: 9px 11px; border-radius: 10px; border: 1px solid var(--md-outline); background: var(--md-surface); font-size: 12.5px; line-height: 1.4; color: var(--md-on-surface-muted); }
+.gt-summary.ok { color: var(--md-on-surface); border-left: 4px solid #34d399; }
+.gt-flow { margin: 0; padding-left: 20px; list-style: decimal; display: grid; gap: 6px; font-size: 12.5px; line-height: 1.45; color: var(--md-on-surface-muted); }
+.gt-hint { margin: 0; font-size: 12px; line-height: 1.45; color: var(--md-on-surface-muted); }
+.gt-hint kbd { display: inline-block; padding: 1px 6px; margin-right: 4px; border-radius: 6px; border: 1px solid var(--md-outline); background: var(--md-surface-variant); font: 600 11px inherit; }
+
+/* hold Ctrl: the guide over the page */
+.gt-peek { position: fixed; inset: 0; z-index: 2147483100; display: grid; place-items: center; pointer-events: none; }
+.gt-peek-card { width: min(520px, 86vmin); padding: 14px; border-radius: 20px; background: rgb(11 16 15 / 90%); border: 1px solid rgb(255 255 255 / 18%); box-shadow: 0 24px 80px rgb(0 0 0 / 55%); color: #fff; font-family: Inter, "Segoe UI", system-ui, sans-serif; }
+.gt-peek-kicker { margin: 0 2px 8px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #8ed7bf; }
+.gt-peek canvas { display: block; width: 100%; aspect-ratio: 1; border-radius: 12px; background: #05080a; }
+.gt-peek-state { margin-top: 10px; padding: 9px 12px; border-radius: 10px; border-left: 4px solid #fff; background: rgb(255 255 255 / 8%); font-size: 13px; line-height: 1.4; }
+.gt-peek-state.good { border-left-color: #34d399; } .gt-peek-state.warn { border-left-color: #fbbf24; } .gt-peek-state.bad { border-left-color: #f87171; }
+@media (max-width: 760px) { .gt-panel { left: 8px !important; right: 8px; width: auto; top: 8px; bottom: 8px; } }
+html[data-menu-colour="high-contrast"] .gt-panel, html[data-menu-colour="high-contrast"] .gt-card { border-color: var(--md-on-surface); }

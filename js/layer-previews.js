@@ -1,11 +1,13 @@
 /* Small, live canvas previews. Reuse object renderers without triggering animations. */
 (function (root) {
+    // a long pencil stroke is not re-serialised every refresh: its length and end points stand in for it
+    function pointsKey(p) { return Array.isArray(p) ? [p.length, p[0], p[p.length - 1], p[p.length >> 1]] : p; }
     function signature(obj) {
         const media = obj.video || obj.img;
         return JSON.stringify([obj.name, obj.type, obj.shapeType, obj.width, obj.height, obj.rotation,
             obj.flipHorizontal, obj.flipVertical, obj.color, obj.appearance, obj.cornerRadius,
             obj.strokeColor, obj.strokeWidth, obj.text, obj.size, obj.fontFamily,
-            obj.fontWeight, obj.fontStyle, obj.lineWidth, obj.pencilOpacity, obj.points,
+            obj.fontWeight, obj.fontStyle, obj.lineWidth, obj.pencilOpacity, pointsKey(obj.points),
             media?.currentSrc || media?.src, media?.naturalWidth, media?.videoWidth,
             media?.readyState, Math.floor((media?.currentTime || 0) * 8)]);
     }

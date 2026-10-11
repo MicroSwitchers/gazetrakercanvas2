@@ -23,6 +23,7 @@
   const VERSION = '1.0';
   const DEFAULTS = {
     server: null,            // default: ?gazeServer=… , saved choice, else http://localhost:8765
+    source: null,            // instead of the server: { subscribe(onMessage, setStatus) -> unsubscribe } (js/tet-direct.js talks to the tracker over WebUSB)
     dwellMs: 900,            // look this long at a target to "select" it
     graceMs: 250,            // tracker dropouts / glances shorter than this don't reset the dwell
     rearmMs: 500,            // after a dwell fires, look away this long before it can fire again on the same target
@@ -37,6 +38,7 @@
     pointerOpacity: 0.8,     // 0.1 .. 1
     overlay: false,          // legacy: same as pointer:'dot'
     hotkeys: true,
+    emitGaze: false,         // true: also fire a 'gazebridge:gaze' window event for every processed sample
     map: null,               // optional (x, y) => [clientX, clientY] to override the screen→page mapping
     persist: true,           // remember dwellMs / tolerancePx / overlay in localStorage
     storageKey: 'gazeBridge.v1',
@@ -52,7 +54,7 @@
     const st = {
       es: null, status: 'idle', detail: '', hello: null, lastAt: 0, last: null, sx: null, sy: null, onPage: false,
       cur: null, curSince: 0, lostSince: 0, fired: false, lastFiredObj: null, lastFiredLeave: 0, lastFireAt: 0,
-      dwellOn: true, diagAt: -1e9, started: false,
+      dwellOn: true, diagAt: -1e9, started: false, procAt: 0, pickAt: 0, pickX: 0, pickY: 0, pickRes: null, ptrKey: '', pillTxt: '', pillShown: null, ringKey: '', arcOff: -1,
     };
     let ui = null, pillUntil = 0, timer = 0;
 
@@ -71,6 +73,11 @@
     /* ---- hit test with tolerance: centre first, then vote over rings of points ---- */
     function pick(cx, cy) {
       if (!o.pick) return null;
+      const t = performance.now();
+      if (st.pickAt && t - st.pickAt < 100 && Math.abs(cx - st.pickX) < 2 && Math.abs(cy - st.pickY) < 2) return st.pickRes;      // gaze barely moved: same answer
+      const r = pickNow(cx, cy); st.pickAt = t; st.pickX = cx; st.pickY = cy; st.pickRes = r; return r;
+    }
+    function pickNow(cx, cy) {
       const c = o.pick(cx, cy); if (c || !o.tolerancePx) return c || null;
       const votes = new Map();
       for (const r of [o.tolerancePx / 2, o.tolerancePx]) for (let i = 0; i < 8; i++) {
@@ -111,12 +118,14 @@
     function onSample(m) {
       const now = performance.now(); st.last = m; st.lastAt = now;
       if (m.hello) { st.hello = m; setStatus('live', m.calibrated ? 'calibrated gaze' : 'NOT calibrated — positions may be off'); return; }
-      if (!m.ok || m.x == null) { st.onPage = false; step(null, now); draw(); return; }
+      if (!m.ok || m.x == null) { st.onPage = false; st.pickAt = 0; step(null, now); draw(); return; }
       const [cx, cy] = toClient(m.x, m.y);
       if (st.sx == null) { st.sx = cx; st.sy = cy; } else { st.sx += (cx - st.sx) * o.smooth; st.sy += (cy - st.sy) * o.smooth; }
+      if (now - st.procAt < 15) return;                              // the tracker sends ~90 a second: the page only needs ~60 to look and feel smooth
+      st.procAt = now;
       st.onPage = st.sx >= 0 && st.sy >= 0 && st.sx <= root.innerWidth && st.sy <= root.innerHeight;
       step(st.onPage ? pick(st.sx, st.sy) : null, now);
-      emit('gaze', { x: st.sx, y: st.sy, screenX: m.x, screenY: m.y, ok: true, target: st.cur });
+      if (o.emitGaze) emit('gaze', { x: st.sx, y: st.sy, screenX: m.x, screenY: m.y, ok: true, target: st.cur });
       draw();
     }
     function setStatus(s, detail) { if (s !== st.status || detail !== st.detail) { st.status = s; st.detail = detail || ''; pillUntil = performance.now() + 5000; draw(); emit('status', { status: s, detail }); } }
@@ -134,6 +143,8 @@
     }
     function connect() {
       if (st.es) st.es.close();
+      if (st.unsub) { st.unsub(); st.unsub = null; }
+      if (o.source) { st.unsub = o.source.subscribe(onSample, setStatus); return; }
       let es; try { es = new EventSource(o.server + '/gaze'); } catch (e) { setStatus('unreachable', String(e)); return; }
       st.es = es;
       es.onmessage = e => { try { onSample(JSON.parse(e.data)); } catch (_) { /* ignore a bad frame */ } };
@@ -148,33 +159,45 @@
     let pillPinned = false;
     function ensureUI() {
       if (ui) return ui; const d = document.createElement('div'); d.setAttribute('aria-hidden', 'true');
-      d.innerHTML = '<div data-k="ptr" style="position:fixed;border-radius:50%;pointer-events:none;display:none;z-index:2147483000;box-sizing:border-box"></div>' +
-        '<div data-k="ring" style="position:fixed;border-radius:50%;pointer-events:none;display:none;z-index:2147482999"></div>' +
-        '<div data-k="pill" style="position:fixed;left:10px;bottom:10px;padding:5px 12px;border-radius:99px;background:rgba(0,0,0,.72);color:#fff;font:12px system-ui,sans-serif;pointer-events:none;display:none;z-index:2147483001;max-width:70vw"></div>';
-      document.body.appendChild(d); ui = { ptr: d.querySelector('[data-k=ptr]'), ring: d.querySelector('[data-k=ring]'), pill: d.querySelector('[data-k=pill]') }; return ui;
+      d.innerHTML = '<div data-k="ptr" style="position:fixed;left:0;top:0;border-radius:50%;pointer-events:none;display:none;z-index:2147483000;box-sizing:border-box;will-change:transform"></div>' +
+        '<div data-k="ring" style="position:fixed;left:0;top:0;border-radius:50%;pointer-events:none;display:none;z-index:2147482999;will-change:transform">' +
+          '<svg viewBox="0 0 100 100" width="100%" height="100%" style="display:block"><circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="10"/>' +
+          '<circle data-k="arc" cx="50" cy="50" r="44" fill="none" stroke="rgba(75,227,138,.9)" stroke-width="10" stroke-dasharray="276.46" stroke-dashoffset="276.46" transform="rotate(-90 50 50)"/></svg></div>' +
+        '<div data-k="pill" style="position:fixed;left:50%;transform:translateX(-50%);bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:5px 12px;border-radius:99px;background:rgba(0,0,0,.72);color:#fff;font:12px system-ui,sans-serif;pointer-events:none;display:none;z-index:2147483001;max-width:70vw"></div>';
+      document.body.appendChild(d); ui = { ptr: d.querySelector('[data-k=ptr]'), ring: d.querySelector('[data-k=ring]'), ringSvg: d.querySelector('[data-k=ring] svg'), arc: d.querySelector('[data-k=arc]'), pill: d.querySelector('[data-k=pill]') }; return ui;
     }
     function flashRing() {
       if (o.pointer === 'off' || !ui) return; const u = ui, d = pointerPx() + 16;
-      Object.assign(u.ring.style, { width: d + 'px', height: d + 'px', margin: (-d / 2) + 'px 0 0 ' + (-d / 2) + 'px', left: st.sx + 'px', top: st.sy + 'px', background: 'rgba(75,227,138,.55)', display: 'block', opacity: Math.max(.35, o.pointerOpacity) });
-      setTimeout(() => { u.ring.style.display = 'none'; }, 300);
+      u.ringSvg.style.display = 'none';                                                       // a green disc for a moment instead of the progress arc
+      Object.assign(u.ring.style, { width: d + 'px', height: d + 'px', transform: 'translate(' + Math.round(st.sx - d / 2) + 'px,' + Math.round(st.sy - d / 2) + 'px)', background: 'rgba(75,227,138,.55)', display: 'block', opacity: Math.max(.35, o.pointerOpacity) });
+      st.ringKey = ''; setTimeout(() => { u.ring.style.display = 'none'; u.ring.style.background = 'none'; u.ringSvg.style.display = 'block'; st.ringKey = ''; }, 300);
     }
     function draw() {
       const now = performance.now(), pillOn = pillPinned || now < pillUntil;
       if (!ui && !pillOn && o.pointer === 'off') return; const u = ensureUI();
-      const colour = { live: '#4be38a', connecting: '#ffd24a', off: '#ff9a3c', blocked: '#ff6b6b', unreachable: '#ff6b6b', idle: '#8b97a8' }[st.status] || '#8b97a8';
-      u.pill.style.display = pillOn ? 'block' : 'none';
-      u.pill.innerHTML = '<span style="color:' + colour + '">●</span> gaze: ' + (st.status === 'live' ? 'live' : st.status) + (st.detail ? ' · ' + st.detail : '') + ' · pointer ' + o.pointer + ' · dwell ' + (st.dwellOn ? o.dwellMs + ' ms' : 'off');
+      if (pillOn !== st.pillShown) { u.pill.style.display = pillOn ? 'block' : 'none'; st.pillShown = pillOn; }
+      if (pillOn) {
+        const colour = { live: '#4be38a', connecting: '#ffd24a', off: '#ff9a3c', blocked: '#ff6b6b', unreachable: '#ff6b6b', idle: '#8b97a8' }[st.status] || '#8b97a8';
+        const html = '<span style="color:' + colour + '">●</span> gaze: ' + (st.status === 'live' ? 'live' : st.status) + (st.detail ? ' · ' + st.detail : '') + ' · pointer ' + o.pointer + ' · dwell ' + (st.dwellOn ? o.dwellMs + ' ms' : 'off');
+        if (html !== st.pillTxt) { u.pill.innerHTML = html; st.pillTxt = html; }
+      }
       const show = o.pointer !== 'off' && st.status === 'live' && st.onPage && now - st.lastAt < o.staleMs, p = u.ptr.style;
-      if (!show) { p.display = 'none'; if (!st.fired) u.ring.style.display = 'none'; return; }
-      const d = pointerPx(), c = o.pointerColor;
-      Object.assign(p, { display: 'block', width: d + 'px', height: d + 'px', margin: (-d / 2) + 'px 0 0 ' + (-d / 2) + 'px', left: st.sx + 'px', top: st.sy + 'px', opacity: Math.min(1, Math.max(.05, o.pointerOpacity)) });
-      if (o.pointer === 'circle') { p.border = '3px solid ' + c; p.background = 'radial-gradient(circle, ' + hexRgba(c, .55) + ' 0, ' + hexRgba(c, .55) + ' 3px, ' + hexRgba(c, .16) + ' 4px)'; }
-      else { p.border = '0'; p.background = c; }
-      if (st.cur && st.dwellOn && !st.fired) {
-        const f = Math.min(1, (now - st.curSince) / o.dwellMs), r = d + 14;
-        Object.assign(u.ring.style, { width: r + 'px', height: r + 'px', margin: (-r / 2) + 'px 0 0 ' + (-r / 2) + 'px', left: st.sx + 'px', top: st.sy + 'px', display: 'block', opacity: Math.min(1, Math.max(.35, o.pointerOpacity)),
-          background: 'conic-gradient(rgba(75,227,138,.9) ' + f * 360 + 'deg, rgba(255,255,255,.18) 0)', webkitMask: 'radial-gradient(circle, transparent 60%, #000 62%)', mask: 'radial-gradient(circle, transparent 60%, #000 62%)' });
-      } else if (!st.fired) u.ring.style.display = 'none';
+      if (!show) { if (st.ptrKey !== 'hidden') { p.display = 'none'; st.ptrKey = 'hidden'; } if (!st.fired && st.ringKey !== 'hidden') { u.ring.style.display = 'none'; st.ringKey = 'hidden'; } return; }
+      const d = pointerPx(), c = o.pointerColor, op = Math.min(1, Math.max(.05, o.pointerOpacity)), tx = Math.round(st.sx - d / 2), ty = Math.round(st.sy - d / 2);
+      const key = d + '|' + c + '|' + op + '|' + o.pointer;                                  // look of the pointer: rewritten only when a setting changes
+      if (st.ptrKey !== key) {
+        Object.assign(p, { display: 'block', width: d + 'px', height: d + 'px', opacity: op });
+        if (o.pointer === 'circle') { p.border = '3px solid ' + c; p.background = 'radial-gradient(circle, ' + hexRgba(c, .55) + ' 0, ' + hexRgba(c, .55) + ' 3px, ' + hexRgba(c, .16) + ' 4px)'; }
+        else { p.border = '0'; p.background = c; }
+        st.ptrKey = key;
+      }
+      p.transform = 'translate(' + tx + 'px,' + ty + 'px)';                                   // position only: no layout work
+      if (st.cur && st.dwellOn && !st.fired) {                                                 // dwell progress: an arc that fills while the child keeps looking
+        const f = Math.min(1, (now - st.curSince) / o.dwellMs), r = d + 14, rk = r + '|' + op;
+        u.ring.style.transform = 'translate(' + Math.round(st.sx - r / 2) + 'px,' + Math.round(st.sy - r / 2) + 'px)';
+        if (st.ringKey !== rk) { Object.assign(u.ring.style, { width: r + 'px', height: r + 'px', display: 'block', background: 'none', opacity: Math.min(1, Math.max(.35, o.pointerOpacity)) }); u.ringSvg.style.display = 'block'; st.ringKey = rk; }
+        const off = Math.round(276.46 * (1 - f)); if (off !== st.arcOff) { u.arc.setAttribute('stroke-dashoffset', off); st.arcOff = off; }
+      } else if (!st.fired && st.ringKey !== 'hidden') { u.ring.style.display = 'none'; st.ringKey = 'hidden'; st.arcOff = -1; }
     }
     function keys(e) {
       if (!o.hotkeys || !e.ctrlKey || !e.altKey) return;
@@ -193,8 +216,9 @@
         if (o.hotkeys) root.addEventListener('keydown', keys, true);
         return api;
       },
-      stop() { if (st.es) st.es.close(); st.es = null; clearInterval(timer); root.removeEventListener('keydown', keys, true); st.started = false; setStatus('idle', ''); if (ui) { ui.ptr.style.display = ui.pill.style.display = ui.ring.style.display = 'none'; } return api; },
+      stop() { if (st.es) st.es.close(); st.es = null; if (st.unsub) { st.unsub(); st.unsub = null; } clearInterval(timer); root.removeEventListener('keydown', keys, true); st.started = false; setStatus('idle', ''); if (ui) { ui.ptr.style.display = ui.pill.style.display = ui.ring.style.display = 'none'; } return api; },
       setOptions(p) { Object.assign(o, p); persist(); return api; },
+      setSource(src) { o.source = src || null; if (st.started) connect(); return api; },
       setDwellEnabled(b) { st.dwellOn = !!b; return api; },
       showStatus(on) { pillPinned = !!on; draw(); return api; },
       status() { return { status: st.status, detail: st.detail, hello: st.hello, x: st.sx, y: st.sy, target: st.cur, dwellOn: st.dwellOn }; },

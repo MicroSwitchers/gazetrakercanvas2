@@ -36,6 +36,8 @@
     <link rel="stylesheet" href="./styles/library-layout.css">
     <link rel="stylesheet" href="./styles/professional-theme.css">
     <link rel="stylesheet" href="./styles/design-refresh.css">
+    <link rel="stylesheet" href="./styles/gaze-panel.css">
+    <link rel="stylesheet" href="./styles/gaze-tools.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Andika:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -721,7 +723,7 @@
                     </div>
 
                     <!-- Orientation: flip (pictures) and rotate -->
-                    <div id="orientation-group" class="orientation-group" data-prop-group="look">
+                    <div id="orientation-group" class="orientation-group" data-prop-group="look" hidden>
                         <span class="prop-heading">Orientation</span>
                         <div class="orientation-row">
                             <div id="image-properties" class="hidden orientation-row__flip">
@@ -1096,51 +1098,88 @@
                         <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></span><span class="grid-option__text">Hover pop-up effect<small>Targets grow slightly under the pointer in Play.</small></span><input type="checkbox" id="hover-popup-toggle" class="grid-switch"></label>
                         <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg></span><span class="grid-option__text">Remember target names<small>Targets you name (e.g. for text-to-speech) keep that name when the exact target is loaded again.</small></span><input type="checkbox" id="save-tts-settings" class="grid-switch"></label>
                     </div>
-                    <div class="page-options grid-main-options" id="gaze-options">
-                        <style>
-                            #gaze-options .gaze-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: -2px 0 8px 40px; font-size: 12px; font-weight: 500; color: var(--md-on-surface-muted); }
-                            #gaze-options .gaze-sub label { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-                            #gaze-options .gaze-sub input[type=range] { width: 96px; }
-                            #gaze-options .gaze-sub input[type=color] { width: 34px; height: 24px; padding: 0; border: 1px solid var(--md-outline); border-radius: 6px; background: none; }
-                            #gaze-options .gaze-sub b { min-width: 3.2em; color: var(--md-on-surface); font-weight: 600; }
-                            #gaze-status { margin: 0 0 8px 40px; font-size: 12px; font-weight: 600; }
-                            #gaze-status.ok { color: #34d399; } #gaze-status.bad { color: #f87171; } #gaze-status.wait { color: #fbbf24; }
-                        </style>
-                        <span class="panel-label">Eye gaze (optional)</span>
-                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="grid-option__text">Use eye gaze in Play<small>Needs the Gaze Assessment Tools running on this computer, with the gaze link switched on.</small></span><input type="checkbox" id="gaze-enable" class="grid-switch"></label>
-                        <div id="gaze-status" aria-live="polite">Off</div>
-                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="grid-option__text">Lift it when looked at<small>The target grows slightly, so you can see the child is aware of it.</small></span><input type="checkbox" id="gaze-lift" class="grid-switch"></label>
-                        <div class="gaze-sub"><label>How much <input type="range" id="gaze-lift-pct" min="3" max="40" step="1" aria-label="How much a target lifts"><b id="gaze-lift-pct-v"></b></label></div>
-                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="grid-option__text">Glow around its edges<small>A soft halo follows the edge of the target.</small></span><input type="checkbox" id="gaze-glow" class="grid-switch"></label>
-                        <div class="gaze-sub"><label>Colour <input type="color" id="gaze-glow-color"></label><label>Size <input type="range" id="gaze-glow-size" min="4" max="60" step="1" aria-label="Glow size"><b id="gaze-glow-size-v"></b></label></div>
-                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="grid-option__text">Select it after looking for a moment<small>Like a tap, but with the eyes. Choose what happens below.</small></span><input type="checkbox" id="gaze-select" class="grid-switch"></label>
-                        <div class="gaze-sub"><label>Look for <input type="range" id="gaze-select-sec" min="0.3" max="3" step="0.1" aria-label="Seconds of looking before it is selected"><b id="gaze-select-sec-v"></b></label>
-                            <label><input type="checkbox" id="gaze-anim"> start its animation</label><label><input type="checkbox" id="gaze-speak"> say its name</label></div>
-                        <div class="gaze-sub"><label>Forgiveness <input type="range" id="gaze-tol" min="0" max="60" step="2" aria-label="How far from a target the gaze can be and still count"><b id="gaze-tol-v"></b></label>
-</div>
-                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="grid-option__text">Say the name of what the child looks at<small>Reads the target’s name aloud once the child has looked at it for a moment (its custom speech text if it has one).</small></span><input type="checkbox" id="gaze-name" class="grid-switch"></label>
-                        <div class="gaze-sub"><label>After looking for <input type="range" id="gaze-name-sec" min="0.2" max="2" step="0.1" aria-label="Seconds of looking before the name is said"><b id="gaze-name-sec-v"></b></label></div>
-                        <span class="panel-label" style="margin-top:10px">Gaze pointer (what you can see)</span>
-                        <div class="gaze-sub"><label>Show <select id="gaze-pointer" aria-label="Gaze pointer style"><option value="off">Nothing — only the targets react</option><option value="dot">Small dot</option><option value="circle">Broad circle</option></select></label></div>
-                        <div class="gaze-sub"><label>Dot size <input type="range" id="gaze-dot-px" min="6" max="60" step="1" aria-label="Small dot size"><b id="gaze-dot-px-v"></b></label>
-                            <label>Circle size <input type="range" id="gaze-circle-in" min="0.5" max="4" step="0.1" aria-label="Broad circle size in inches"><b id="gaze-circle-in-v"></b></label></div>
-                        <div class="gaze-sub"><label>Colour <input type="color" id="gaze-pointer-color"></label>
-                            <label>Transparency <input type="range" id="gaze-transparency" min="0" max="90" step="5" aria-label="Pointer transparency"><b id="gaze-transparency-v"></b></label></div>
+                </div>
+                <!-- Eye Tracking (closed by default): the tracker, what targets do when the child looks at them, the gaze pointer, and the looking log -->
+                <div class="section-header">
+                    <button class="accordion-button w-full flex justify-between items-center p-3 font-semibold rounded-md" aria-expanded="false">
+                        <span class="flex items-center space-x-2">
+                            <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <span>Eye Tracking</span>
+                        </span>
+                        <svg class="arrow-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                </div>
+                <div class="accordion-content section-content p-3" id="gaze-options">
+
+                    <!-- 1. Tracker -->
+                    <div class="page-options grid-main-options gz-card" id="gaze-tracker-card">
+                        <span class="panel-label">Tracker</span>
+                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="grid-option__text">Use eye gaze<small>Targets respond when someone looks at them, in Edit as well as Play, so you can try the settings out.</small></span><input type="checkbox" id="gaze-enable" class="grid-switch"></label>
+                        <div class="gz-status"><span class="gz-status__dot" aria-hidden="true"></span><span id="gaze-status" aria-live="polite">Off</span></div>
+                        <label class="gz-field"><span class="form-label">Gaze comes from</span>
+                            <select id="gaze-source" class="form-input"><option value="usb">Tracker on this computer (USB)</option><option value="server">Gaze Assessment Tools app</option></select></label>
+                        <p class="gz-hint" id="gaze-usb-browser">USB eye tracking only works in <b>Chrome</b>, <b>Chromium</b> and <b>Edge</b>.</p>
+                        <div id="gaze-usb">
+                            <label class="gz-field"><span class="form-label">Screen size</span>
+                                <span class="gz-suffix"><input type="number" id="gaze-screen-in" class="form-input" min="5" max="60" step="0.1" placeholder="13.3" aria-label="Screen size, diagonal, in inches"><span>inches, measured corner to corner</span></span></label>
+                            <div class="gz-buttons"><button type="button" id="gaze-connect" class="upload-button gz-primary">Connect tracker</button><button type="button" id="gaze-tools-open" class="upload-button">Calibration tools…</button></div>
+                            <div class="gz-cal" id="gaze-cal-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg><span id="gaze-cal-note"></span><button type="button" id="gaze-clear-cal" class="gz-link">Forget</button></div>
+                            <p class="gz-hint">Position guide, calibration and accuracy check are in <b>Calibration tools</b>. Hold <b>Ctrl</b> at any time to see the position guide over the page.</p>
+                        </div>
                     </div>
-                    <div class="page-options grid-main-options" id="gaze-log-box">
-                        <style>
-                            #gaze-log-box .gaze-log { display: grid; gap: 5px; margin: 4px 0 8px; font-size: 12.5px; }
-                            #gaze-log-box .gaze-log-empty { color: var(--md-on-surface-muted); line-height: 1.4; }
-                            #gaze-log-box .gaze-log-row { position: relative; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 4px 8px; border-radius: 8px; overflow: hidden; background: color-mix(in srgb, var(--md-surface) 80%, transparent); }
-                            #gaze-log-box .gaze-log-bar { position: absolute; inset: 0 auto 0 0; background: color-mix(in srgb, #7c3aed 30%, transparent); z-index: 0; transition: width .3s; }
-                            #gaze-log-box .gaze-log-row > span, #gaze-log-box .gaze-log-row > b { position: relative; z-index: 1; }
-                            #gaze-log-box .gaze-log-row > b { font-variant-numeric: tabular-nums; }
-                            #gaze-log-box .gaze-log-row small { color: var(--md-on-surface-muted); margin-left: 6px; }
-                            #gaze-log-box .gaze-sub { gap: 8px; }
-                        </style>
+
+                    <!-- 2. What a target does when the child looks at it -->
+                    <div class="page-options grid-main-options gz-card">
+                        <span class="panel-label">When the child looks at a target</span>
+                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></span><span class="grid-option__text">Lift it<small>The target grows slightly, so you can see the child noticed it.</small></span><input type="checkbox" id="gaze-lift" class="grid-switch"></label>
+                        <div class="gz-sub" id="gaze-lift-sub">
+                            <label class="gz-row"><span>How much</span><input type="range" id="gaze-lift-pct" min="3" max="40" step="1" aria-label="How much a target lifts"><b id="gaze-lift-pct-v"></b></label>
+                        </div>
+                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><span class="grid-option__text">Glow around its edges<small>A soft halo follows the outline of the target.</small></span><input type="checkbox" id="gaze-glow" class="grid-switch"></label>
+                        <div class="gz-sub" id="gaze-glow-sub">
+                            <label class="gz-row"><span>Colour</span><input type="color" id="gaze-glow-color" aria-label="Glow colour"><b></b></label>
+                            <label class="gz-row"><span>Size</span><input type="range" id="gaze-glow-size" min="4" max="60" step="1" aria-label="Glow size"><b id="gaze-glow-size-v"></b></label>
+                        </div>
+                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg></span><span class="grid-option__text">Say its name<small>Reads the target’s name (or its custom speech) once the child has looked at it.</small></span><input type="checkbox" id="gaze-name" class="grid-switch"></label>
+                        <div class="gz-sub" id="gaze-name-sub">
+                            <label class="gz-row"><span>After</span><input type="range" id="gaze-name-sec" min="0.2" max="2" step="0.1" aria-label="Seconds of looking before the name is said"><b id="gaze-name-sec-v"></b></label>
+                        </div>
+                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1M5.1 8l-2.9-.8M14 4.1 12 6M6 12l-1.9 2"/></svg></span><span class="grid-option__text">Select it by looking<small>Like a tap, but with the eyes: looking long enough starts it.</small></span><input type="checkbox" id="gaze-select" class="grid-switch"></label>
+                        <div class="gz-sub" id="gaze-select-sub">
+                            <label class="gz-row"><span>Look for</span><input type="range" id="gaze-select-sec" min="0.3" max="3" step="0.1" aria-label="Seconds of looking before it is selected"><b id="gaze-select-sec-v"></b></label>
+                            <div class="gz-checks"><label><input type="checkbox" id="gaze-anim"> start its animation</label><label><input type="checkbox" id="gaze-speak"> say its name</label></div>
+                        </div>
+                        <span class="panel-label">Forgiveness</span>
+                        <div class="gz-sub gz-sub--flat">
+                            <label class="gz-row"><span>Distance</span><input type="range" id="gaze-tol" min="0" max="60" step="2" aria-label="How far from a target the gaze can be and still count"><b id="gaze-tol-v"></b></label>
+                        </div>
+                        <p class="gz-hint">How far outside a target the gaze can land and still count as looking at it. Raise it if the child is clearly looking but nothing happens.</p>
+                    </div>
+
+                    <!-- 3. The gaze pointer: what the adult sees -->
+                    <div class="page-options grid-main-options gz-card" id="gaze-pointer-card" data-pointer="off">
+                        <span class="panel-label">Gaze pointer</span>
+                        <p class="gz-hint">What you see on the screen where the child is looking. “Nothing” leaves only the targets reacting.</p>
+                        <select id="gaze-pointer" hidden aria-hidden="true" tabindex="-1"><option value="off">Nothing</option><option value="dot">Small dot</option><option value="circle">Broad circle</option></select>
+                        <div class="gz-seg" role="radiogroup" aria-label="Gaze pointer">
+                            <button type="button" role="radio" data-pointer="off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/><path d="m5 5 14 14"/></svg>Nothing</button>
+                            <button type="button" role="radio" data-pointer="dot"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>Small dot</button>
+                            <button type="button" role="radio" data-pointer="circle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>Broad circle</button>
+                        </div>
+                        <div class="gz-sub gz-sub--flat gz-ptr-opts">
+                            <label class="gz-row gz-only-dot"><span>Dot size</span><input type="range" id="gaze-dot-px" min="6" max="60" step="1" aria-label="Small dot size"><b id="gaze-dot-px-v"></b></label>
+                            <label class="gz-row gz-only-circle"><span>Circle size</span><input type="range" id="gaze-circle-in" min="0.5" max="4" step="0.1" aria-label="Broad circle size in inches"><b id="gaze-circle-in-v"></b></label>
+                            <label class="gz-row"><span>Colour</span><input type="color" id="gaze-pointer-color" aria-label="Pointer colour"><b></b></label>
+                            <label class="gz-row"><span>See-through</span><input type="range" id="gaze-transparency" min="0" max="95" step="5" aria-label="Pointer transparency"><b id="gaze-transparency-v"></b></label>
+                        </div>
+                        <p class="gz-hint" style="margin-bottom:6px">In Play, Ctrl+Alt+G switches the pointer without opening this panel.</p>
+                    </div>
+
+                    <!-- 4. Where the child looked -->
+                    <div class="page-options grid-main-options gz-card" id="gaze-log-box">
                         <span class="panel-label">Where the child looked</span>
                         <div id="gaze-log-list" class="gaze-log" aria-live="off"><span class="gaze-log-empty">Nothing yet. Turn on eye gaze and switch to Play — the list fills in as the child looks at targets.</span></div>
-                        <div class="gaze-sub" style="margin-left:0"><button type="button" id="gaze-log-clear" class="tool-button px-3 py-1.5 rounded text-xs">Clear list</button><button type="button" id="gaze-log-save" class="tool-button px-3 py-1.5 rounded text-xs">Save as spreadsheet (CSV)</button></div>
+                        <div class="gz-buttons"><button type="button" id="gaze-log-clear" class="upload-button">Clear list</button><button type="button" id="gaze-log-save" class="upload-button">Save as CSV</button></div>
                     </div>
                 </div>
                  <!-- Layer Management -->
@@ -1465,6 +1504,10 @@
     <script src="./js/media-store.js"></script>
     <script src="./js/media-library.js"></script>
     <script src="./js/gaze-bridge.js"></script>
+    <script src="./js/calmath.js"></script>
+    <script src="./js/tet-usb.js"></script>
+    <script src="./js/tet-direct.js"></script>
+    <script src="./js/gaze-tools.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
             // --- Device Detection and Mobile Setup ---
@@ -1677,7 +1720,7 @@
             DeviceDetector.init();
 
             // --- Version Management & Cache Busting ---
-            const APP_VERSION = '2026.10.10.003'; // Update this when deploying new versions
+            const APP_VERSION = '2026.10.11.003'; // Update this when deploying new versions
             const VERSION_KEY = 'eyeTrackingAppVersion';
             const SETTINGS_BACKUP_KEY = 'eyeTrackingAppSettingsBackup';
             
@@ -1811,10 +1854,10 @@
                 // Register service worker if sw.js exists
                 navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
                     .then(registration => {
-                        // Check for updates every 30 seconds
+                        // Check for updates every 5 minutes
                         setInterval(() => {
                             registration.update();
-                        }, 30000);
+                        }, 300000);
                         
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
@@ -2309,25 +2352,27 @@
             const HOVER_SCALE_TARGET = 1.15; // Target scale when hovered (15% larger - more noticeable)
             const HOVER_ANIMATION_SPEED = 0.25; // Animation interpolation speed (faster)
 
-            // Eye-gaze interaction state (optional; driven by js/gaze-bridge.js, see the "Eye gaze" settings)
-            const GAZE_DEFAULTS = { enabled: false, lift: true, liftPct: 15, glow: false, glowColor: '#ffd24a', glowSize: 18,
+            // Eye-gaze interaction state (optional; driven by js/gaze-bridge.js, see the "Eye Tracking" settings)
+            const GAZE_DEFAULTS = { enabled: false, source: null, lift: true, liftPct: 15, glow: false, glowColor: '#ffd24a', glowSize: 18,
                                     select: false, selectSec: 0.9, anim: true, speak: true, tolerance: 22,
-                                    pointer: 'off', dotPx: 22, circleIn: 1.5, pointerColor: '#ffd24a', transparency: 20,   // what the adult/child can see of the gaze
+                                    pointer: 'off', dotPx: 22, circleIn: 1.5, pointerColor: '#ffffff', transparency: 20,   // what the adult/child can see of the gaze
                                     nameOn: false, nameSec: 0.5 };                                                          // say the name of what the child looks at
             let gazeSettings = { ...GAZE_DEFAULTS };
             try { Object.assign(gazeSettings, JSON.parse(localStorage.getItem('gazeInteraction.v1') || '{}')); } catch {}
             if (gazeSettings.dot === true && gazeSettings.pointer === 'off') gazeSettings.pointer = 'dot';   // setting from the first version
             delete gazeSettings.dot;
+            if (!gazeSettings.ptrWhite) { if (gazeSettings.pointerColor === '#ffd24a') gazeSettings.pointerColor = '#ffffff'; gazeSettings.ptrWhite = true; }   // the pointer now starts white (least distracting); one-time switch from the old yellow default
             let gazeObject = null;          // target the child is currently looking at (only set when lift/glow is on)
             let lookObject = null;          // target the child is looking at, whatever the settings (drives the log and naming)
             const lookLog = new Map();      // target -> { name, ms, looks, longest, cur }  (how long each target was looked at)
             const gazeFx = new Map();       // target -> { lift: 0..1, glow: 0..1 } (eased so effects fade in and out)
             let gazeFxBusy = false;         // true while an effect is still easing
+            let frameBusy = false;          // something is moving (video, animation, drag): draw() favours speed over resampling quality
             function gazeFxUpdate() {
                 let busy = false;
                 if (gazeObject && !gazeFx.has(gazeObject)) gazeFx.set(gazeObject, { lift: 0, glow: 0 });
                 gazeFx.forEach((fx, obj) => {
-                    const on = obj === gazeObject && interactionMode === 'play';
+                    const on = obj === gazeObject;
                     const tl = on && gazeSettings.lift ? 1 : 0, tg = on && gazeSettings.glow ? 1 : 0;
                     fx.lift += (tl - fx.lift) * 0.22; fx.glow += (tg - fx.glow) * 0.22;
                     if (Math.abs(tl - fx.lift) < 0.004) fx.lift = tl;
@@ -2342,31 +2387,56 @@
             function gazeFxPending() {
                 if (gazeObject && !gazeFx.has(gazeObject)) return true;
                 for (const [obj, fx] of gazeFx) {
-                    const on = obj === gazeObject && interactionMode === 'play';
+                    const on = obj === gazeObject;
                     if (fx.lift !== (on && gazeSettings.lift ? 1 : 0) || fx.glow !== (on && gazeSettings.glow ? 1 : 0)) return true;
                     if (!on && fx.lift === 0 && fx.glow === 0) return true;      // let draw() clean it up
                 }
                 return false;
             }
+            // Blurring is the expensive part of a halo or a drop shadow, so each target's is blurred once and kept; every frame just pastes it
+            // (fading it in and out). It is rebuilt only if the target's size, rotation or the settings change.
+            const gazeShadows = new WeakMap();
+            // Reading the canvas size from the page forces a layout every time it is asked, which is slow while the page is changing every frame; ask a few times a second.
+            let gazeBackingScale = 1, gazeBackingAt = -1e9;
+            function gazeBackingPerCss() {
+                const now = performance.now();
+                if (now - gazeBackingAt > 500) { gazeBackingAt = now; gazeBackingScale = ctx.canvas.width / (ctx.canvas.getBoundingClientRect().width || ctx.canvas.width); }
+                return gazeBackingScale;
+            }
+            function cachedShadow(obj, s, dpr, color, blurDev, offYDev) {
+                const pose = animationPose(obj), key = [obj.width | 0, obj.height | 0, Math.round((pose.rotation || 0) * 50), s.toFixed(3), color, blurDev.toFixed(1), offYDev.toFixed(1), dpr].join('|');
+                let e = gazeShadows.get(obj);
+                if (e && e.key === key) return e;
+                const c = obj.getCenterPoint(), cx = c.x + pose.x, cy = c.y + pose.y, r = Math.hypot(obj.width, obj.height) / 2 * s + 6;   // radius that holds the target at any rotation
+                const sw = Math.ceil(2 * r * dpr), pad = Math.ceil(blurDev * 2.2 + offYDev + 2), W = sw + 2 * pad;
+                if (!gazeLayer) gazeLayer = document.createElement('canvas');
+                if (gazeLayer.width < sw || gazeLayer.height < sw) { gazeLayer.width = Math.max(gazeLayer.width, sw); gazeLayer.height = Math.max(gazeLayer.height, sw); }
+                const lc = gazeLayer.getContext('2d'); lc.setTransform(1, 0, 0, 1, 0, 0); lc.clearRect(0, 0, gazeLayer.width, gazeLayer.height);
+                lc.setTransform(dpr, 0, 0, dpr, -(cx - r) * dpr, -(cy - r) * dpr); lc.translate(cx, cy); lc.scale(s, s); lc.translate(-cx, -cy);
+                lc.shadowColor = 'transparent'; obj.draw(lc);
+                if (!e) e = { canvas: document.createElement('canvas') };
+                e.key = key; e.pad = pad; e.r = r; e.canvas.width = W; e.canvas.height = W;
+                const g = e.canvas.getContext('2d'), D = W + 40;           // draw the target far off to the left and let only its shadow land on the sprite
+                g.shadowColor = color; g.shadowBlur = blurDev; g.shadowOffsetX = D; g.shadowOffsetY = offYDev;
+                g.drawImage(gazeLayer, 0, 0, sw, sw, pad - D, pad, sw, sw);
+                if (blurDev > 8) g.drawImage(gazeLayer, 0, 0, sw, sw, pad - D, pad, sw, sw);        // twice, so a halo is bold enough to notice
+                gazeShadows.set(obj, e); return e;
+            }
             function drawWithGazeFx(obj, fx) {
                 const pose = animationPose(obj), c = obj.getCenterPoint(), cx = c.x + pose.x, cy = c.y + pose.y;   // follow the target while it moves
-                const s = 1 + (gazeSettings.liftPct / 100) * fx.lift;
-                ctx.save();
-                ctx.translate(cx, cy); ctx.scale(s, s); ctx.translate(-cx, -cy);
-                if (fx.glow > 0.01) {
-                    // Draw the target alone on a scratch layer, then paste the layer with a blurred coloured shadow = a halo that follows its edge.
-                    if (!gazeLayer) gazeLayer = document.createElement('canvas');
-                    if (gazeLayer.width !== ctx.canvas.width || gazeLayer.height !== ctx.canvas.height) { gazeLayer.width = ctx.canvas.width; gazeLayer.height = ctx.canvas.height; }
-                    const lc = gazeLayer.getContext('2d'); lc.setTransform(1, 0, 0, 1, 0, 0); lc.clearRect(0, 0, gazeLayer.width, gazeLayer.height); lc.setTransform(ctx.getTransform());
-                    obj.draw(lc);
-                    const px = ctx.canvas.width / (ctx.canvas.getBoundingClientRect().width || ctx.canvas.width);
-                    ctx.setTransform(1, 0, 0, 1, 0, 0);
-                    ctx.shadowColor = gazeSettings.glowColor; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0; ctx.shadowBlur = gazeSettings.glowSize * fx.glow * px;
-                    ctx.drawImage(gazeLayer, 0, 0); ctx.drawImage(gazeLayer, 0, 0);       // twice, so the halo is bold enough to notice
-                } else {
-                    ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'; ctx.shadowBlur = 15 * fx.lift * Math.min(1, gazeSettings.liftPct / 15); ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 5 * fx.lift * Math.min(1, gazeSettings.liftPct / 15);
-                    obj.draw(ctx);
+                const sFull = gazeSettings.lift ? 1 + gazeSettings.liftPct / 100 : 1, s = 1 + (sFull - 1) * fx.lift, dpr = ctx.canvas.width / CANVAS_WIDTH;
+                const px = gazeBackingPerCss() / canvasZoom;                                                       // sprite pixels per screen pixel (the sprite is pasted through the current pan/zoom)
+                let sh = null, alpha = 0;
+                // built once at the fully-lifted size, then scaled while the lift eases in and out (so it is not rebuilt every frame)
+                if (fx.glow > 0.01) { sh = cachedShadow(obj, sFull, dpr, gazeSettings.glowColor, gazeSettings.glowSize * px, 0); alpha = fx.glow; }
+                else if (fx.lift > 0.01) { const k = Math.min(1, gazeSettings.liftPct / 15); sh = cachedShadow(obj, sFull, dpr, 'rgba(0, 0, 0, 0.3)', 15 * k, 5 * k); alpha = fx.lift; }
+                if (sh) {
+                    const k = s / sFull / dpr, W = sh.canvas.width;       // sprite pixels -> canvas units, drawn through the page's own pan/zoom/dpr transform
+                    ctx.save(); ctx.translate(cx, cy); ctx.scale(k, k); ctx.globalAlpha = alpha;
+                    ctx.drawImage(sh.canvas, -W / 2, -W / 2); ctx.restore();
                 }
+                ctx.save(); ctx.translate(cx, cy); ctx.scale(s, s); ctx.translate(-cx, -cy);
+                obj.draw(ctx);
                 ctx.restore();
             }
 
@@ -2796,7 +2866,7 @@
 
                     // Configure image smoothing for crisp rendering
                     ctx.imageSmoothingEnabled = true;
-                    ctx.imageSmoothingQuality = 'high';
+                    ctx.imageSmoothingQuality = frameBusy ? 'medium' : 'high';   // 'high' is slow on large images/video: only use it while the picture is still
 
                     // Draw background
                     ctx.fillStyle = backgroundColor;
@@ -2977,12 +3047,14 @@
                     const animating = objects.some(o => o.isAnimating || o.animationTransition);
                     const snapping = isSnapping;
                     const hoverAnimating = enableHoverPopup && (hoveredObject !== null || Math.abs(hoverScale - 1.0) > 0.001);
+                    frameBusy = hasVideo || animating || dragging || snapping;
                     if (hasVideo || dragging || animating || snapping || hoverAnimating || gazeFxBusy || gazeFxPending() || needsRender) {
                         if (needsRender) needsRender = false;
                         draw();
                         requestAnimationFrame(loop);
                     } else {
                         continuousLoop = false; // allow restart when needed
+                        if (frameBusy) { frameBusy = false; requestAnimationFrame(draw); }   // one last full-quality frame
                         animationFrameTime = 0;
                     }
                 }
@@ -4423,6 +4495,7 @@
             
             toggleLibraryBtn.addEventListener('click', (e) => { 
                 e.stopPropagation(); 
+                if (interactionMode === 'play') return;   // also covers Ctrl+M
                 controlsDrawer.classList.remove('open'); 
                 mediaLibrary.classList.toggle('open'); 
                 updateStatusIndicators();
@@ -6163,7 +6236,7 @@
                     showProgress(); updateProgress(0, Math.max(1, supported.length));
                     const cancel = document.getElementById('library-cancel-import');
                     cancel.hidden = false;
-                    if (!autoLoaded) {
+                    if (!autoLoaded && interactionMode !== 'play') {
                         mediaLibrary.classList.add('open');
                         toggleLibraryBtn.setAttribute('aria-expanded', 'true');
                     }
@@ -6478,6 +6551,9 @@
                 });
                 
                 document.body.appendChild(menu);
+                // the library sits at the right edge: keep the menu on screen
+                menu.style.left = Math.max(4, Math.min(x, innerWidth - menu.offsetWidth - 4)) + 'px';
+                menu.style.top = Math.max(4, Math.min(y, innerHeight - menu.offsetHeight - 4)) + 'px';
                 
                 // Close menu when clicking outside
                 setTimeout(() => {
@@ -6725,6 +6801,8 @@
 
                     // Apply saved TTS settings if available
                     applyTTSSettings(newObj, name);
+                    // Imported symbols are all named, so they say their name unless the adult already chose something else for this picture.
+                    if (img.dataset.symbolCredit && !loadTTSSettings(name)) newObj.speechMode = 'default';
 
                     objects.push(newObj);
                     setSelectedObject(newObj);
@@ -7378,15 +7456,15 @@
             function getObjectAt(x, y) {
                 // Sort objects by Z-index and find first visible object at position
                 // We rebuild the sorted list each time to ensure we have current objects
-                const sorted = [...objects].sort((a, b) => b.zIndex - a.zIndex);
-                for (const obj of sorted) {
+                // (top-most hit wins; equal z-index: the earlier one in the list, as a stable sort would give. No copy or sort: this runs many times per gaze sample)
+                let best = null;
+                for (const obj of objects) {
+                    if (!obj.visible || (best && obj.zIndex <= best.zIndex)) continue;
                     const motion=animationPose(obj),center=obj.getCenterPoint();
                     const dx=x-center.x-motion.x,dy=y-center.y-motion.y,c=Math.cos(motion.rotation),sn=Math.sin(motion.rotation);
-                    if (obj.visible && obj.isPointInside(center.x+dx*c+dy*sn, center.y-dx*sn+dy*c)) {
-                        return obj;
-                    }
+                    if (obj.isPointInside(center.x+dx*c+dy*sn, center.y-dx*sn+dy*c)) best = obj;
                 }
-                return null;
+                return best;
             }
             // Upgrade to Pointer Events (covers mouse + touch + pen)
             canvas.addEventListener('pointerdown', (e) => {
@@ -8324,6 +8402,7 @@
                     isDraggingPathNode = false;
                     canvas.style.cursor = 'default';
                     hideConsultantPanels();
+                    toggleLibraryBtn.hidden = true;          // the media library is for setting up, not for Play
                 } else {
                     modeRow.classList.remove('mode--play');
                     modeRow.classList.add('mode--edit');
@@ -8333,6 +8412,7 @@
                     document.getElementById('play-mode-message').classList.add('hidden');
                     document.getElementById('tools-content').style.display = 'block';
                     propertiesPanel.style.display = 'block';
+                    toggleLibraryBtn.hidden = false;
 
                     setActiveTool('select');
                     isDrawingPath = false;
@@ -9489,9 +9569,11 @@
                 const animatableTypes = ['text','shape','image'];
                 const canAnimate = selectedObject && animatableTypes.includes(selectedObject.type);
                 animateBtn.style.display = canAnimate ? 'flex' : 'none';
-                contextMenu.style.display = 'block'; 
-                contextMenu.style.left = `${x}px`; 
-                contextMenu.style.top = `${y}px`; 
+                contextMenu.style.display = 'block';
+                // keep it on screen when opened near the right or bottom edge
+                const w = contextMenu.offsetWidth, h = contextMenu.offsetHeight;
+                contextMenu.style.left = `${Math.max(4, Math.min(x, innerWidth - w - 4))}px`;
+                contextMenu.style.top = `${Math.max(4, Math.min(y, innerHeight - h - 4))}px`;
             }
             
             function hideContextMenu() { 
@@ -9973,11 +10055,20 @@
             // --- Eye gaze (optional) ------------------------------------------------------------------------
             // Looking at a target can lift it, make it glow, and/or select it (start its animation, say its name).
             // Needs js/gaze-bridge.js and the Gaze Assessment Tools on this computer (viewer.py) with the gaze link on and
-            // this site allowed. Switched on in Play settings > "Eye gaze"; also with ?gaze, or Ctrl+Alt+L. When it is off
+            // this site allowed. Switched on in the "Eye Tracking" section; also with ?gaze, or Ctrl+Alt+L. When it is off
             // the page never contacts localhost.
             if (window.GazeBridge) {
                 let gazeLink = null;
                 const $g = id => document.getElementById(id);
+                // Gaze can come straight from the tracker over WebUSB (js/tet-direct.js), or from the Python Gaze Assessment Tools.
+                const td = (window.TetDirect && window.TetUSB && TetUSB.supported()) ? TetDirect.create() : null;
+                if (!(window.TetUSB && TetUSB.supported())) {      // e.g. Firefox or Safari: say so plainly where the tracker is set up
+                    const note = $g('gaze-usb-browser'); note.classList.add('gz-warn');
+                    note.innerHTML = 'This browser can’t use a USB eye tracker. Open this page in <b>Chrome</b>, <b>Chromium</b> or <b>Edge</b>.';
+                }
+                const useUsb = () => !!td && (gazeSettings.source || 'usb') === 'usb';
+                // the calibration tools menu: position guide (also shown while Ctrl is held), calibration, accuracy check
+                const tools = (td && window.GazeTools) ? GazeTools.create({ td, drawer: document.getElementById('controls-drawer'), isEnabled: () => gazeSettings.enabled && useUsb() }) : null;
                 const saveGaze = () => { try { localStorage.setItem('gazeInteraction.v1', JSON.stringify(gazeSettings)); } catch {} };
                 const setGazeStatus = (text, cls) => { const el = $g('gaze-status'); if (el) { el.textContent = text; el.className = cls || ''; } };
                 const bridgeOpts = () => ({ dwellMs: Math.round(gazeSettings.selectSec * 1000), tolerancePx: gazeSettings.tolerance, pointer: gazeSettings.pointer, dotPx: gazeSettings.dotPx, circleInches: gazeSettings.circleIn,
@@ -9993,36 +10084,46 @@
                     $g('gaze-select-sec-v').textContent = gazeSettings.selectSec.toFixed(1) + ' s'; $g('gaze-tol-v').textContent = gazeSettings.tolerance + ' px';
                     $g('gaze-name-sec-v').textContent = gazeSettings.nameSec.toFixed(1) + ' s'; $g('gaze-dot-px-v').textContent = gazeSettings.dotPx + ' px';
                     $g('gaze-circle-in-v').textContent = gazeSettings.circleIn.toFixed(1) + ' in'; $g('gaze-transparency-v').textContent = gazeSettings.transparency + '%';
+                    // each switch's own settings only show while it is on; the pointer card shows the options for the chosen style
+                    $g('gaze-lift-sub').hidden = !gazeSettings.lift; $g('gaze-glow-sub').hidden = !gazeSettings.glow;
+                    $g('gaze-name-sub').hidden = !gazeSettings.nameOn; $g('gaze-select-sub').hidden = !gazeSettings.select;
+                    $g('gaze-pointer-card').dataset.pointer = gazeSettings.pointer;
+                    document.querySelectorAll('#gaze-pointer-card .gz-seg button').forEach(b => b.setAttribute('aria-checked', String(b.dataset.pointer === gazeSettings.pointer)));
                 }
                 function applyGaze() {
                     if (gazeLink) { gazeLink.setOptions(bridgeOpts()); gazeLink.setDwellEnabled(gazeSettings.select); }
                     if (!gazeSettings.lift && !gazeSettings.glow) gazeObject = null;
                     ensureRenderLoop();
                 }
+                let pickRect = null, pickRectAt = 0;
                 function startGaze() {
                     if (gazeLink) return;
                     gazeLink = GazeBridge.create({
-                        ...bridgeOpts(),
+                        ...bridgeOpts(), source: useUsb() ? td.source : null,
                         // gaze-bridge hands us page pixels; reuse the page's own pointer maths and hit test
-                        pick: (cx, cy) => {
-                            if (interactionMode !== 'play') return null;
-                            const p = getMousePos({ clientX: cx, clientY: cy });
-                            return getObjectAt(p.x, p.y);
+                        pick: (cx, cy) => {                  // runs several times per gaze sample, so measure the canvas only a few times a second
+                            const now = performance.now(); if (!pickRect || now - pickRectAt > 250) { pickRect = canvasContainer.getBoundingClientRect(); pickRectAt = now; }
+                            return getObjectAt((cx - pickRect.left - canvasPanX) / canvasZoom, (cy - pickRect.top - canvasPanY) / canvasZoom);
                         },
                         onHover: obj => { noteLook(obj); gazeObject = (gazeSettings.lift || gazeSettings.glow) ? obj : null; ensureRenderLoop(); },
-                        onDwell: obj => {
-                            if (interactionMode !== 'play') return;
-                            if (gazeSettings.speak) speakObjectName(obj);
+                        onDwell: obj => {                    // Edit too, so whoever sets up the page sees how targets will respond
+                            if (gazeSettings.speak) sayTargetName(obj);
                             if (gazeSettings.anim && obj.animationType) triggerAnimation(obj);
                         },
                     }).start();
                     gazeLink.setDwellEnabled(gazeSettings.select);
+                    if (useUsb()) td.autoConnect();                  // no click needed once this browser has permission for the tracker
                 }
-                function stopGaze() { if (gazeLink) { gazeLink.stop(); gazeLink = null; } noteLook(null); gazeObject = null; setGazeStatus('Off'); ensureRenderLoop(); }
+                function stopGaze() { if (gazeLink) { gazeLink.stop(); gazeLink = null; } if (td) td.disconnect(); noteLook(null); gazeObject = null; setGazeStatus('Off'); ensureRenderLoop(); }
                 function setGazeEnabled(on) { gazeSettings.enabled = on; saveGaze(); syncGazeUi(); if (on) { setGazeStatus('Connecting…', 'wait'); startGaze(); } else stopGaze(); }
 
                 window.addEventListener('gazebridge:status', e => {
                     if (!gazeLink) return; const { status, detail } = e.detail;
+                    if (useUsb()) {                                // the tracker module words its own messages
+                        const d = (detail || '').replace(/^./, c => c.toUpperCase());
+                        setGazeStatus(status === 'live' ? 'Eye gaze is live' + (/NOT/.test(detail) ? ' — but not calibrated yet' : '') : d || 'Not connected', status === 'live' ? 'ok' : status === 'unreachable' ? 'bad' : 'wait');
+                        return;
+                    }
                     setGazeStatus(status === 'live' ? 'Eye gaze is live' + (detail && /NOT/.test(detail) ? ' — but not calibrated' : '') : status === 'off' ? 'The gaze link is switched off in the Gaze Assessment Tools'
                         : status === 'blocked' ? 'This website is not allowed yet — in the Gaze Assessment Tools, Gaze tab, click “Allow microswitchers.github.io”' : status === 'unreachable' ? 'Can’t find the Gaze Assessment Tools — is it running on this computer?' : 'Connecting…',
                         status === 'live' ? 'ok' : status === 'connecting' ? 'wait' : 'bad');
@@ -10038,6 +10139,7 @@
                 bindChange('gaze-pointer', t => { gazeSettings.pointer = t.value; });       bindChange('gaze-dot-px', t => { gazeSettings.dotPx = +t.value; });
                 bindChange('gaze-circle-in', t => { gazeSettings.circleIn = +t.value; });   bindChange('gaze-pointer-color', t => { gazeSettings.pointerColor = t.value; });
                 bindChange('gaze-transparency', t => { gazeSettings.transparency = +t.value; });
+                document.querySelectorAll('#gaze-pointer-card .gz-seg button').forEach(b => b.addEventListener('click', () => { gazeSettings.pointer = b.dataset.pointer; saveGaze(); syncGazeUi(); applyGaze(); }));
                 // the adult's hotkeys inside the bridge (Ctrl+Alt+G pointer style, Ctrl+Alt+Up/Down dwell time) keep these settings in step
                 window.addEventListener('gazebridge:option', e => {
                     if (e.detail.pointer) gazeSettings.pointer = e.detail.pointer;
@@ -10045,11 +10147,45 @@
                     saveGaze(); syncGazeUi();
                 });
 
+                // --- tracker connection (USB) ---
+                function syncUsbUi() {
+                    const sel = $g('gaze-source'); sel.value = useUsb() ? 'usb' : 'server';
+                    if (!td) { sel.querySelector('option[value=usb]').disabled = true; sel.querySelector('option[value=usb]').textContent = 'Tracker on this computer (needs Chrome or Edge)'; }
+                    $g('gaze-usb').style.display = useUsb() ? '' : 'none';
+                    if (!td) return; const s = td.state();
+                    if (document.activeElement !== $g('gaze-screen-in')) $g('gaze-screen-in').value = s.diagIn || '';
+                    $g('gaze-connect').textContent = td.running ? 'Disconnect' : 'Connect tracker';
+                    $g('gaze-connect').classList.toggle('gz-primary', !td.running);
+                    $g('gaze-tools-open').classList.toggle('gz-primary', td.running && s.status === 'live' && !s.calibrated);
+                    $g('gaze-clear-cal').hidden = !s.calibrated;
+                    $g('gaze-cal-box').classList.toggle('is-done', s.calibrated);
+                    $g('gaze-cal-note').textContent = s.calibrated ? 'Calibrated ' + new Date(s.cal.created).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) + (s.cal.grade ? ' · ' + s.cal.grade : '') + (s.cal.errDeg != null ? ' (about ' + s.cal.errDeg + '° off)' : '')
+                        : 'Not calibrated yet. Sit where the child will sit, then click Calibrate.';
+                }
+                if (td) td.onChange(syncUsbUi);
+                $g('gaze-source').addEventListener('change', e => {
+                    gazeSettings.source = e.target.value; saveGaze();
+                    if (gazeSettings.enabled) { stopGaze(); setGazeStatus('Connecting…', 'wait'); startGaze(); }
+                    syncUsbUi();
+                });
+                $g('gaze-screen-in').addEventListener('change', e => {
+                    td.setScreenInches(e.target.value);
+                    if (td.running) { td.disconnect(); setTimeout(() => td.autoConnect(), 400); }
+                });
+                $g('gaze-connect').addEventListener('click', () => {
+                    if (!gazeSettings.enabled) setGazeEnabled(true);
+                    if (td.running) { td.disconnect(); return; }
+                    if (!td.state().screenMm) { setGazeStatus('Enter your screen size first (diagonal, in inches)', 'wait'); $g('gaze-screen-in').focus(); return; }
+                    td.connect();
+                });
+                $g('gaze-tools-open').addEventListener('click', () => { if (!gazeSettings.enabled) setGazeEnabled(true); if (tools) tools.toggle(); });
+                $g('gaze-clear-cal').addEventListener('click', () => td.clearCalibration());
+
                 // --- what the child looked at: log + name reading ---
                 const targetLabel = obj => (obj.name && String(obj.name).trim()) || getDefaultSpeechText(obj) || 'Target';
                 const lookEntry = obj => { let e = lookLog.get(obj); if (!e) { e = { name: '', ms: 0, looks: 0, longest: 0, cur: 0, counted: false }; lookLog.set(obj, e); } e.name = targetLabel(obj); return e; };
                 let nameTimer = 0, lastNamed = null, lastNamedAt = 0, lastLookTick = performance.now();
-                function sayTargetName(obj) {
+                function sayTargetName(obj) {                // custom speech if the target has it, otherwise its name — even if its tap speech is "none"
                     const text = (obj.speechMode === 'custom' && obj.customSpeechText) ? obj.customSpeechText : (getDefaultSpeechText(obj) || obj.name || '');
                     if (text) speakText(text);
                 }
@@ -10060,7 +10196,7 @@
                     if (!obj) return;
                     lookEntry(obj);
                     if (gazeSettings.nameOn) nameTimer = setTimeout(() => {
-                        if (lookObject !== obj || interactionMode !== 'play') return;
+                        if (lookObject !== obj) return;
                         const now = performance.now();
                         if (obj === lastNamed && now - lastNamedAt < 4000) return;   // glancing away and straight back doesn't repeat it
                         lastNamed = obj; lastNamedAt = now; sayTargetName(obj);
@@ -10101,12 +10237,12 @@
                 });
 
                 if (new URLSearchParams(location.search).has('gaze')) { gazeSettings.enabled = true; saveGaze(); }
-                syncGazeUi();
+                syncGazeUi(); syncUsbUi();
                 if (gazeSettings.enabled) { setGazeStatus('Connecting…', 'wait'); startGaze(); }
                 window.addEventListener('keydown', e => {
                     if (!(e.ctrlKey && e.altKey && e.code === 'KeyL')) return;
                     e.preventDefault(); setGazeEnabled(!gazeSettings.enabled);
-                    showToast(gazeSettings.enabled ? 'Eye gaze on' : 'Eye gaze off', gazeSettings.enabled ? 'Needs the gaze tools running on this computer.' : '', 'info');
+                    showToast(gazeSettings.enabled ? 'Eye gaze on' : 'Eye gaze off', gazeSettings.enabled ? (useUsb() ? 'Connect the tracker in the Eye Tracking settings.' : 'Needs the gaze tools running on this computer.') : '', 'info');
                 }, true);
             } else {
                 const el = document.getElementById('gaze-enable'); if (el) { el.disabled = true; }

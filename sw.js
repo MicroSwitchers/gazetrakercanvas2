@@ -1,5 +1,5 @@
-const CACHE_NAME = 'gaze-tracker-v2026.10.10.003'; // Update this with each deployment
-const APP_VERSION = '2026.10.10.003'; // Keep in sync with main app version
+const CACHE_NAME = 'gaze-tracker-v2026.10.11.003'; // Update this with each deployment
+const APP_VERSION = '2026.10.11.003'; // Keep in sync with main app version
 const urlsToCache = [
   './',
   './index.html',
@@ -10,6 +10,8 @@ const urlsToCache = [
   './styles/library-layout.css',
   './styles/professional-theme.css',
   './styles/design-refresh.css',
+  './styles/gaze-panel.css',
+  './styles/gaze-tools.css',
   './js/shape-geometry.js',
   './js/layer-previews.js',
   './js/pencil-object.js',
@@ -18,6 +20,11 @@ const urlsToCache = [
   './js/media-store.js',
   './js/media-library.js',
   './js/gaze-bridge.js',
+  './js/calmath.js',
+  './js/tet-usb.js',
+  './js/tet-direct.js',
+  './js/gaze-tools.js',
+  './data/tet-init.bin',
   // JavaScript modules
   './js/pwa.js',
   './js/service-worker-manager.js',
