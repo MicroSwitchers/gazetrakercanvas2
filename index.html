@@ -1127,16 +1127,20 @@
                         <div class="gz-status"><span class="gz-status__dot" aria-hidden="true"></span><span id="gaze-status" aria-live="polite">Off</span></div>
                         <label class="gz-field"><span class="form-label">Gaze comes from</span>
                             <select id="gaze-source" class="form-input"><option value="usb">Tracker on this computer (USB)</option><option value="webcam">Webcam on this computer</option><option value="server">Gaze Assessment Tools app</option></select></label>
+                        <div id="gaze-guide" hidden>
+                            <ol class="gz-steps" aria-label="Set-up steps"><li data-s="screen"><i>1</i><span>Screen</span></li><li data-s="connect"><i>2</i><span id="gaze-step2-name">Connect</span></li><li data-s="cal"><i>3</i><span>Calibrate</span></li></ol>
+                            <p class="gz-next" id="gaze-next" role="status" aria-live="polite"></p>
+                        </div>
                         <p class="gz-hint" id="gaze-usb-browser">USB eye tracking only works in <b>Chrome</b>, <b>Chromium</b> and <b>Edge</b>.</p>
-                        <label class="gz-field" id="gaze-screen-row"><span class="form-label">Screen size</span>
+                        <label class="gz-field" id="gaze-screen-row"><span class="form-label">1 · Screen size</span>
                             <span class="gz-suffix"><input type="number" id="gaze-screen-in" class="form-input" min="5" max="60" step="0.1" placeholder="13.3" aria-label="Screen size, diagonal, in inches"><span>inches, measured corner to corner</span></span></label>
                         <div id="gaze-webcam" hidden>
-                            <div class="gz-buttons"><button type="button" id="gaze-wc-connect" class="upload-button gz-primary">Start camera</button><button type="button" id="gaze-wc-tools" class="upload-button">Set up and calibrate…</button></div>
+                            <div class="gz-buttons"><button type="button" id="gaze-wc-connect" class="upload-button gz-primary">2 · Start camera</button><button type="button" id="gaze-wc-tools" class="upload-button">3 · Set up and calibrate…</button></div>
                             <div class="gz-cal" id="gaze-wc-cal-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg><span id="gaze-wc-cal-note"></span><button type="button" id="gaze-wc-clear-cal" class="gz-link">Forget</button></div>
                             <p class="gz-hint">A webcam is less exact than an eye tracker: use large, well-spaced targets. Light the face from the front, sit at arm’s length and keep the head still. The camera picture stays on this computer. Hold <b>Ctrl</b> to see the position guide.</p>
                         </div>
                         <div id="gaze-usb">
-                            <div class="gz-buttons"><button type="button" id="gaze-connect" class="upload-button gz-primary">Connect tracker</button><button type="button" id="gaze-tools-open" class="upload-button">Set up and calibrate…</button></div>
+                            <div class="gz-buttons"><button type="button" id="gaze-connect" class="upload-button gz-primary">2 · Connect tracker</button><button type="button" id="gaze-tools-open" class="upload-button">3 · Set up and calibrate…</button></div>
                             <div class="gz-cal" id="gaze-cal-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg><span id="gaze-cal-note"></span><button type="button" id="gaze-clear-cal" class="gz-link">Forget</button></div>
                             <p class="gz-hint">Where to sit, which eye(s) to follow and calibration are in <b>Set up and calibrate</b>. Hold <b>Ctrl</b> at any time to see the position guide over the page.</p>
                         </div>
@@ -1749,7 +1753,7 @@
             DeviceDetector.init();
 
             // --- Version Management & Cache Busting ---
-            const APP_VERSION = '2026.10.15.001'; // Update this when deploying new versions
+            const APP_VERSION = '2026.10.15.002'; // Update this when deploying new versions
             const VERSION_KEY = 'eyeTrackingAppVersion';
             const SETTINGS_BACKUP_KEY = 'eyeTrackingAppSettingsBackup';
             
@@ -10172,6 +10176,14 @@
                     let best = 0; for (const o of objects) { if (!o.visible) continue; const c = o.getCenterPoint(), d = Math.max(0, Math.hypot(x - c.x, y - c.y) - Math.max(o.width, o.height) / 2); best = Math.max(best, Math.exp(-d / 120)); if (best > 0.999) break; }
                     return best;
                 });
+                /* Eye gaze is on but nothing is connected (no permission yet, or no screen size): say exactly what to do, in the status and as a message. */
+                let askedAt = 0;
+                function needConnect() {
+                    const cam = useCam(), s = cam ? wg.state() : td.state(), what = cam ? 'camera' : 'tracker';
+                    const text = !s.screenMm ? 'Enter your screen size to start the ' + what : cam ? 'Click “Start camera” to allow the camera' : 'Click “Connect tracker” to allow the tracker';
+                    setGazeStatus(text, 'wait');
+                    if (performance.now() - askedAt > 20000) { askedAt = performance.now(); showToast('Eye gaze needs the ' + what, text + ' — in Settings, Eye Tracking.', 'info'); }
+                }
                 function startGaze() {
                     if (gazeLink) return;
                     gazeLink = GazeBridge.create({
@@ -10187,12 +10199,12 @@
                         },
                     }).start();
                     gazeLink.setDwellEnabled(gazeSettings.anim);
-                    if (useUsb()) td.autoConnect();                  // no click needed once this browser has permission for the tracker
-                    if (useCam()) wg.autoConnect().then(on => { if (!on && gazeLink && useCam()) setGazeStatus('Click Start camera', 'wait'); });   // the same for the camera
+                    if (useUsb()) td.autoConnect().then(on => { if (!on && gazeLink && useUsb()) needConnect(); syncUsbUi(); });                  // no click needed once this browser has permission for the tracker
+                    if (useCam()) wg.autoConnect().then(on => { if (!on && gazeLink && useCam()) needConnect(); syncUsbUi(); });   // the same for the camera
                     syncCamera();
                 }
                 function stopGaze() { if (gazeLink) { gazeLink.stop(); gazeLink = null; } syncCamera(); if (td) td.disconnect(); if (wg) wg.disconnect(); noteLook(null); gazeObject = null; setGazeStatus('Off'); ensureRenderLoop(); }
-                function setGazeEnabled(on) { gazeSettings.enabled = on; saveGaze(); syncGazeUi(); if (on) { setGazeStatus('Connecting…', 'wait'); startGaze(); } else stopGaze(); window.dispatchEvent(new Event('gaze:enabled')); }
+                function setGazeEnabled(on) { gazeSettings.enabled = on; saveGaze(); syncGazeUi(); if (on) { setGazeStatus('Connecting…', 'wait'); startGaze(); } else stopGaze(); syncUsbUi(); window.dispatchEvent(new Event('gaze:enabled')); }
 
                 // every gaze sample, in canvas (world) coordinates: feeds the heat map, the numbered shifts and the recording's pointer
                 gazeMmPerPx = () => { const mm = useCam() ? wg.state().screenMm : td && td.state().screenMm; return mm && screen.width ? mm[0] / screen.width : 25.4 / 96; };
@@ -10240,7 +10252,33 @@
 
                 // --- tracker connection (USB) ---
                 const EYES = { both: 'both eyes', left: 'left eye', right: 'right eye', either: 'either eye' };
+                /* The three steps, always saying what to do next: screen size -> connect (the browser asks permission) -> calibrate. */
+                function syncGuide() {
+                    const box = $g('gaze-guide'), kind = useUsb() ? 'usb' : useCam() ? 'webcam' : null;
+                    box.hidden = !kind; if (!kind) return;
+                    const s = kind === 'webcam' ? wg.state() : td.state(), cam = kind === 'webcam', thing = cam ? 'camera' : 'tracker';
+                    const hasScreen = !!s.screenMm, running = cam ? wg.running : td.running, live = s.status === 'live';
+                    let at, text, tone = 'need';                       // at: the step that is next; tone: need (act now) | wait | bad | ok
+                    if (!gazeSettings.enabled) { at = 'on'; text = 'Eye gaze is switched off. Turn on “Use eye gaze” above to begin.'; }
+                    else if (!hasScreen) { at = 'screen'; text = cam ? 'Step 1 of 3 — enter your screen size (diagonal, in inches) so the accuracy is measured correctly. Then click Start camera.' : 'Step 1 of 3 — enter your screen size (diagonal, in inches). The tracker cannot start without it.'; }
+                    else if (!running || s.status === 'idle') { at = 'connect'; text = cam ? 'Step 2 of 3 — click Start camera. The browser will ask to allow the camera: choose Allow.' : 'Step 2 of 3 — click Connect tracker. The browser will show a box listing the tracker: choose it and click Connect.'; if (s.detail && /refus|not allow|no tracker chosen|disconnected|could not/i.test(s.detail)) { text += '  (' + s.detail + ')'; } }
+                    else if (s.status === 'unreachable') { at = 'connect'; tone = 'bad'; text = 'The ' + thing + ' could not be used: ' + (s.detail || 'unknown problem') + '.'; }
+                    else if (!live) { at = 'connect'; tone = 'wait'; text = 'Connecting to the ' + thing + '… ' + (s.detail || ''); }
+                    else if (!s.calibrated) { at = 'cal'; text = 'Step 3 of 3 — ' + (cam ? 'sit where the child will sit, then click Set up and calibrate.' : 'the tracker is streaming. Sit where the child will sit, then click Set up and calibrate.'); }
+                    else { at = 'done'; tone = 'ok'; text = 'Ready — the ' + thing + ' is live and calibrated.'; }
+                    const order = ['screen', 'connect', 'cal'], i = order.indexOf(at);
+                    box.querySelectorAll('li').forEach(li => { const k = order.indexOf(li.dataset.s); li.className = at === 'done' || (at !== 'on' && k < i) ? 'is-done' : k === i ? 'is-now' : ''; li.querySelector('i').textContent = li.classList.contains('is-done') ? '✓' : String(k + 1); });
+                    $g('gaze-step2-name').textContent = cam ? 'Camera' : 'Connect';
+                    const nx = $g('gaze-next'); nx.textContent = text; nx.dataset.tone = tone;
+                    $g('gaze-screen-row').classList.toggle('gz-need', at === 'screen');
+                    $g('gaze-enable').closest('.grid-option').classList.toggle('gz-need', at === 'on');
+                    $g('gaze-connect').classList.toggle('gz-pulse', !cam && at === 'connect' && tone === 'need');
+                    $g('gaze-wc-connect').classList.toggle('gz-pulse', cam && at === 'connect' && tone === 'need');
+                    $g('gaze-tools-open').classList.toggle('gz-pulse', !cam && at === 'cal'); $g('gaze-wc-tools').classList.toggle('gz-pulse', cam && at === 'cal');
+                    return at;
+                }
                 function syncUsbUi() {
+                    syncGuide();
                     const sel = $g('gaze-source'); sel.value = useUsb() ? 'usb' : useCam() ? 'webcam' : 'server';
                     if (!td) { sel.querySelector('option[value=usb]').disabled = true; sel.querySelector('option[value=usb]').textContent = 'Tracker on this computer (needs Chrome or Edge)'; }
                     if (!wg) { sel.querySelector('option[value=webcam]').disabled = true; sel.querySelector('option[value=webcam]').textContent = 'Webcam on this computer (not available in this browser)'; }
@@ -10251,7 +10289,7 @@
                     { const s = useCam() ? wg.state() : td ? td.state() : null; if (s && document.activeElement !== $g('gaze-screen-in')) $g('gaze-screen-in').value = s.diagIn || ''; }
                     if (wg) {
                         const w = wg.state();
-                        $g('gaze-wc-connect').textContent = wg.running ? 'Stop camera' : 'Start camera';
+                        $g('gaze-wc-connect').textContent = wg.running ? 'Stop camera' : '2 · Start camera';
                         $g('gaze-wc-connect').classList.toggle('gz-primary', !wg.running);
                         $g('gaze-wc-tools').classList.toggle('gz-primary', wg.running && w.status === 'live' && !w.calibrated);
                         $g('gaze-wc-clear-cal').hidden = !w.anyCalibration;
@@ -10260,7 +10298,7 @@
                             : (w.anyCalibration ? 'Not calibrated for ' + EYES[w.eyeMode] + ' yet. Click Set up and calibrate.' : 'Not calibrated yet. Start the camera, then click Set up and calibrate.');
                     }
                     if (!td) return; const s = td.state();
-                    $g('gaze-connect').textContent = td.running ? 'Disconnect' : 'Connect tracker';
+                    $g('gaze-connect').textContent = td.running ? 'Disconnect' : '2 · Connect tracker';
                     $g('gaze-connect').classList.toggle('gz-primary', !td.running);
                     $g('gaze-tools-open').classList.toggle('gz-primary', td.running && s.status === 'live' && !s.calibrated);
                     $g('gaze-clear-cal').hidden = !s.calibrated;
@@ -10276,10 +10314,14 @@
                     syncUsbUi();
                 });
                 $g('gaze-screen-in').addEventListener('change', e => {
-                    if (wg) wg.setScreenInches(e.target.value);
-                    if (!td) return;
-                    td.setScreenInches(e.target.value);
-                    if (td.running) { td.disconnect(); setTimeout(() => td.autoConnect(), 400); }
+                    const inches = e.target.value;                  // read first: setting it in one source refreshes this box from the other, which still has the old value
+                    if (wg) wg.setScreenInches(inches);
+                    if (td) {
+                        td.setScreenInches(inches);
+                        if (td.running) { td.disconnect(); setTimeout(() => td.autoConnect(), 400); }
+                        else if (gazeSettings.enabled && useUsb() && td.state().screenMm) td.autoConnect().then(on => { if (!on) needConnect(); syncUsbUi(); });      // permission already given: carry on without another click
+                    }
+                    syncUsbUi();
                 });
                 if (wg) {
                     $g('gaze-wc-connect').addEventListener('click', () => {
@@ -10293,7 +10335,7 @@
                 $g('gaze-connect').addEventListener('click', () => {
                     if (!gazeSettings.enabled) setGazeEnabled(true);
                     if (td.running) { td.disconnect(); return; }
-                    if (!td.state().screenMm) { setGazeStatus('Enter your screen size first (diagonal, in inches)', 'wait'); $g('gaze-screen-in').focus(); return; }
+                    if (!td.state().screenMm) { setGazeStatus('Enter your screen size first (diagonal, in inches)', 'wait'); syncUsbUi(); $g('gaze-screen-in').scrollIntoView({ block: 'center' }); $g('gaze-screen-in').focus(); return; }
                     td.connect();
                 });
                 $g('gaze-tools-open').addEventListener('click', () => { if (!gazeSettings.enabled) setGazeEnabled(true); if (tools) tools.toggle(); });

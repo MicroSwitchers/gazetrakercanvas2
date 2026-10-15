@@ -138,3 +138,23 @@ html[data-menu-colour="high-contrast"] #gaze-options .gz-seg button[aria-checked
 html[data-menu-colour="high-contrast"] #gaze-options :is(.gz-matrix, .gz-mhead, .gz-recbtn) { background: transparent; border-color: var(--md-on-surface); }
 html[data-menu-colour="high-contrast"] #gaze-options .gz-recbtn.is-recording { background: var(--md-on-surface); color: var(--md-surface); }
 html[data-menu-colour="high-contrast"] #gaze-options .gz-mrow + .gz-mrow { border-color: var(--md-on-surface); }
+
+/* Set-up steps: screen size -> connect -> calibrate, with the next thing to do spelled out */
+#gaze-options .gz-steps { display: flex; gap: 4px; margin: 4px 0 8px; padding: 0; list-style: none; }
+#gaze-options .gz-steps li { flex: 1; display: flex; align-items: center; gap: 4px; min-width: 0; padding: 5px 6px; border-radius: 999px; border: 1px solid var(--md-outline-variant, rgb(128 128 128 / 35%)); font-size: 11px; font-weight: 600; color: var(--md-on-surface-muted); }
+#gaze-options .gz-steps li i { flex: none; display: grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; font-style: normal; font-size: 10.5px; background: rgb(128 128 128 / 22%); }
+#gaze-options .gz-steps li span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#gaze-options .gz-steps li.is-now { color: var(--md-on-surface); border-color: var(--md-primary); background: rgb(59 130 246 / 12%); }
+#gaze-options .gz-steps li.is-now i { background: var(--md-primary); color: var(--md-on-primary); }
+#gaze-options .gz-steps li.is-done { color: var(--md-on-surface); }
+#gaze-options .gz-steps li.is-done i { background: #34d399; color: #04210f; }
+#gaze-options .gz-next { margin: 0 0 12px; padding: 10px 12px; border-radius: 10px; border-left: 4px solid #f59e0b; background: rgb(245 158 11 / 14%); color: var(--md-on-surface); font-size: 12.5px; font-weight: 600; line-height: 1.45; }
+#gaze-options .gz-next[data-tone="wait"] { border-left-color: #fbbf24; background: rgb(251 191 36 / 12%); }
+#gaze-options .gz-next[data-tone="bad"] { border-left-color: #f87171; background: rgb(248 113 113 / 14%); }
+#gaze-options .gz-next[data-tone="ok"] { border-left-color: #34d399; background: rgb(52 211 153 / 14%); }
+#gaze-options .gz-need { padding: 8px; border-radius: 10px; outline: 2px solid #f59e0b; outline-offset: 0; background: rgb(245 158 11 / 10%); }
+#gaze-options .gz-need .form-input { border-color: #f59e0b; }
+@keyframes gz-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgb(59 130 246 / 55%); } 50% { box-shadow: 0 0 0 6px rgb(59 130 246 / 0%); } }
+#gaze-options .gz-pulse { animation: gz-pulse 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { #gaze-options .gz-pulse { animation: none; outline: 2px solid var(--md-primary); } }
+@media (max-width: 420px) { #gaze-options .gz-steps li { padding: 5px 6px; } #gaze-options .gz-steps li span { font-size: 10.5px; } }

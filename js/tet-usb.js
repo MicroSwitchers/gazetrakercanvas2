@@ -183,12 +183,13 @@
       if (queue.length) return Promise.resolve(queue.shift());
       return new Promise(res => { waiter = { res, t: setTimeout(() => { waiter = null; res(null); }, ms) }; });
     }
+    let readSize = 1 << 17;                                   // bytes asked for per read; smaller if the computer's USB controller turns out not to like big reads
     let parser = createParser(raw => push(parseMessage(raw)));
     const feed = chunk => parser.feed(chunk);
     async function pump(myGen) {
       while (myGen === gen && dev) {
         let r;
-        try { r = await dev.transferIn(EP_IN, 1 << 17); } catch (e) { if (myGen === gen) push({ error_: e }); return; }
+        try { r = await dev.transferIn(EP_IN, readSize); } catch (e) { if (myGen === gen) push({ error_: e }); return; }
         if (myGen !== gen) return;
         if (r.status === 'stall') { try { await dev.clearHalt('in', EP_IN); } catch (_) { /* ignore */ } continue; }
         if (r.data && r.data.byteLength) feed(new Uint8Array(r.data.buffer, r.data.byteOffset, r.data.byteLength).slice());
@@ -296,7 +297,9 @@
           if (e && e.name === 'NetworkError' && /claim|open|access/i.test(msg)) {
             status('unreachable', 'could not open the tracker (' + msg + ') — ' + openHelp());
           }
-          else status('connecting', msg + ' — retrying');
+          else status('connecting', (e && e.name && e.name !== 'Error' && !msg.includes(e.name) ? e.name + ': ' : '') + msg + ' — retrying' + (attempt ? ' (try ' + (attempt + 1) + ')' : ''));
+          if (e && e.name === 'NetworkError' && attempt >= 1 && readSize > 16384) { readSize = 16384; console.info('[tet] transfer error: asking for smaller reads (16 KB) from now on'); }      // some small computers' USB controllers (e.g. a Raspberry Pi's) fail big reads
+          console.warn('[tet] connect attempt ' + (attempt + 1) + ' failed:', e);
           attempt++;
         } finally { await teardown(); }
         if (running) await sleep(1500);
