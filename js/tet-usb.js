@@ -26,6 +26,12 @@
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const platform = () => (((navigator.userAgentData && navigator.userAgentData.platform) || navigator.userAgent || '').match(/Windows|Android|CrOS|Linux|Mac/i) || [''])[0].toLowerCase();
   /** What to tell somebody whose browser was refused the tracker, for their computer. */
+  /** The browser said no outright (not "permission denied by the operating system"): what usually causes it. */
+  function refusedHelp(msg) {
+    if (/protected class/i.test(msg)) return 'the browser treats this USB interface as protected. Update Chrome / Chromium, and unplug and replug the tracker.';
+    if (/gesture/i.test(msg)) return 'click Connect tracker again (the browser only allows this straight after a click).';
+    return 'click the icon at the left of the address bar, open Site settings, and set USB devices to Ask, then reload and click Connect tracker. If the page is inside another page or opened from an http:// address other than localhost, open it directly from https or localhost. Also unplug and replug the tracker.';
+  }
   function openHelp() {
     const p = platform(), other = ' Also close any other tab or program using the tracker.';
     if (p === 'windows') return 'on Windows the tracker is held by its own driver software (the maker\'s settings app and its background service), and Chrome can only use devices on the WinUSB driver. Quit that app and stop its service, or install WinUSB for the device (for example with Zadig), then unplug and replug it.' + other;
@@ -293,7 +299,10 @@
           if (!running) break;
           const msg = (e && e.message) || String(e);
           if (/not authorised|screen size/.test(msg)) { status('idle', msg); running = false; break; }
-          if (e && (e.name === 'SecurityError' || e.name === 'NotAllowedError')) { status('unreachable', 'the browser did not allow access to the tracker'); running = false; break; }
+          if (e && (e.name === 'SecurityError' || e.name === 'NotAllowedError')) {
+            console.warn('[tet] browser refused the tracker:', e);
+            status('unreachable', 'the browser did not allow access to the tracker (' + e.name + ': ' + msg + ') — ' + refusedHelp(msg)); running = false; break;
+          }
           if (e && e.name === 'NetworkError' && /claim|open|access/i.test(msg)) {
             status('unreachable', 'could not open the tracker (' + msg + ') — ' + openHelp());
           }
