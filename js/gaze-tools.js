@@ -1,25 +1,29 @@
-/* gaze-tools.js — the calibration tools menu: position guide, calibration, accuracy check.
+/* gaze-tools.js — the eye tracker set-up menu: where to sit, which eye(s) to follow, calibrate.
  *
- *   Position  : the tracker's camera picture with a head-and-shoulders outline and a box showing where the eyes should be.
- *               "Mark this position" saves where the examiner sits (the eye box moves to where their eyes were, and their picture
- *               is kept as an onion skin) so the child can be lined up the same way afterwards.
- *   Calibrate : the examiner's 9-dot calibration (js/tet-direct.js).
- *   Check     : the random-dot accuracy check.
+ *   Position  : the tracker's camera picture with a head-and-shoulders outline showing where the head should be.
+ *   Eyes      : follow both eyes, the left only, the right only, or whichever eye is looking ("either").
+ *   Calibrate : dots that move on once they have been looked at, then four check dots that show the miss and refine the result (js/tet-direct.js).
  *   Ctrl      : hold Ctrl on its own at any time to see the position guide over the page (even in full-screen Play).
  *
  *   const tools = GazeTools.create({ td: TetDirect.create(), isEnabled: () => true, drawer: document.getElementById('controls-drawer') });
- *   tools.open('position');
+ *   tools.open();
+ *
+ * The same menu serves the webcam (js/webcam-gaze.js). A tracker that brings its own position guide sets td.guide
+ * ({ draw(canvas, ev), evaluate() -> { level, title, detail }, mark(), reset(), marked() }), td.eyeModes (the choices it offers)
+ * and td.calNote(mode) (one line about what calibrating takes).
  */
 (function (root) {
   'use strict';
-  const LS = 'gazeTools.v1', MAX_REFS = 8, IMG = 280, DIST_OK = [450, 850];
-  const DEFAULTS = { outline: true, box: true, onion: true, style: 'edges', alpha: 70, tolLat: 15, tolDepth: 50, tolRoll: 8, beep: false, checkN: 8, refName: 'Examiner' };
-  const DEFAULT_EYES = [[112, 100], [168, 100]];                 // where the eyes should be in the (unmirrored) camera picture when nothing is marked
+  const LS = 'gazeTools.v2', IMG = 280, DIST_OK = [450, 850], DEFAULT_EYES = [[112, 100], [168, 100]];   // where the eyes sit in the (unmirrored) camera picture when nothing is marked
   const lsGet = () => { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch (_) { return {}; } };
   const lsSet = v => { try { localStorage.setItem(LS, JSON.stringify(v)); return true; } catch (_) { return false; } };
   const $el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-  const b64 = px => { let s = ''; for (let i = 0; i < px.length; i += 8192) s += String.fromCharCode.apply(null, px.subarray(i, i + 8192)); return btoa(s); };
-  const unb64 = s => { const bin = atob(s), a = new Uint8Array(bin.length); for (let i = 0; i < a.length; i++) a[i] = bin.charCodeAt(i); return a; };
+  const MODE_TEXT = {
+    both: ['Both eyes', 'The usual way: the average of the two eyes.'],
+    left: ['Left eye only', 'For when only the left eye is looking, or the right is covered.'],
+    right: ['Right eye only', 'For when only the right eye is looking, or the left is covered.'],
+    either: ['Either eye (taking turns)', 'Each eye is calibrated on its own. The gaze follows whichever eye is looking at the target and glides to the other when it takes over.'],
+  };
 
   /* ---------------------------------------------------------------- camera picture helpers */
   /** Picture with its brightness stretched (the tracker's infrared picture is dark) -> a 280x280 canvas. */
@@ -30,23 +34,6 @@
     let acc = 0, p = 255; for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc >= px.length * 0.995) { p = v; break; } }
     const top = Math.max(60, p), lut = new Uint8Array(256); for (let v = 0; v < 256; v++) lut[v] = Math.min(255, 255 * Math.pow(Math.min(1, v / top), 0.75));
     for (let i = 0; i < px.length; i++) { const v = lut[px[i]]; d[i * 4] = d[i * 4 + 1] = d[i * 4 + 2] = v; d[i * 4 + 3] = 255; }
-    g.putImageData(im, 0, 0); return c;
-  }
-  /** Outline (edges) or warm "ghost" of a stored picture, for laying over the live one. */
-  function onionPicture(px, style) {
-    const c = document.createElement('canvas'); c.width = c.height = IMG; const g = c.getContext('2d'), im = g.createImageData(IMG, IMG), d = im.data;
-    if (style === 'ghost') {
-      for (let i = 0; i < px.length; i++) { const v = Math.min(255, px[i] * 1.8); d[i * 4] = v; d[i * 4 + 1] = v * 0.6; d[i * 4 + 2] = v * 0.1; d[i * 4 + 3] = 255; }
-    } else {                                        // edges: box blur, Sobel magnitude, scaled by its 97th percentile
-      const bl = new Float32Array(px.length), mag = new Float32Array(px.length);
-      for (let y = 1; y < IMG - 1; y++) for (let x = 1; x < IMG - 1; x++) { let s = 0; for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) s += px[(y + j) * IMG + x + i]; bl[y * IMG + x] = s / 9; }
-      for (let y = 2; y < IMG - 2; y++) for (let x = 2; x < IMG - 2; x++) {
-        const i = y * IMG + x, gx = -bl[i - 281] - 2 * bl[i - 1] - bl[i + 279] + bl[i - 279] + 2 * bl[i + 1] + bl[i + 281], gy = -bl[i - 281] - 2 * bl[i - 280] - bl[i - 279] + bl[i + 279] + 2 * bl[i + 280] + bl[i + 281];
-        mag[i] = Math.hypot(gx, gy);
-      }
-      const sorted = Float32Array.from(mag).sort(), p97 = sorted[Math.floor(sorted.length * 0.97)] || 1;
-      for (let i = 0; i < px.length; i++) { const a = Math.min(1, mag[i] / p97); d[i * 4] = 255; d[i * 4 + 1] = 154; d[i * 4 + 2] = 60; d[i * 4 + 3] = a * a * 255; }
-    }
     g.putImageData(im, 0, 0); return c;
   }
   /** Finds the two eyes in the camera picture from the small bright reflections on the eyes. -> [[x,y],[x,y]] (left, right) or null. */
@@ -78,207 +65,147 @@
     return best;
   }
 
-  /* ---------------------------------------------------------------- the guide drawing (shared by the panel and the Ctrl peek) */
+  /* ---------------------------------------------------------------- the guide: camera picture (mirrored, like a mirror) and one clean head-and-shoulders outline */
+  /** v: { live: canvas | null, eyes: [[x,y],[x,y]] where the eyes should be (unmirrored picture pixels), tone: colour of the outline } */
   function drawGuide(c, v) {
-    const W = c.width, g = c.getContext('2d'), k = W / IMG, MX = x => (IMG - x) * k, MY = y => y * k;      // the picture is shown mirrored, like a mirror
+    const W = c.width, g = c.getContext('2d'), k = W / IMG;
     g.clearRect(0, 0, W, W); g.fillStyle = '#05080a'; g.fillRect(0, 0, W, W);
     if (v.live) { g.save(); g.translate(W, 0); g.scale(-1, 1); g.drawImage(v.live, 0, 0, W, W); g.restore(); }
-    if (v.onionCanvas && v.opts.onion) { g.save(); g.globalAlpha = v.opts.alpha / 100; g.translate(W, 0); g.scale(-1, 1); g.drawImage(v.onionCanvas, 0, 0, W, W); g.restore(); }
-    const tone = v.aligned === true ? '#34d399' : v.aligned === false ? '#fbbf24' : '#ffffff';
-    if (v.opts.outline) {                                                                                    // head and shoulders
-      const s = W / 100; g.save(); g.strokeStyle = 'rgba(255,255,255,.55)'; g.lineWidth = Math.max(1.5, W / 220); g.setLineDash([W / 70, W / 100]); g.lineCap = 'round';
-      g.beginPath(); g.ellipse(50 * s, 38 * s, 17 * s, 22 * s, 0, 0, 7); g.stroke();
-      g.beginPath(); g.moveTo(43 * s, 59 * s); g.lineTo(43 * s, 68 * s); g.moveTo(57 * s, 59 * s); g.lineTo(57 * s, 68 * s); g.stroke();
-      g.beginPath(); g.moveTo(43 * s, 68 * s); g.bezierCurveTo(30 * s, 70 * s, 12 * s, 74 * s, 8 * s, 100 * s); g.moveTo(57 * s, 68 * s); g.bezierCurveTo(70 * s, 70 * s, 88 * s, 74 * s, 92 * s, 100 * s); g.stroke(); g.restore();
-    }
-    if (v.opts.box) {                                                                                        // where the eyes should be
-      const [a, b] = v.eyes, ax = MX(a[0]), ay = MY(a[1]), bx = MX(b[0]), by = MY(b[1]), sep = Math.hypot(ax - bx, ay - by), cx = (ax + bx) / 2, cy = (ay + by) / 2, hw = sep * 1.05, hh = sep * 0.55, r = sep * 0.2;
-      g.save(); g.strokeStyle = tone; g.lineWidth = Math.max(2, W / 200); g.shadowColor = 'rgba(0,0,0,.6)'; g.shadowBlur = 4;
-      g.setLineDash([W / 45, W / 90]); g.beginPath(); g.roundRect(cx - hw, cy - hh, hw * 2, hh * 2, r); g.stroke(); g.setLineDash([]);
-      for (const [ex, ey] of [[ax, ay], [bx, by]]) { g.beginPath(); g.arc(ex, ey, sep * 0.15, 0, 7); g.stroke(); g.beginPath(); g.moveTo(ex - sep * 0.24, ey); g.lineTo(ex - sep * 0.08, ey); g.moveTo(ex + sep * 0.08, ey); g.lineTo(ex + sep * 0.24, ey); g.moveTo(ex, ey - sep * 0.24); g.lineTo(ex, ey - sep * 0.08); g.moveTo(ex, ey + sep * 0.08); g.lineTo(ex, ey + sep * 0.24); g.stroke(); }
-      g.restore();
-    }
-    if (v.liveEyes) {                                                                                        // where the eyes are now
-      g.save(); g.fillStyle = tone; g.strokeStyle = 'rgba(0,0,0,.7)'; g.lineWidth = 2;
-      for (const [x, y] of v.liveEyes) { g.beginPath(); g.arc(MX(x), MY(y), Math.max(4, W / 70), 0, 7); g.stroke(); g.fill(); } g.restore();
-    }
+    const [a, b] = v.eyes, ex = W - ((a[0] + b[0]) / 2) * k, ey = ((a[1] + b[1]) / 2) * k;       // eye level of the outline, in the mirrored picture
+    const eyeGap = Math.abs(b[0] - a[0]) * k, s = Math.max(0.8, Math.min(1.4, eyeGap / (56 * k))), U = W * s;
+    const rx = 0.165 * U, ry = 0.215 * U, cy = ey + 0.035 * U, nx = 0.085 * U, th = Math.acos(nx / rx);   // head ellipse, neck width
+    g.save(); g.lineJoin = g.lineCap = 'round'; g.lineWidth = Math.max(3, W / 150); g.strokeStyle = v.tone || '#ffffff'; g.fillStyle = 'rgb(255 255 255 / 7%)'; g.shadowColor = 'rgba(0,0,0,.55)'; g.shadowBlur = 6;
+    g.beginPath();
+    g.moveTo(ex - 0.50 * U, W + 6);                                                              // left shoulder, off the bottom of the picture
+    g.bezierCurveTo(ex - 0.47 * U, cy + 0.42 * U, ex - 0.22 * U, cy + 0.36 * U, ex - nx, cy + ry * Math.sin(th) + 0.06 * U);   // up to the neck
+    g.lineTo(ex - nx, cy + ry * Math.sin(th));                                                   // neck
+    g.ellipse(ex, cy, rx, ry, 0, Math.PI - th, 2 * Math.PI + th, false);                         // jaw, around the head, and down to the other side
+    g.lineTo(ex + nx, cy + ry * Math.sin(th) + 0.06 * U);
+    g.bezierCurveTo(ex + 0.22 * U, cy + 0.36 * U, ex + 0.47 * U, cy + 0.42 * U, ex + 0.50 * U, W + 6);
+    g.fill(); g.stroke(); g.restore();
   }
 
-  /* ---------------------------------------------------------------- the tools */
+  /* ---------------------------------------------------------------- the menu */
   function create(cfg) {
     const td = cfg.td, isEnabled = cfg.isEnabled || (() => true), saved = lsGet();
-    const S = { opts: Object.assign({}, DEFAULTS, saved.opts), refs: Array.isArray(saved.refs) ? saved.refs : [], activeId: saved.activeId || null,
-                liveC: document.createElement('canvas'), liveEyes: null, liveEyesAt: 0, onionC: null, onionFor: '', tab: 'position', panel: null, peek: null, peekOn: false, ctrlTimer: 0, tick: 0, alignedSince: 0, lastBeep: 0, audio: null };
-    const save = () => lsSet({ opts: S.opts, refs: S.refs, activeId: S.activeId });
-    const activeRef = () => S.refs.find(r => r.id === S.activeId) || null;
-    const tol = () => ({ lat: +S.opts.tolLat, depth: +S.opts.tolDepth, roll: +S.opts.tolRoll });
+    const S = { ref: saved.ref && saved.ref.eyes ? saved.ref : null, liveC: document.createElement('canvas'), liveEyes: null, liveEyesAt: 0, panel: null, peek: null, peekOn: false, ctrlTimer: 0, tick: 0 };
+    const save = () => lsSet({ ref: S.ref });
+    const targetEyes = () => (S.ref && S.ref.eyes) || DEFAULT_EYES;
 
-    // The camera picture is only requested and processed while the panel or the Ctrl guide is showing.
+    // The camera picture is only requested and processed while the menu or the Ctrl guide is showing.
     let imgN = 0, unImg = null;
     const onPicture = px => { livePicture(px, S.liveC); if (++imgN % 3 === 1) { S.liveEyes = findEyes(px); S.liveEyesAt = performance.now(); } };
-    const watchCamera = on => { if (on && !unImg) unImg = td.onImage(onPicture); else if (!on && unImg) { unImg(); unImg = null; } };
+    const G = td.guide || null;                                 // a tracker with its own position guide (the webcam)
+    const watchCamera = on => { if (G) { if (G.watch) G.watch(on); return; } if (on && !unImg) unImg = td.onImage(onPicture); else if (!on && unImg) { unImg(); unImg = null; } };
 
-    /* ---- is the examiner / child lined up? */
+    /** Is the head where the outline is? One plain sentence. */
     function evaluate() {
-      const st = td.state(), live = st.status === 'live', f = st.last, cur = live ? td.pose(10) : null, ref = activeRef(), t = tol();
-      const out = { level: 'bad', title: '', detail: '', cur, cmp: null, ref };
-      if (!live) { out.title = 'Tracker not connected'; out.detail = 'Connect the tracker in the Eye Tracking settings first.'; return out; }
-      if (!cur) { const one = f && (f.l || f.r); out.level = one ? 'warn' : 'bad'; out.title = one ? 'Only one eye found' : 'No eyes found'; out.detail = 'Face the screen with both eyes visible, about 50–80 cm away.'; return out; }
-      if (ref) {
-        const d = [cur.mid[0] - ref.pose.mid[0], cur.mid[1] - ref.pose.mid[1], cur.mid[2] - ref.pose.mid[2]], lat = Math.hypot(d[0], d[1]), dr = cur.roll != null && ref.pose.roll != null ? cur.roll - ref.pose.roll : null;
-        out.cmp = { d, lat, dr, ok: lat <= t.lat && Math.abs(d[2]) <= t.depth && (dr == null || Math.abs(dr) <= t.roll) };
-        if (out.cmp.ok) { out.level = 'good'; out.title = 'Lined up'; out.detail = `Matches “${ref.name}”. Hold still.`; return out; }
-        const parts = [];
-        if (d[2] > t.depth) parts.push(`move closer to the screen (${d[2].toFixed(0)} mm too far)`); else if (d[2] < -t.depth) parts.push(`move back (${(-d[2]).toFixed(0)} mm too close)`);
-        if (lat > t.lat) parts.push(`shift the head about ${lat.toFixed(0)} mm — ${Math.abs(d[0]) > Math.abs(d[1]) ? (d[0] > 0 ? 'to their left' : 'to their right') : (d[1] > 0 ? 'down' : 'up')}`);
-        if (dr != null && Math.abs(dr) > t.roll) parts.push(`level the head (${Math.abs(dr).toFixed(0)}° tilt difference)`);
-        out.level = lat > t.lat * 3 || Math.abs(d[2]) > t.depth * 3 ? 'bad' : 'warn'; out.title = 'Nearly there'; out.detail = parts.join('; ') + '.'; return out;
+      if (G) return G.evaluate();
+      const st = td.state(), live = st.status === 'live', fresh = performance.now() - (td.image() ? td.image().at : -1e9) < 1500;
+      if (!live) return { level: 'bad', title: 'Tracker not connected', detail: 'Connect the tracker in the Eye Tracking settings first.' };
+      const eyes = fresh && performance.now() - S.liveEyesAt < 1500 ? S.liveEyes : null, cur = td.pose(10);
+      if (!eyes && !cur) return { level: 'bad', title: 'No eyes found', detail: 'Face the screen with both eyes visible, about 50–80 cm away.' };
+      const parts = [];
+      if (cur) { const z = cur.mid[2]; if (z < DIST_OK[0]) parts.push(`move back (${(z / 10).toFixed(0)} cm is too close)`); else if (z > DIST_OK[1]) parts.push(`move closer (${(z / 10).toFixed(0)} cm is too far)`); }
+      if (eyes) {
+        const t = targetEyes(), mx = (eyes[0][0] + eyes[1][0]) / 2, my = (eyes[0][1] + eyes[1][1]) / 2, tx = (t[0][0] + t[1][0]) / 2, ty = (t[0][1] + t[1][1]) / 2, tol = 26;
+        const dxm = (IMG - mx) - (IMG - tx);                                                    // in the mirrored picture; a mirror moves the same way you do
+        if (Math.abs(dxm) > tol) parts.push(dxm < 0 ? 'move a little to the right' : 'move a little to the left');
+        if (Math.abs(my - ty) > tol) parts.push(my < ty ? 'sit a little lower' : 'sit a little higher');
       }
-      const z = cur.mid[2];
-      if (z < DIST_OK[0]) { out.level = 'warn'; out.title = 'Too close'; out.detail = `${(z / 10).toFixed(0)} cm from the screen. Move back to at least ${DIST_OK[0] / 10} cm.`; }
-      else if (z > DIST_OK[1]) { out.level = 'warn'; out.title = 'Too far'; out.detail = `${(z / 10).toFixed(0)} cm from the screen. Move closer than ${DIST_OK[1] / 10} cm.`; }
-      else { out.level = 'good'; out.title = 'Tracking well'; out.detail = 'Mark this position when the examiner is comfortable and centred.'; }
-      return out;
+      if (!parts.length) return { level: 'good', title: 'Lined up', detail: 'The head is inside the outline. Hold still.' };
+      return { level: parts.length > 1 ? 'bad' : 'warn', title: 'Nearly there', detail: parts.join('; ').replace(/^./, c => c.toUpperCase()) + '.' };
     }
+    const toneOf = lvl => (lvl === 'good' ? '#34d399' : lvl === 'warn' ? '#fbbf24' : '#ffffff');
+    function view() {
+      const ev = evaluate();
+      if (G) return { v: null, ev, fresh: !!ev.fresh };
+      const fresh = performance.now() - (td.image() ? td.image().at : -1e9) < 1500; return { v: { live: fresh ? S.liveC : null, eyes: targetEyes(), tone: toneOf(ev.level) }, ev, fresh };
+    }
+    const paint = (canvas, v, ev) => (G ? G.draw(canvas, ev) : drawGuide(canvas, v));
 
-    function guideView() {
-      const ref = activeRef(), fresh = performance.now() - (td.image() ? td.image().at : -1e9) < 1500, ev = evaluate();
-      if (ref && ref.ir) {                                       // onion skin of the marked position (rebuilt only when the choice or style changes)
-        const key = ref.id + ':' + S.opts.style; if (S.onionFor !== key) { S.onionC = onionPicture(unb64(ref.ir), S.opts.style); S.onionFor = key; }
-      } else { S.onionC = null; S.onionFor = ''; }
-      let aligned = null; if (ev.cmp) aligned = ev.cmp.ok; else if (ev.cur) aligned = ev.level === 'good' ? null : false;
-      return { v: { live: fresh ? S.liveC : null, onionCanvas: S.onionC, opts: S.opts, eyes: (ref && ref.eyesPx) || DEFAULT_EYES, liveEyes: fresh && performance.now() - S.liveEyesAt < 1500 ? S.liveEyes : null, aligned }, ev, fresh };
-    }
-    function beepIfAligned(ev) {
-      if (ev.cmp && ev.cmp.ok) {
-        if (!S.alignedSince) S.alignedSince = performance.now();
-        if (S.opts.beep && performance.now() - S.alignedSince > 1200 && performance.now() - S.lastBeep > 4000) {
-          S.lastBeep = performance.now();
-          try { S.audio = S.audio || new AudioContext(); const o = S.audio.createOscillator(), g = S.audio.createGain(); o.frequency.value = 880; g.gain.value = .08; o.connect(g); g.connect(S.audio.destination); o.start(); o.stop(S.audio.currentTime + .15); } catch (_) { /* no audio */ }
-        }
-      } else S.alignedSince = 0;
-    }
-
-    /* ---- marking positions */
+    /* ---- marking where the outline should be */
     function mark() {
-      const cur = td.pose(20), img = td.image(), P = S.panel;
-      const say = t => { if (P) P.markMsg.textContent = t; };
-      if (!cur) { say('Both eyes need to be found to mark a position.'); return null; }
-      if (!img) { say('No camera picture yet — wait a moment.'); return null; }
-      const name = ((P && P.name.value) || S.opts.refName || 'Examiner').trim() || 'Examiner', eyes = findEyes(img.px);
-      const ref = { id: String(Date.now()), name, created: new Date().toISOString(), pose: { mid: cur.mid, ipd: cur.ipd, roll: cur.roll }, ir: b64(img.px), eyesPx: eyes, summary: `${(cur.mid[2] / 10).toFixed(0)} cm away, eyes ${cur.ipd.toFixed(0)} mm apart` };
-      S.refs.unshift(ref); S.refs = S.refs.slice(0, MAX_REFS); S.activeId = ref.id;
-      const stored = save();
-      say(`Marked “${name}” (${ref.summary}).` + (eyes ? '' : ' The eyes could not be found in the picture, so the box stays in its standard place.') + (cur.sd > 6 ? ' Your head was moving a little — fine for a rough guide.' : '') + (stored ? '' : ' (Could not save it in this browser.)'));
-      renderPanel(); return ref;
+      if (G) { const t = G.mark(); if (S.panel) S.panel.markMsg.textContent = t || ''; renderPanel(); return; }
+      const img = td.image(), P = S.panel, say = t => { if (P) P.markMsg.textContent = t; };
+      if (!img) { say('No camera picture yet — wait a moment.'); return; }
+      const eyes = findEyes(img.px); if (!eyes) { say('Both eyes need to be found to set the outline.'); return; }
+      S.ref = { eyes, at: new Date().toISOString() }; save(); say('The outline is now where the head is.'); renderPanel();
     }
+    const reset = () => { if (G) G.reset(); else { S.ref = null; save(); } if (S.panel) S.panel.markMsg.textContent = ''; renderPanel(); };
 
-    /* ---- panel */
+    /* ---- the panel */
     function buildPanel() {
-      const P = { root: $el('aside', 'gt-panel'), tabs: {}, pages: {} };
-      P.root.id = 'gt-panel'; P.root.hidden = true; P.root.setAttribute('aria-label', 'Calibration tools');
-      const head = $el('header', 'gt-head'), title = $el('div', 'gt-title'); title.append($el('b', '', 'Calibration tools'), $el('span', '', 'Line up, calibrate, check'));
+      const P = { root: $el('aside', 'gt-panel') };
+      P.root.id = 'gt-panel'; P.root.hidden = true; P.root.setAttribute('aria-label', 'Eye tracker set-up');
+      const head = $el('header', 'gt-head'), title = $el('div', 'gt-title'); title.append($el('b', '', 'Set up the eye tracker'), $el('span', '', 'Position, which eyes, calibrate'));
       const close = $el('button', 'gt-x'); close.type = 'button'; close.setAttribute('aria-label', 'Close'); close.textContent = '×'; close.onclick = () => api.close(); head.append(title, close);
-      const nav = $el('nav', 'gt-steps'); nav.setAttribute('role', 'tablist');
-      [['position', '1', 'Position'], ['calibrate', '2', 'Calibrate'], ['check', '3', 'Check']].forEach(([id, n, label]) => {
-        const b = $el('button', 'gt-step'); b.type = 'button'; b.setAttribute('role', 'tab'); b.dataset.tab = id; b.append($el('i', '', n), $el('span', '', label)); b.onclick = () => api.open(id); P.tabs[id] = b; nav.appendChild(b);
-      });
-      const body = $el('div', 'gt-body');
+      const body = $el('div', 'gt-body'), page = $el('div', 'gt-page');
 
-      // --- 1. position
-      const pos = $el('section', 'gt-page'); P.pages.position = pos;
-      const view = $el('div', 'gt-view'); P.canvas = $el('canvas'); P.canvas.width = P.canvas.height = 560; P.viewMsg = $el('div', 'gt-viewmsg'); view.append(P.canvas, P.viewMsg);
-      const legend = $el('div', 'gt-legend'); legend.innerHTML = '<span><i class="gt-sw gt-sw-box"></i>where the eyes should be</span><span><i class="gt-sw gt-sw-eye"></i>your eyes now</span><span><i class="gt-sw gt-sw-skin"></i>marked position</span>';
+      // 1. position
+      const pos = $el('section', 'gt-card'); pos.append($el('h3', '', '1. Position'));
+      const viewBox = $el('div', 'gt-view'); P.canvas = $el('canvas'); P.canvas.width = P.canvas.height = 420; P.viewMsg = $el('div', 'gt-viewmsg'); viewBox.append(P.canvas, P.viewMsg);
       P.state = $el('div', 'gt-state'); P.stateTitle = $el('b'); P.stateDetail = $el('span'); P.state.append(P.stateTitle, P.stateDetail);
-      const ro = $el('div', 'gt-ro'); P.ro = {};
-      [['dist', 'Distance'], ['off', 'Side / up'], ['depth', 'Depth'], ['roll', 'Head tilt'], ['ipd', 'Eye spacing']].forEach(([k, l]) => { const d = $el('div'); d.append($el('span', '', l)); P.ro[k] = $el('b', '', '–'); d.appendChild(P.ro[k]); ro.appendChild(d); });
-      const markCard = $el('div', 'gt-card'); markCard.append($el('h3', '', 'Mark a position'), $el('p', 'gt-note', 'Sit comfortably with both eyes found, then mark. The eye box moves to where your eyes are, and your picture stays as an outline, so the child can be lined up the same way.'));
-      const row = $el('div', 'gt-row'); P.name = $el('input', 'gt-input'); P.name.value = S.opts.refName; P.name.setAttribute('aria-label', 'Name for this position');
-      P.mark = $el('button', 'gt-btn primary', 'Mark this position'); P.mark.type = 'button'; P.mark.onclick = mark; P.clear = $el('button', 'gt-btn', 'Clear'); P.clear.type = 'button'; P.clear.onclick = () => { S.activeId = null; save(); renderPanel(); };
-      row.append(P.name, P.mark, P.clear); P.markMsg = $el('div', 'gt-note'); P.list = $el('div', 'gt-list');
-      markCard.append(row, P.markMsg, P.list);
-      const optCard = $el('div', 'gt-card'); optCard.appendChild($el('h3', '', 'On the guide'));
-      const chk = (key, label) => { const l = $el('label', 'gt-check'), i = $el('input'); i.type = 'checkbox'; i.checked = !!S.opts[key]; i.onchange = () => { S.opts[key] = i.checked; save(); }; l.append(i, document.createTextNode(' ' + label)); return l; };
-      optCard.append(chk('outline', 'Head and shoulders outline'), chk('box', 'Eye box'), chk('onion', 'Marked position (outline of the picture)'), chk('beep', 'Beep when lined up'));
-      const style = $el('label', 'gt-field'); style.append($el('span', '', 'Marked picture as'), (() => { const s = $el('select', 'gt-input'); s.innerHTML = '<option value="edges">Outline</option><option value="ghost">Warm ghost</option>'; s.value = S.opts.style; s.onchange = () => { S.opts.style = s.value; save(); }; return s; })());
-      const alpha = $el('label', 'gt-field'); alpha.append($el('span', '', 'Marked picture strength'), (() => { const s = $el('input'); s.type = 'range'; s.min = 10; s.max = 100; s.value = S.opts.alpha; s.oninput = () => { S.opts.alpha = +s.value; save(); }; return s; })());
-      const tolRow = $el('div', 'gt-tol'); [['tolLat', 'Side / up', 'mm', 2, 60, 1], ['tolDepth', 'Depth', 'mm', 5, 150, 5], ['tolRoll', 'Tilt', '°', 1, 30, 1]].forEach(([k, l, u, mn, mx, st]) => {
-        const lab = $el('label', 'gt-field'), i = $el('input', 'gt-input'); i.type = 'number'; i.min = mn; i.max = mx; i.step = st; i.value = S.opts[k]; i.onchange = () => { S.opts[k] = Math.max(mn, Math.min(mx, +i.value || DEFAULTS[k])); i.value = S.opts[k]; save(); }; lab.append($el('span', '', `${l} (${u})`), i); tolRow.appendChild(lab);
-      });
-      optCard.append(style, alpha, $el('span', 'gt-sub', 'How close counts as lined up'), tolRow);
-      const hint = $el('p', 'gt-hint'); hint.innerHTML = '<kbd>Ctrl</kbd> Hold <b>Ctrl</b> any time to see this guide over the page, even in full-screen Play. Let go to hide it.';
-      pos.append(view, legend, P.state, ro, markCard, optCard, hint);
+      const prow = $el('div', 'gt-row'); P.mark = $el('button', 'gt-btn', 'Put the outline here'); P.mark.type = 'button'; P.mark.onclick = mark;
+      P.reset = $el('button', 'gt-btn', 'Centre it'); P.reset.type = 'button'; P.reset.onclick = reset; prow.append(P.mark, P.reset); P.markMsg = $el('p', 'gt-note');
+      const hint = $el('p', 'gt-hint'); hint.innerHTML = '<kbd>Ctrl</kbd> Hold <b>Ctrl</b> any time to see this over the page, even in full-screen Play.';
+      pos.append(viewBox, P.state, prow, P.markMsg, hint);
 
-      // --- 2. calibrate
-      const cal = $el('section', 'gt-page'); P.pages.calibrate = cal;
-      const calCard = $el('div', 'gt-card'); calCard.append($el('h3', '', 'Calibrate'), $el('p', 'gt-note', 'You look at 9 dots and the tracker learns where you look; 5 more dots then check it. Do this once, sitting exactly as the child will sit. The calibration is saved in this browser and is used for the child too.'));
-      P.calSummary = $el('div', 'gt-summary'); const calRow = $el('div', 'gt-row');
-      P.calBtn = $el('button', 'gt-btn primary', 'Calibrate…'); P.calBtn.type = 'button'; P.calBtn.onclick = async () => { const r = await td.calibrate(); if (r) { renderPanel(); } };
-      P.calClear = $el('button', 'gt-btn', 'Forget'); P.calClear.type = 'button'; P.calClear.onclick = () => td.clearCalibration(); calRow.append(P.calBtn, P.calClear);
-      calCard.append(P.calSummary, calRow); cal.append(calCard);
+      // 2. which eyes
+      const eyes = $el('section', 'gt-card'); eyes.append($el('h3', '', '2. Which eyes?'));
+      P.mode = $el('select', 'gt-input'); P.mode.setAttribute('aria-label', 'Which eyes the gaze follows');
+      (td.eyeModes || Object.keys(MODE_TEXT)).forEach(k => { const o = $el('option', '', MODE_TEXT[k][0]); o.value = k; P.mode.appendChild(o); });
+      P.mode.onchange = () => { td.setEyeMode(P.mode.value); renderPanel(); };
+      P.modeNote = $el('p', 'gt-note'); P.eyeData = $el('p', 'gt-note');
+      eyes.append(P.mode, P.modeNote, P.eyeData);
 
-      // --- 3. check
-      const chkp = $el('section', 'gt-page'); P.pages.check = chkp;
-      const chkCard = $el('div', 'gt-card'); chkCard.append($el('h3', '', 'Check accuracy'), $el('p', 'gt-note', 'Dots appear in random places and you look at each. The result shows how far the tracker’s idea of where you look is from where the dots really were. Do this after calibrating.'));
-      const nSel = $el('select', 'gt-input'); nSel.innerHTML = '<option value="5">5 dots</option><option value="8">8 dots</option><option value="12">12 dots</option>'; nSel.value = String(S.opts.checkN); nSel.onchange = () => { S.opts.checkN = +nSel.value; save(); };
-      P.checkBtn = $el('button', 'gt-btn primary', 'Check accuracy…'); P.checkBtn.type = 'button'; P.checkBtn.onclick = async () => { const r = await td.accuracyCheck(S.opts.checkN); if (r) renderPanel(); };
-      const chkRow = $el('div', 'gt-row'); chkRow.append(nSel, P.checkBtn); P.checkSummary = $el('div', 'gt-summary');
-      chkCard.append(P.checkSummary, chkRow); chkp.append(chkCard);
-      const flow = $el('div', 'gt-card'); flow.append($el('h3', '', 'When the child sits down'));
-      const ol = $el('ol', 'gt-flow'); ['Seat the child so they are in the same place you were: hold Ctrl and match the eye box and outline.', 'Do not recalibrate — your calibration is used as it is.', 'Switch to Play, turn on the gaze pointer if you want to see where they look.'].forEach(t => ol.appendChild($el('li', '', t))); flow.appendChild(ol); chkp.appendChild(flow);
+      // 3. calibrate
+      const cal = $el('section', 'gt-card'); cal.append($el('h3', '', '3. Calibrate'));
+      P.calSummary = $el('div', 'gt-summary'); P.calNote = $el('p', 'gt-note');
+      const crow = $el('div', 'gt-row'); P.calBtn = $el('button', 'gt-btn primary', 'Calibrate'); P.calBtn.type = 'button'; P.calBtn.onclick = async () => { await td.calibrate(); renderPanel(); };
+      P.chkBtn = $el('button', 'gt-btn', 'Check accuracy'); P.chkBtn.type = 'button'; P.chkBtn.onclick = async () => { await td.recheck(); renderPanel(); };
+      P.clr = $el('button', 'gt-btn', 'Forget'); P.clr.type = 'button'; P.clr.onclick = () => td.clearCalibration(); crow.append(P.calBtn, P.chkBtn, P.clr);
+      cal.append(P.calSummary, crow, P.calNote);
 
-      body.append(pos, cal, chkp); P.root.append(head, nav, body); document.body.appendChild(P.root); return P;
-    }
-
-    function renderList(P) {
-      P.list.textContent = '';
-      if (!S.refs.length) { P.list.appendChild($el('div', 'gt-note', 'No saved positions yet.')); return; }
-      S.refs.forEach(r => {
-        const d = $el('div', 'gt-item' + (r.id === S.activeId ? ' on' : '')), t = $el('span'); t.append($el('b', '', r.name), $el('small', '', [r.summary, new Date(r.created).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })].join(' · ')));
-        const use = $el('button', 'gt-btn', r.id === S.activeId ? 'In use' : 'Use'); use.type = 'button'; use.disabled = r.id === S.activeId; use.onclick = () => { S.activeId = r.id; save(); renderPanel(); };
-        const del = $el('button', 'gt-btn gt-del', 'Delete'); del.type = 'button'; del.onclick = () => { S.refs = S.refs.filter(x => x.id !== r.id); if (S.activeId === r.id) S.activeId = null; save(); renderPanel(); };
-        d.append(t, use, del); P.list.appendChild(d);
-      });
+      page.append(pos, eyes, cal); body.appendChild(page); P.root.append(head, body); document.body.appendChild(P.root); return P;
     }
     function renderPanel() {
-      const P = S.panel; if (!P) return; const st = td.state();
-      for (const id of Object.keys(P.tabs)) { const on = S.tab === id; P.tabs[id].setAttribute('aria-selected', String(on)); P.pages[id].hidden = !on; }
-      P.tabs.position.classList.toggle('done', !!activeRef()); P.tabs.calibrate.classList.toggle('done', st.calibrated); P.tabs.check.classList.toggle('done', !!(st.check && st.calibrated && st.check.calibrated));
-      renderList(P);
-      P.clear.disabled = !activeRef();
-      P.calSummary.textContent = st.calibrated ? `Calibrated ${new Date(st.cal.created).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}${st.cal.grade ? ' · ' + st.cal.grade : ''}${st.cal.errDeg != null ? ` (about ${st.cal.errDeg}° off on the 5 check dots)` : ''}` : 'Not calibrated yet.';
-      P.calSummary.className = 'gt-summary' + (st.calibrated ? ' ok' : '');
-      P.calClear.hidden = !st.calibrated; P.calBtn.textContent = st.calibrated ? 'Calibrate again…' : 'Calibrate…';
-      const ck = st.check; P.checkSummary.textContent = ck ? `Last check ${new Date(ck.when).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}: ${ck.meanDeg}° on average (${ck.grade}), worst dot ${ck.worstDeg}°, ${ck.n} dots${ck.calibrated ? '' : ' — before calibrating'}.` : 'Not checked yet.';
-      P.checkSummary.className = 'gt-summary' + (ck ? ' ok' : '');
-      const ready = st.status === 'live' && !st.busy; P.calBtn.disabled = !ready; P.checkBtn.disabled = !ready;
+      const P = S.panel; if (!P) return; const st = td.state(), mode = st.eyeMode, cal = st.cal;
+      P.mode.value = mode; P.modeNote.textContent = MODE_TEXT[mode][1];
+      P.eyeData.textContent = mode === 'both' ? '' : st.perEye ? 'This tracker is giving separate left and right gaze: ready.' : 'Learning this tracker’s separate left and right gaze. Look at the screen with both eyes open for a few seconds. Until then it follows both eyes.';
+      P.eyeData.hidden = mode === 'both' || !!G;
+      P.reset.hidden = G ? !G.marked() : !S.ref;
+      const sm = st.calibrated && cal;
+      let line = 'Not calibrated for this setting yet.';
+      if (sm) {
+        const when = new Date(cal.created).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+        const pe = cal.perEye || {}, per = mode === 'either' ? ` (left ${pe.L ? pe.L.score : '–'}, right ${pe.R ? pe.R.score : '–'})` : '';
+        line = `Calibrated ${when}. Accuracy ${cal.score != null ? cal.score + ' / 100' : ''}${cal.errDeg != null ? ' · about ' + cal.errDeg + '°' : ''}${cal.grade ? ' · ' + cal.grade : ''}${per}`;
+      } else if (st.anyCalibration) line = 'Calibrated for another eye setting. Calibrate again for this one.';
+      P.calSummary.textContent = line; P.calSummary.className = 'gt-summary' + (sm ? ' ok' : '');
+      P.calBtn.textContent = sm ? 'Calibrate again' : 'Calibrate';
+      const ready = st.status === 'live' && !st.busy; P.calBtn.disabled = !ready; P.chkBtn.disabled = !ready || !sm; P.chkBtn.hidden = !sm; P.clr.hidden = !st.anyCalibration;
+      P.calNote.textContent = td.calNote ? td.calNote(mode) : mode === 'left' || mode === 'right' ? `Cover the ${mode === 'left' ? 'right' : 'left'} eye while calibrating.` : mode === 'either' ? 'Takes two short rounds: cover one eye for each, then both open.' : 'About a minute: 9 dots, then 4 check dots.';
     }
     function placePanel() {
       const P = S.panel; if (!P) return; const d = cfg.drawer, open = d && d.classList.contains('open') && innerWidth > 760;
       P.root.style.left = open ? Math.round(d.getBoundingClientRect().right + 12) + 'px' : '12px';
     }
-    function updateLive() {                                     // runs ~12x a second while the panel or the Ctrl guide is showing
-      const { v, ev, fresh } = guideView();
-      if (S.panel && !S.panel.root.hidden && S.tab === 'position') {
-        const P = S.panel; drawGuide(P.canvas, v); P.viewMsg.textContent = fresh ? '' : (td.state().status === 'live' ? 'Waiting for the camera…' : 'Connect the tracker to see the camera.');
+    function updateLive() {                                     // runs ~12x a second while the menu or the Ctrl guide is showing
+      const { v, ev, fresh } = view();
+      if (S.panel && !S.panel.root.hidden) {
+        const P = S.panel; paint(P.canvas, v, ev); P.viewMsg.textContent = fresh ? '' : (td.state().status === 'live' ? 'Waiting for the camera…' : G ? 'Start the camera to see the picture.' : 'Connect the tracker to see the camera.');
         P.state.className = 'gt-state ' + ev.level; P.stateTitle.textContent = ev.title; P.stateDetail.textContent = ev.detail;
-        const cur = ev.cur, cmp = ev.cmp, ref = ev.ref;
-        P.ro.dist.textContent = cur ? `${(cur.mid[2] / 10).toFixed(0)} cm` : '–'; P.ro.off.textContent = cmp ? `${cmp.d[0].toFixed(0)} / ${cmp.d[1].toFixed(0)} mm` : '–';
-        P.ro.depth.textContent = cmp ? `${cmp.d[2] > 0 ? '+' : ''}${cmp.d[2].toFixed(0)} mm` : '–'; P.ro.roll.textContent = cur ? `${cur.roll.toFixed(0)}°` : '–';
-        P.ro.ipd.textContent = cur ? `${cur.ipd.toFixed(0)} mm${ref ? ` (marked ${ref.pose.ipd.toFixed(0)})` : ''}` : '–';
       }
-      if (S.peekOn && S.peek) {
-        drawGuide(S.peek.canvas, v); S.peek.state.className = 'gt-peek-state ' + ev.level; S.peek.state.textContent = fresh || ev.level === 'good' ? `${ev.title} — ${ev.detail}` : ev.detail || ev.title;
-      }
-      beepIfAligned(ev);
+      if (S.peekOn && S.peek) { paint(S.peek.canvas, v, ev); S.peek.state.className = 'gt-peek-state ' + ev.level; S.peek.state.textContent = `${ev.title} — ${ev.detail}`; }
     }
     const ensureTick = () => { const need = !!((S.panel && !S.panel.root.hidden) || S.peekOn); watchCamera(need); if (need && !S.tick) S.tick = setInterval(updateLive, 80); else if (!need && S.tick) { clearInterval(S.tick); S.tick = 0; } };
 
     /* ---- Ctrl peek */
     function buildPeek() {
-      const root = $el('div', 'gt-peek'); root.hidden = true; root.setAttribute('aria-hidden', 'true'); const card = $el('div', 'gt-peek-card');
+      const rootEl = $el('div', 'gt-peek'); rootEl.hidden = true; rootEl.setAttribute('aria-hidden', 'true'); const card = $el('div', 'gt-peek-card');
       const kicker = $el('div', 'gt-peek-kicker', 'Position guide · release Ctrl to hide'); const canvas = $el('canvas'); canvas.width = canvas.height = 480; const state = $el('div', 'gt-peek-state');
-      card.append(kicker, canvas, state); root.appendChild(card); document.body.appendChild(root); return { root, canvas, state };
+      card.append(kicker, canvas, state); rootEl.appendChild(card); document.body.appendChild(rootEl); return { root: rootEl, canvas, state };
     }
     function peek(on) {
       if (on === S.peekOn) return; S.peekOn = on;
@@ -289,7 +216,7 @@
     addEventListener('keydown', e => {
       if (e.key === 'Control' && !e.repeat) { cancelCtrl(); if (isEnabled() && !td.state().busy) S.ctrlTimer = setTimeout(() => peek(true), 220); }
       else if (e.key !== 'Control') { cancelCtrl(); peek(false); }          // Ctrl+S, Ctrl+Alt+G … are shortcuts, not a request for the guide
-      if (e.key === 'Escape' && S.panel && !S.panel.root.hidden && !td.state().busy) api.close();   // like every other dialog (a running calibration handles its own Esc)
+      if (e.key === 'Escape' && S.panel && !S.panel.root.hidden && !td.state().busy) api.close();
     }, true);
     addEventListener('keyup', e => { if (e.key === 'Control') { cancelCtrl(); peek(false); } }, true);
     addEventListener('blur', () => { cancelCtrl(); peek(false); });
@@ -298,18 +225,15 @@
     addEventListener('resize', placePanel);
 
     const api = {
-      open(tab) {
-        S.panel = S.panel || buildPanel(); S.tab = tab && S.panel.pages[tab] ? tab : S.tab; S.panel.root.hidden = false; placePanel(); renderPanel(); ensureTick(); updateLive(); return api;
-      },
+      open() { S.panel = S.panel || buildPanel(); S.panel.root.hidden = false; placePanel(); renderPanel(); ensureTick(); updateLive(); return api; },
       close() { if (S.panel) S.panel.root.hidden = true; ensureTick(); return api; },
-      toggle(tab) { return S.panel && !S.panel.root.hidden ? api.close() : api.open(tab); },
+      toggle() { return S.panel && !S.panel.root.hidden ? api.close() : api.open(); },
       get isOpen() { return !!(S.panel && !S.panel.root.hidden); },
-      mark, evaluate, peek,
-      refs: () => S.refs.slice(), activeRef,
-      _test: { findEyes, livePicture, onionPicture, drawGuide, S },
+      mark, reset, evaluate, peek,
+      _test: { findEyes, livePicture, drawGuide, S },
     };
     return api;
   }
 
-  root.GazeTools = { create, findEyes };
+  root.GazeTools = { create, findEyes, livePicture, drawGuide };
 })(window);

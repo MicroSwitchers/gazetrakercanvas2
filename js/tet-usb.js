@@ -1,7 +1,7 @@
-/* tet-usb.js — talks to a TET (eye tracker; Tobii Eye Tracker 5, USB 2104:0313) straight from the browser with WebUSB.
- * No Tobii software and no helper program. Chrome / Edge only (Firefox and Safari have no WebUSB); the page must be https or localhost.
+/* tet-usb.js — talks to an IR tracker (USB 2104:0313) straight from the browser with WebUSB.
+ * No tracker software and no helper program. Chrome / Edge only (Firefox and Safari have no WebUSB); the page must be https or localhost.
  *
- * This is a JavaScript port of tobii.py (the Gaze Assessment Tools). The wire format comes from public reverse-engineering
+ * This is a JavaScript port of the Gaze Assessment Tools' Python tracker reader. The wire format comes from public reverse-engineering
  * of the vendor protocol, replayed from data/tet-init.bin (the captured start-up sequence).
  *
  *   host->dev : 00000000 | LE u32 body_len | BE u32 words: 0x51, seq, 0, cmd, 0, payload_len | payload
@@ -16,10 +16,22 @@
   const VID = 0x2104, PID = 0x0313, IFACE = 0, EP_IN = 3, EP_OUT = 5;      // 0x83 / 0x05 in libusb terms
   const M_CMD = 0x51, M_RESP = 0x52, M_STREAM = 0x53;
   const STREAM_GAZE = 0x500, STREAM_IMAGE = 0x50E, IMG_PIXELS = 280 * 280, CMD_STREAM_START = 1220, CMD_SET_DISPLAY = 1440, CMD_UPLOAD_CAL = 1110;
+  /* The tracker's own (on-device) calibration. Op codes and payloads from public reverse-engineering notes (calibration, select-eyes, op catalogue),
+     every one answered by this tracker in a hardware check. The eye argument is a mask: 1 left, 2 right, 3 both. */
+  const CAL = { start: 1010, stop: 1020, addPoint: 1030, clear: 1060, compute: 1070, discard: 1080, retrieve: 1100, apply: 1110, setEye: 3160, getEye: 3170 };
+  const OUT_CHUNK = 4095;
   const KEY_MARK = 0x00020BB9, T_U32 = 0x02, T_FIX32 = 0x04, T_FIELD = 0x05;
   const K = { ts: 0x01, gaze: 0x1C, gazeOk: 0x1B, frame: 0x14 };
   const EYES = { left: { status: 0x07, pupil: 0x06, origin: 0x22, originOk: 0x21 }, right: { status: 0x0D, pupil: 0x0C, origin: 0x24, originOk: 0x23 } };
   const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const platform = () => (((navigator.userAgentData && navigator.userAgentData.platform) || navigator.userAgent || '').match(/Windows|Android|CrOS|Linux|Mac/i) || [''])[0].toLowerCase();
+  /** What to tell somebody whose browser was refused the tracker, for their computer. */
+  function openHelp() {
+    const p = platform(), other = ' Also close any other tab or program using the tracker.';
+    if (p === 'windows') return 'on Windows the tracker is held by its own driver software (the maker\'s settings app and its background service), and Chrome can only use devices on the WinUSB driver. Quit that app and stop its service, or install WinUSB for the device (for example with Zadig), then unplug and replug it.' + other;
+    if (p === 'linux') return 'on Linux the browser needs permission to use the tracker. In a terminal in this folder run:  sudo ./linux/install-udev-rule.sh  then unplug the tracker and plug it back in. Use Google Chrome, Edge or Chromium installed from a .deb (a Snap or Flatpak browser cannot see USB devices).' + other;
+    return 'the browser could not take the tracker. Unplug it, plug it back in, and close any program that uses it.' + other;
+  }
 
   /* ------------------------------------------------------------ bytes */
   const u32 = (n, le) => { const b = new Uint8Array(4); new DataView(b.buffer).setUint32(0, n >>> 0, !!le); return b; };
@@ -93,12 +105,53 @@
     const f = keyedFields(msg.payload), g = f.get(K.gaze);
     const d = { ts_us: f.has(K.ts) ? f.get(K.ts) : null, frame: f.has(K.frame) ? f.get(K.frame) : null, valid: f.get(K.gazeOk) === 1, x: null, y: null, eyes: {} };
     if (g && typeof g === 'object' && g.comps.length >= 2) { d.x = norm(g.comps[0]); d.y = norm(g.comps[1]); }
+    // any keyed point of the message as plain numbers (mm or display fractions), for the per-eye gaze detector in eye-model.js
+    d.pt = key => { const v = f.get(key); return v && typeof v === 'object' && v.comps ? v.comps.map(norm) : null; };
     for (const name of Object.keys(EYES)) {
       const k = EYES[name], o = f.get(k.origin), p = f.get(k.pupil);
       d.eyes[name] = { tracked: f.get(k.status) === 0, pupil_mm: typeof p === 'number' ? p / 65536 : null,
         origin_mm: o && typeof o === 'object' ? o.comps.map(norm) : null, origin_ok: f.get(k.originOk) === 1 };
     }
     return d;
+  }
+
+  /**
+   * Splits the bytes from the tracker into whole messages; feed() once per USB read. A big reply (the ~650 KB calibration) comes over many
+   * reads, and some start with their own 8-byte envelope that is not part of the message: it is dropped when it fits what the message
+   * still needs. A message's size is its TTP header's payload length, not the envelope's length field (which for a big reply describes a
+   * run of reads). Same rules as the public open-source parsers; checked against reads recorded from this tracker.
+   */
+  function createParser(onMessage) {
+    const isIn = (b, i) => b[i] === 1 && b[i + 1] === 0 && b[i + 2] === 0 && b[i + 3] === 0;
+    const le32 = (b, i) => new DataView(b.buffer, b.byteOffset + i, 4).getUint32(0, true), be32 = (b, i) => new DataView(b.buffer, b.byteOffset + i, 4).getUint32(0);
+    let buf = new Uint8Array(0);
+    return {
+      feed(chunk) {
+        if (buf.length >= 32 && chunk.length >= 8 && isIn(chunk, 0)) {
+          const need = 32 + be32(buf, 28) - buf.length, el = le32(chunk, 4);
+          if (need > 0 && el > 8 && el - 8 <= need) chunk = chunk.subarray(8);
+        }
+        buf = buf.length ? cat([buf, chunk]) : chunk;
+        for (;;) {
+          if (buf.length < 8) return;
+          if (!isIn(buf, 0) || le32(buf, 4) < 32) { buf = buf.subarray(1); continue; }   // resync
+          if (buf.length < 32) return;
+          const n = 32 + be32(buf, 28);
+          if (n > (1 << 22)) { buf = buf.subarray(1); continue; }
+          if (buf.length < n) return;
+          const raw = buf.slice(0, n); buf = buf.subarray(n); onMessage(raw);
+        }
+      },
+      reset() { buf = new Uint8Array(0); },
+    };
+  }
+  /** A whole command as USB transfers: longer than 4095 bytes, it goes in 4095-byte pieces, each with its own envelope, exactly like the
+   *  captured Windows start-up (data/tet-init.bin); a calibration sent in one piece is refused. */
+  function chunkFrame(bytes) {
+    if (bytes.length <= OUT_CHUNK) return [bytes];
+    const first = bytes.slice(0, OUT_CHUNK); first.set(u32(OUT_CHUNK - 8, true), 4); const out = [first];
+    for (let i = OUT_CHUNK; i < bytes.length;) { const part = bytes.subarray(i, i + OUT_CHUNK - 8); out.push(cat([u32(0), u32(part.length, true), part])); i += part.length; }
+    return out;
   }
 
   /** Stream-0x50E message -> the 280x280 8-bit infrared camera picture (Uint8Array view), or null. */
@@ -111,8 +164,8 @@
 
   /* ------------------------------------------------------------ the device */
   function create(opts) {
-    const o = Object.assign({ displayMm: null, tiltDeg: 20, onGaze: null, onImage: null, images: false, wantImage: null, onStatus: null, initUrl: 'data/tet-init.bin', stallMs: 2500 }, opts || {});
-    let dev = null, streamingLive = false, gen = 0, buf = new Uint8Array(0), queue = [], waiter = null, running = false, initRows = null, seq = 0;
+    const o = Object.assign({ displayMm: null, tiltDeg: 20, onGaze: null, onImage: null, images: false, wantImage: null, onStatus: null, onLive: null, initUrl: 'data/tet-init.bin', stallMs: 2500 }, opts || {});
+    let dev = null, streamingLive = false, gen = 0, queue = [], waiter = null, running = false, initRows = null;
     const status = (state, text) => { try { o.onStatus && o.onStatus(state, text); } catch (e) { console.error('[tet] onStatus', e); } };
     const supported = () => !!(root.navigator && navigator.usb);
 
@@ -130,16 +183,8 @@
       if (queue.length) return Promise.resolve(queue.shift());
       return new Promise(res => { waiter = { res, t: setTimeout(() => { waiter = null; res(null); }, ms) }; });
     }
-    function feed(chunk) {
-      buf = buf.length ? cat([buf, chunk]) : chunk;
-      for (;;) {
-        if (buf.length < 8) return;
-        const n = new DataView(buf.buffer, buf.byteOffset + 4, 4).getUint32(0, true);
-        if (!(buf[0] === 1 && buf[1] === 0 && buf[2] === 0 && buf[3] === 0) || n < 8 || n > (1 << 22)) { buf = buf.subarray(1); continue; }   // resync
-        if (buf.length < n) return;
-        push(parseMessage(buf.slice(0, n))); buf = buf.subarray(n);
-      }
-    }
+    let parser = createParser(raw => push(parseMessage(raw)));
+    const feed = chunk => parser.feed(chunk);
     async function pump(myGen) {
       while (myGen === gen && dev) {
         let r;
@@ -150,6 +195,19 @@
       }
     }
     const write = bytes => dev.transferOut(EP_OUT, bytes).then(r => { if (r.status !== 'ok') throw new Error('write ' + r.status); });
+    async function writeFrame(bytes) { for (const t of chunkFrame(bytes)) await write(t); }
+    /* requests while streaming: the stream loop hands replies over by sequence number */
+    const pending = new Map(); let reqSeq = 1000;
+    function request(cmd, payload, ms, what) {
+      if (!dev || !streamingLive) return Promise.reject(new Error('the tracker is not streaming'));
+      const s = reqSeq++; if (reqSeq > 0x7fffffff) reqSeq = 1000;
+      return new Promise((res, rej) => {
+        const t = setTimeout(() => { pending.delete(s); rej(new Error('no answer to ' + (what || 'command ' + cmd))); }, ms || 10000);
+        pending.set(s, { res, rej, t, what: what || 'command ' + cmd });
+        writeFrame(buildCommand(s, cmd, payload)).catch(e => { if (pending.delete(s)) { clearTimeout(t); rej(e); } });
+      });
+    }
+    const failPending = e => { pending.forEach(p => { clearTimeout(p.t); p.rej(e); }); pending.clear(); };
     async function waitResp(wantSeq, what) {
       const end = performance.now() + 8000;
       for (;;) {
@@ -181,7 +239,7 @@
     }
     async function bringUp(myGen) {
       const rows = await loadInit(), dm = o.displayMm; if (!dm) throw new Error('screen size not set');
-      queue = []; buf = new Uint8Array(0); pump(myGen);
+      queue = []; parser.reset(); pump(myGen);
       await controlInit();
       let i = 0;
       while (i < 200) {
@@ -193,14 +251,14 @@
         }
         if (cmd === CMD_SET_DISPLAY) raw = displayAreaPacket(s, displayPoints(dm[0], dm[1], o.tiltDeg));
         await write(raw); const r = await waitResp(s, 'command ' + cmd);
-        if (r.error && cmd === CMD_SET_DISPLAY) throw new Error('display area refused: ' + r.error.toString(16));   // like tobii.py, other replayed commands may answer with an error and still work
+        if (r.error && cmd === CMD_SET_DISPLAY) throw new Error('display area refused: ' + r.error.toString(16));   // like the Python reader, other replayed commands may answer with an error and still work
         i++;
       }
       await write(streamCommand(100, STREAM_GAZE));
       if (o.images) await write(streamCommand(101, STREAM_IMAGE));       // the camera picture, for the position guide
     }
     async function teardown() {
-      gen++; streamingLive = false; const d = dev; dev = null;
+      gen++; streamingLive = false; const d = dev; dev = null; failPending(new Error('the tracker disconnected'));
       if (waiter) { const w = waiter; waiter = null; clearTimeout(w.t); w.res(null); }
       if (d) { try { await d.controlTransferOut({ requestType: 'vendor', recipient: 'interface', request: 66, value: 0, index: IFACE }); } catch (_) { /* ignore */ } try { await d.close(); } catch (_) { /* ignore */ } }
     }
@@ -221,8 +279,9 @@
             const m = await nextMsg(o.stallMs);
             if (!m) throw new Error('the tracker stopped sending data');
             if (m.error_) throw m.error_;
+            if (m.marker === M_RESP && pending.has(m.seq)) { const p = pending.get(m.seq); pending.delete(m.seq); clearTimeout(p.t); p.res(m); continue; }
             if (m.marker === M_STREAM && m.id === STREAM_GAZE) {
-              if (!streaming) { streaming = true; streamingLive = true; attempt = 0; status('live', 'tracker streaming'); }
+              if (!streaming) { streaming = true; streamingLive = true; attempt = 0; status('live', 'tracker streaming'); if (o.onLive) Promise.resolve().then(o.onLive).catch(e => console.warn('[tet] onLive', e)); }
               try { o.onGaze && o.onGaze(decodeGaze(m)); } catch (e) { console.error('[tet] onGaze', e); }
             } else if (m.marker === M_STREAM && m.id === STREAM_IMAGE && o.onImage && (++imgN & 1) === 0 && (!o.wantImage || o.wantImage())) {      // every second picture is plenty, and none unless somebody is looking at them
               const px = imagePixels(m.payload);
@@ -234,7 +293,9 @@
           const msg = (e && e.message) || String(e);
           if (/not authorised|screen size/.test(msg)) { status('idle', msg); running = false; break; }
           if (e && (e.name === 'SecurityError' || e.name === 'NotAllowedError')) { status('unreachable', 'the browser did not allow access to the tracker'); running = false; break; }
-          if (e && e.name === 'NetworkError' && /claim|open|access/i.test(msg)) status('unreachable', 'could not open the tracker (' + msg + ') — is the Python Gaze Assessment Tools still running, or the udev rule missing?');
+          if (e && e.name === 'NetworkError' && /claim|open|access/i.test(msg)) {
+            status('unreachable', 'could not open the tracker (' + msg + ') — ' + openHelp());
+          }
           else status('connecting', msg + ' — retrying');
           attempt++;
         } finally { await teardown(); }
@@ -251,6 +312,7 @@
       /** Start streaming. The first time it must run from a click (the browser asks which device). */
       async connect() {
         if (running) return; if (!supported()) { status('unreachable', 'this browser has no WebUSB — use Chrome or Edge'); return; }
+        if (root.location && root.location.protocol === 'file:') { status('unreachable', 'this page was opened as a file — open it from http://localhost (' + (platform() === 'windows' ? 'double-click start.bat' : 'run ./start.sh') + ') so the browser can load the tracker start-up data'); return; }
         if (!o.displayMm) { status('idle', 'enter your screen size first'); return; }
         let d = null;
         try { d = await pickDevice(true); } catch (e) { status('idle', e && e.name === 'NotFoundError' ? 'no tracker chosen' : String((e && e.message) || e)); return; }
@@ -264,12 +326,49 @@
       },
       disconnect() { running = false; teardown(); status('idle', 'tracker disconnected'); },
       options: o,
+      get live() { return !!dev && streamingLive; },
+      /**
+       * The tracker's own calibration, run inside the tracker's 3-D eye model (what the maker's own software does), while it keeps streaming.
+       * Each call resolves to the reply payload, or throws (err.code = the tracker's error) when refused or unanswered.
+       * Sequence: setEye(mask) → start → clear → addPoint(x, y, mask) per dot (it waits up to ~3 s for usable data, and refuses the dot
+       * without it) → compute (fits and applies) → stop → retrieve (the blob to keep). apply(blob) puts a kept one back; the tracker forgets
+       * it whenever it restarts, which is every connect.
+       */
+      device: (() => {
+        const Z = () => Uint8Array.of(0, 0), q = v => tlv(T_FIX32, fix64(v));
+        async function call(cmd, payload, ms, what) {
+          const m = await request(cmd, payload, ms, what);
+          if (m.error) { const e = new Error((what || 'command ' + cmd) + ' refused (0x' + m.error.toString(16) + ')'); e.code = m.error; throw e; }
+          return m.payload;
+        }
+        let defaultBlob = null;
+        async function capturedBlob() {                          // the calibration the captured start-up uploads (00 00 prefix removed)
+          if (defaultBlob) return defaultBlob;
+          const rows = await loadInit(), i = rows.findIndex(r => r.length >= 32 && new DataView(r.buffer, r.byteOffset, r.byteLength).getUint32(20) === CMD_UPLOAD_CAL);
+          if (i < 0) throw new Error('no calibration in the start-up data');
+          return (defaultBlob = cat([rows[i].subarray(34), ...rows.slice(i + 1, 200).map(r => r.subarray(8))]));
+        }
+        return {
+          setEye: mask => call(CAL.setEye, cat([Z(), tlv(T_U32, u32(mask))]), 4000, 'select eyes'),
+          getEye: async () => { const p = await call(CAL.getEye, new Uint8Array(0), 4000, 'read eyes'); return p.length >= 4 ? beNum(p.subarray(p.length - 4)) : null; },
+          start: () => call(CAL.start, Z(), 8000, 'calibration start'),
+          stop: () => call(CAL.stop, Z(), 8000, 'calibration stop'),
+          clear: () => call(CAL.clear, Z(), 8000, 'calibration clear'),
+          addPoint: (x, y, mask) => call(CAL.addPoint, cat([Z(), q(x), q(y), tlv(T_U32, u32(mask))]), 15000, 'calibration dot'),
+          discard: (x, y) => call(CAL.discard, cat([Z(), q(x), q(y)]), 8000, 'calibration discard'),
+          compute: () => call(CAL.compute, Z(), 120000, 'calibration compute'),
+          retrieve: async () => (await call(CAL.retrieve, Z(), 60000, 'calibration download')).slice(2),
+          apply: blob => call(CAL.apply, cat([Z(), blob]), 60000, 'calibration upload'),
+          /** Back to what every connect starts with: both eyes, the captured start-up calibration. */
+          async restoreDefault() { await call(CAL.setEye, cat([Z(), tlv(T_U32, u32(3))]), 4000, 'select eyes'); await call(CAL.apply, cat([Z(), await capturedBlob()]), 60000, 'calibration upload'); },
+        };
+      })(),
     };
   }
 
   const api = { create, supported: () => !!(root.navigator && navigator.usb),
     // exposed for tests
-    _t: { imagePixels, buildCommand, streamCommand, displayPoints, displayAreaPacket, parseMessage, keyedFields, decodeGaze, fromHex, toHex } };
+    _t: { imagePixels, buildCommand, streamCommand, displayPoints, displayAreaPacket, parseMessage, keyedFields, decodeGaze, fromHex, toHex, createParser, chunkFrame, fix64, tlv, u32, cat } };
   root.TetUSB = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof window !== 'undefined' ? window : this);

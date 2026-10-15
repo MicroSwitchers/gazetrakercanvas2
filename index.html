@@ -371,6 +371,7 @@
 
         <!-- Mobile Drawer Backdrop -->
         <div id="drawer-backdrop" class="drawer-backdrop"></div>
+        <button type="button" id="rec-pill" class="rec-pill" hidden title="Stop recording (R)" aria-label="Recording. Press to stop and save."><span class="rec-pill__dot" aria-hidden="true"></span><span id="rec-pill-time">0:00</span></button>
 
         <!-- Mobile Floating Action Buttons -->
         <button id="mobile-fab-left" class="mobile-fab mobile-fab-left" aria-label="Open tools panel">
@@ -446,6 +447,7 @@
                         </div>
                         <div class="control-card__actions">
                             <button id="install-app-btn" type="button" class="install-app-button" title="Install app" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span>Install app</span></button>
+                            <button id="rec-toolbar-btn" class="toolbar-icon-btn rec-toolbar-btn" type="button" aria-pressed="false" aria-label="Start recording" title="Start or stop recording (R)" hidden><svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6" fill="currentColor"/><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
                             <button id="theme-toggle" class="toolbar-icon-btn" aria-label="Toggle theme">
                                 <svg id="theme-light-icon" class="h-4 w-4 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -1111,68 +1113,91 @@
                 </div>
                 <div class="accordion-content section-content p-3" id="gaze-options">
 
+                    <!-- Recording: first, so it is always one tap away -->
+                    <div class="page-options grid-main-options gz-card gz-recbar" id="gaze-record-card" hidden>
+                        <button type="button" id="gaze-rec-btn" class="gz-recbtn" aria-pressed="false" title="Start or stop recording (R)"><span class="gz-recdot" aria-hidden="true"></span><span id="gaze-rec-label">Start recording</span><kbd>R</kbd></button>
+                        <div class="gz-status"><span class="gz-status__dot" aria-hidden="true"></span><span id="gaze-rec-status" aria-live="polite">Not recording</span></div>
+                        <p class="gz-hint">Saves a video of the canvas, with everything ticked <b>Recording</b> below drawn over the targets. Press <b>R</b> to start and stop (or Ctrl+Alt+R).</p>
+                    </div>
+
                     <!-- 1. Tracker -->
                     <div class="page-options grid-main-options gz-card" id="gaze-tracker-card">
                         <span class="panel-label">Tracker</span>
                         <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></span><span class="grid-option__text">Use eye gaze<small>Targets respond when someone looks at them, in Edit as well as Play, so you can try the settings out.</small></span><input type="checkbox" id="gaze-enable" class="grid-switch"></label>
                         <div class="gz-status"><span class="gz-status__dot" aria-hidden="true"></span><span id="gaze-status" aria-live="polite">Off</span></div>
                         <label class="gz-field"><span class="form-label">Gaze comes from</span>
-                            <select id="gaze-source" class="form-input"><option value="usb">Tracker on this computer (USB)</option><option value="server">Gaze Assessment Tools app</option></select></label>
+                            <select id="gaze-source" class="form-input"><option value="usb">Tracker on this computer (USB)</option><option value="webcam">Webcam on this computer</option><option value="server">Gaze Assessment Tools app</option></select></label>
                         <p class="gz-hint" id="gaze-usb-browser">USB eye tracking only works in <b>Chrome</b>, <b>Chromium</b> and <b>Edge</b>.</p>
+                        <label class="gz-field" id="gaze-screen-row"><span class="form-label">Screen size</span>
+                            <span class="gz-suffix"><input type="number" id="gaze-screen-in" class="form-input" min="5" max="60" step="0.1" placeholder="13.3" aria-label="Screen size, diagonal, in inches"><span>inches, measured corner to corner</span></span></label>
+                        <div id="gaze-webcam" hidden>
+                            <div class="gz-buttons"><button type="button" id="gaze-wc-connect" class="upload-button gz-primary">Start camera</button><button type="button" id="gaze-wc-tools" class="upload-button">Set up and calibrate…</button></div>
+                            <div class="gz-cal" id="gaze-wc-cal-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg><span id="gaze-wc-cal-note"></span><button type="button" id="gaze-wc-clear-cal" class="gz-link">Forget</button></div>
+                            <p class="gz-hint">A webcam is less exact than an eye tracker: use large, well-spaced targets. Light the face from the front, sit at arm’s length and keep the head still. The camera picture stays on this computer. Hold <b>Ctrl</b> to see the position guide.</p>
+                        </div>
                         <div id="gaze-usb">
-                            <label class="gz-field"><span class="form-label">Screen size</span>
-                                <span class="gz-suffix"><input type="number" id="gaze-screen-in" class="form-input" min="5" max="60" step="0.1" placeholder="13.3" aria-label="Screen size, diagonal, in inches"><span>inches, measured corner to corner</span></span></label>
-                            <div class="gz-buttons"><button type="button" id="gaze-connect" class="upload-button gz-primary">Connect tracker</button><button type="button" id="gaze-tools-open" class="upload-button">Calibration tools…</button></div>
+                            <div class="gz-buttons"><button type="button" id="gaze-connect" class="upload-button gz-primary">Connect tracker</button><button type="button" id="gaze-tools-open" class="upload-button">Set up and calibrate…</button></div>
                             <div class="gz-cal" id="gaze-cal-box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg><span id="gaze-cal-note"></span><button type="button" id="gaze-clear-cal" class="gz-link">Forget</button></div>
-                            <p class="gz-hint">Position guide, calibration and accuracy check are in <b>Calibration tools</b>. Hold <b>Ctrl</b> at any time to see the position guide over the page.</p>
+                            <p class="gz-hint">Where to sit, which eye(s) to follow and calibration are in <b>Set up and calibrate</b>. Hold <b>Ctrl</b> at any time to see the position guide over the page.</p>
                         </div>
                     </div>
 
-                    <!-- 2. What a target does when the child looks at it -->
+                    <!-- What shows, live and in the recording -->
+                    <div class="page-options grid-main-options gz-card" id="gaze-show-card">
+                        <span class="panel-label">What to show</span>
+                        <p class="gz-hint"><b>Live</b> is what everyone sees on the screen as the child looks. <b>Recording</b> adds it to the saved video only. Choose both to have it in both.</p>
+                        <div class="gz-matrix" role="group" aria-label="What to show live and in the recording">
+                            <div class="gz-mhead"><span></span><span>Live</span><span>Recording</span></div>
+                            <div class="gz-mrow"><span class="gz-mname">Lift<small>The target grows a little</small></span><input type="checkbox" id="gaze-lift" class="grid-switch gz-msw" aria-label="Lift, live"><input type="checkbox" id="gaze-lift-rec" class="grid-switch gz-msw" aria-label="Lift, in the recording"></div>
+                            <div class="gz-mrow"><span class="gz-mname">Glow<small>A halo around its edge</small></span><input type="checkbox" id="gaze-glow" class="grid-switch gz-msw" aria-label="Glow, live"><input type="checkbox" id="gaze-glow-rec" class="grid-switch gz-msw" aria-label="Glow, in the recording"></div>
+                            <div class="gz-mrow"><span class="gz-mname">Gaze pointer<small>Where they look</small></span><select id="gaze-pointer" class="form-input gz-msel" aria-label="Gaze pointer, live"><option value="off">Off</option><option value="dot">Dot</option><option value="circle">Circle</option></select><select id="gaze-recpointer" class="form-input gz-msel" aria-label="Gaze pointer, in the recording"><option value="off">Off</option><option value="dot">Dot</option><option value="circle">Circle</option></select></div>
+                            <div class="gz-mrow"><span class="gz-mname">Heat map<small>Where gaze stayed longest</small></span><input type="checkbox" id="gaze-heat" class="grid-switch gz-msw" aria-label="Heat map, live"><input type="checkbox" id="gaze-heat-rec" class="grid-switch gz-msw" aria-label="Heat map, in the recording"></div>
+                            <div class="gz-mrow"><span class="gz-mname">Shift numbers<small>1, 2, 3 in order of looking</small></span><input type="checkbox" id="gaze-num" class="grid-switch gz-msw" aria-label="Shift numbers, live"><input type="checkbox" id="gaze-num-rec" class="grid-switch gz-msw" aria-label="Shift numbers, in the recording"></div>
+                            <div class="gz-mrow"><span class="gz-mname">Eye camera<small>Camera picture of the eyes</small></span><input type="checkbox" id="gaze-cam" class="grid-switch gz-msw" aria-label="Eye camera, live"><input type="checkbox" id="gaze-cam-rec" class="grid-switch gz-msw" aria-label="Eye camera, in the recording"></div>
+                        </div>
+                        <details class="gz-details">
+                            <summary>Adjust size, colour and amount</summary>
+                            <div class="gz-sub" id="gaze-lift-sub">
+                                <label class="gz-row"><span>Lift</span><input type="range" id="gaze-lift-pct" min="3" max="40" step="1" aria-label="How much a target lifts"><b id="gaze-lift-pct-v"></b></label>
+                            </div>
+                            <div class="gz-sub" id="gaze-glow-sub">
+                                <label class="gz-row"><span>Glow colour</span><input type="color" id="gaze-glow-color" aria-label="Glow colour"><b></b></label>
+                                <label class="gz-row"><span>Glow size</span><input type="range" id="gaze-glow-size" min="4" max="60" step="1" aria-label="Glow size"><b id="gaze-glow-size-v"></b></label>
+                            </div>
+                            <div id="gaze-pointer-card" data-pointer="off">
+                                <div class="gz-sub gz-sub--flat gz-ptr-opts">
+                                    <label class="gz-row gz-only-dot"><span>Dot size</span><input type="range" id="gaze-dot-px" min="6" max="60" step="1" aria-label="Small dot size"><b id="gaze-dot-px-v"></b></label>
+                                    <label class="gz-row gz-only-circle"><span>Circle size</span><input type="range" id="gaze-circle-in" min="0.5" max="4" step="0.1" aria-label="Broad circle size in inches"><b id="gaze-circle-in-v"></b></label>
+                                    <label class="gz-row"><span>Pointer colour</span><input type="color" id="gaze-pointer-color" aria-label="Pointer colour"><b></b></label>
+                                    <label class="gz-row"><span>See-through</span><input type="range" id="gaze-transparency" min="0" max="95" step="5" aria-label="Pointer transparency"><b id="gaze-transparency-v"></b></label>
+                                </div>
+                            </div>
+                            <div class="gz-sub" id="gaze-cam-sub">
+                                <label class="gz-row gz-row--select"><span>Camera corner</span><select id="gaze-cam-corner" class="form-input" aria-label="Corner for the eye camera picture"><option value="bottom-left">Bottom left</option><option value="bottom-right">Bottom right</option><option value="top-left">Top left</option><option value="top-right">Top right</option></select></label>
+                                <label class="gz-row gz-row--select"><span>Camera size</span><select id="gaze-cam-size" class="form-input" aria-label="Size of the eye camera picture"><option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option></select></label>
+                                <p class="gz-hint" id="gaze-cam-note" style="margin:2px 0 0">The tracker's infrared camera, or the webcam, mirrored like the position guide. It shows the child's eyes, so only record it when you have permission to.</p>
+                            </div>
+                            <p class="gz-hint">In Play, Ctrl+Alt+G changes the live pointer without opening this panel.</p>
+                        </details>
+                        <div class="gz-buttons gz-buttons--one"><button type="button" id="gaze-overlay-clear" class="upload-button">Clear heat map and numbers</button></div>
+                    </div>
+
+                    <!-- What happens when the child looks at a target -->
                     <div class="page-options grid-main-options gz-card">
                         <span class="panel-label">When the child looks at a target</span>
-                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></span><span class="grid-option__text">Lift it<small>The target grows slightly, so you can see the child noticed it.</small></span><input type="checkbox" id="gaze-lift" class="grid-switch"></label>
-                        <div class="gz-sub" id="gaze-lift-sub">
-                            <label class="gz-row"><span>How much</span><input type="range" id="gaze-lift-pct" min="3" max="40" step="1" aria-label="How much a target lifts"><b id="gaze-lift-pct-v"></b></label>
-                        </div>
-                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><span class="grid-option__text">Glow around its edges<small>A soft halo follows the outline of the target.</small></span><input type="checkbox" id="gaze-glow" class="grid-switch"></label>
-                        <div class="gz-sub" id="gaze-glow-sub">
-                            <label class="gz-row"><span>Colour</span><input type="color" id="gaze-glow-color" aria-label="Glow colour"><b></b></label>
-                            <label class="gz-row"><span>Size</span><input type="range" id="gaze-glow-size" min="4" max="60" step="1" aria-label="Glow size"><b id="gaze-glow-size-v"></b></label>
-                        </div>
-                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg></span><span class="grid-option__text">Say its name<small>Reads the target’s name (or its custom speech) once the child has looked at it.</small></span><input type="checkbox" id="gaze-name" class="grid-switch"></label>
+                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg></span><span class="grid-option__text">Say its name<small>Reads the target’s name, or its custom speech, once the child has looked at it for the time below.</small></span><input type="checkbox" id="gaze-name" class="grid-switch"></label>
                         <div class="gz-sub" id="gaze-name-sub">
-                            <label class="gz-row"><span>After</span><input type="range" id="gaze-name-sec" min="0.2" max="2" step="0.1" aria-label="Seconds of looking before the name is said"><b id="gaze-name-sec-v"></b></label>
+                            <label class="gz-row"><span>Look for</span><input type="range" id="gaze-name-sec" min="0.2" max="2" step="0.1" aria-label="Seconds of looking before the name is said"><b id="gaze-name-sec-v"></b></label>
                         </div>
-                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1M5.1 8l-2.9-.8M14 4.1 12 6M6 12l-1.9 2"/></svg></span><span class="grid-option__text">Select it by looking<small>Like a tap, but with the eyes: looking long enough starts it.</small></span><input type="checkbox" id="gaze-select" class="grid-switch"></label>
+                        <label class="grid-option"><span class="grid-option__icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 9 5 12 1.8-5.2L21 14Z"/><path d="M7.2 2.2 8 5.1M5.1 8l-2.9-.8M14 4.1 12 6M6 12l-1.9 2"/></svg></span><span class="grid-option__text">Play its animation<small>Starts the target’s animation, as a tap would, once the child has looked at it for the time below.</small></span><input type="checkbox" id="gaze-anim" class="grid-switch"></label>
                         <div class="gz-sub" id="gaze-select-sub">
-                            <label class="gz-row"><span>Look for</span><input type="range" id="gaze-select-sec" min="0.3" max="3" step="0.1" aria-label="Seconds of looking before it is selected"><b id="gaze-select-sec-v"></b></label>
-                            <div class="gz-checks"><label><input type="checkbox" id="gaze-anim"> start its animation</label><label><input type="checkbox" id="gaze-speak"> say its name</label></div>
+                            <label class="gz-row"><span>Look for</span><input type="range" id="gaze-select-sec" min="0.3" max="3" step="0.1" aria-label="Seconds of looking before the animation plays"><b id="gaze-select-sec-v"></b></label>
                         </div>
                         <span class="panel-label">Forgiveness</span>
                         <div class="gz-sub gz-sub--flat">
                             <label class="gz-row"><span>Distance</span><input type="range" id="gaze-tol" min="0" max="60" step="2" aria-label="How far from a target the gaze can be and still count"><b id="gaze-tol-v"></b></label>
                         </div>
                         <p class="gz-hint">How far outside a target the gaze can land and still count as looking at it. Raise it if the child is clearly looking but nothing happens.</p>
-                    </div>
-
-                    <!-- 3. The gaze pointer: what the adult sees -->
-                    <div class="page-options grid-main-options gz-card" id="gaze-pointer-card" data-pointer="off">
-                        <span class="panel-label">Gaze pointer</span>
-                        <p class="gz-hint">What you see on the screen where the child is looking. “Nothing” leaves only the targets reacting.</p>
-                        <select id="gaze-pointer" hidden aria-hidden="true" tabindex="-1"><option value="off">Nothing</option><option value="dot">Small dot</option><option value="circle">Broad circle</option></select>
-                        <div class="gz-seg" role="radiogroup" aria-label="Gaze pointer">
-                            <button type="button" role="radio" data-pointer="off"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/><path d="m5 5 14 14"/></svg>Nothing</button>
-                            <button type="button" role="radio" data-pointer="dot"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="currentColor"/></svg>Small dot</button>
-                            <button type="button" role="radio" data-pointer="circle"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>Broad circle</button>
-                        </div>
-                        <div class="gz-sub gz-sub--flat gz-ptr-opts">
-                            <label class="gz-row gz-only-dot"><span>Dot size</span><input type="range" id="gaze-dot-px" min="6" max="60" step="1" aria-label="Small dot size"><b id="gaze-dot-px-v"></b></label>
-                            <label class="gz-row gz-only-circle"><span>Circle size</span><input type="range" id="gaze-circle-in" min="0.5" max="4" step="0.1" aria-label="Broad circle size in inches"><b id="gaze-circle-in-v"></b></label>
-                            <label class="gz-row"><span>Colour</span><input type="color" id="gaze-pointer-color" aria-label="Pointer colour"><b></b></label>
-                            <label class="gz-row"><span>See-through</span><input type="range" id="gaze-transparency" min="0" max="95" step="5" aria-label="Pointer transparency"><b id="gaze-transparency-v"></b></label>
-                        </div>
-                        <p class="gz-hint" style="margin-bottom:6px">In Play, Ctrl+Alt+G switches the pointer without opening this panel.</p>
                     </div>
 
                     <!-- 4. Where the child looked -->
@@ -1504,9 +1529,13 @@
     <script src="./js/media-store.js"></script>
     <script src="./js/media-library.js"></script>
     <script src="./js/gaze-bridge.js"></script>
+    <script src="./js/gaze-record.js"></script>
     <script src="./js/calmath.js"></script>
+    <script src="./js/eye-model.js"></script>
     <script src="./js/tet-usb.js"></script>
     <script src="./js/tet-direct.js"></script>
+    <script src="./js/webcam-model.js"></script>
+    <script src="./js/webcam-gaze.js"></script>
     <script src="./js/gaze-tools.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -1720,7 +1749,7 @@
             DeviceDetector.init();
 
             // --- Version Management & Cache Busting ---
-            const APP_VERSION = '2026.10.11.003'; // Update this when deploying new versions
+            const APP_VERSION = '2026.10.15.001'; // Update this when deploying new versions
             const VERSION_KEY = 'eyeTrackingAppVersion';
             const SETTINGS_BACKUP_KEY = 'eyeTrackingAppSettingsBackup';
             
@@ -2176,7 +2205,7 @@
             const fullscreenToggle = document.getElementById('fullscreen-toggle');
             const fullscreenEnterIcon = document.getElementById('fullscreen-enter-icon');
             const fullscreenExitIcon = document.getElementById('fullscreen-exit-icon');
-            const fullscreenText = document.getElementById('fullscreen-text');
+            const fullscreenText = document.getElementById('fullscreen-text') || {};   // the button is icon-only now: nothing to label
             
             const imageUpload = document.getElementById('image-upload');
             const folderUpload = document.getElementById('folder-upload');
@@ -2354,11 +2383,20 @@
 
             // Eye-gaze interaction state (optional; driven by js/gaze-bridge.js, see the "Eye Tracking" settings)
             const GAZE_DEFAULTS = { enabled: false, source: null, lift: true, liftPct: 15, glow: false, glowColor: '#ffd24a', glowSize: 18,
-                                    select: false, selectSec: 0.9, anim: true, speak: true, tolerance: 22,
+                                    selectSec: 0.9, anim: false, tolerance: 22,
                                     pointer: 'off', dotPx: 22, circleIn: 1.5, pointerColor: '#ffffff', transparency: 20,   // what the adult/child can see of the gaze
-                                    nameOn: false, nameSec: 0.5 };                                                          // say the name of what the child looks at
+                                    nameOn: false, nameSec: 0.5,
+                                    heat: false, numbers: false,                                                              // live: heat map and numbered shifts of gaze drawn on the page
+                                    recLift: false, recGlow: false, recPointer: 'off', recHeat: false, recNumbers: false,
+                                    camLive: false, camRec: false, camSize: 'medium', camCorner: 'bottom-left' };            // the tracker's camera picture of the eyes, in a corner (both off unless switched on)   // in the recording only (a switch can be live, recorded, or both)                                                          // say the name of what the child looks at
             let gazeSettings = { ...GAZE_DEFAULTS };
             try { Object.assign(gazeSettings, JSON.parse(localStorage.getItem('gazeInteraction.v1') || '{}')); } catch {}
+            if ('select' in gazeSettings || 'speak' in gazeSettings) {   // earlier versions: "select it by looking" with two tick boxes; now two actions of their own
+                const sel = !!gazeSettings.select;
+                if (sel && gazeSettings.speak !== false && !gazeSettings.nameOn) { gazeSettings.nameOn = true; gazeSettings.nameSec = Math.min(2, Math.max(0.2, gazeSettings.selectSec || 0.9)); }
+                gazeSettings.anim = sel && gazeSettings.anim !== false;
+                delete gazeSettings.select; delete gazeSettings.speak;
+            }
             if (gazeSettings.dot === true && gazeSettings.pointer === 'off') gazeSettings.pointer = 'dot';   // setting from the first version
             delete gazeSettings.dot;
             if (!gazeSettings.ptrWhite) { if (gazeSettings.pointerColor === '#ffd24a') gazeSettings.pointerColor = '#ffffff'; gazeSettings.ptrWhite = true; }   // the pointer now starts white (least distracting); one-time switch from the old yellow default
@@ -2367,6 +2405,20 @@
             const lookLog = new Map();      // target -> { name, ms, looks, longest, cur }  (how long each target was looked at)
             const gazeFx = new Map();       // target -> { lift: 0..1, glow: 0..1 } (eased so effects fade in and out)
             let gazeFxBusy = false;         // true while an effect is still easing
+            // heat map, numbered shifts of gaze, recording (js/gaze-record.js). The page decides what is live; the recording adds the rest.
+            const gazeRec = window.GazeRecord ? GazeRecord.create({
+                canvas,
+                view: () => ({ zoom: canvasZoom, panX: canvasPanX, panY: canvasPanY }),
+                settings: () => gazeSettings,
+                fxConfig: () => ({ lift: !!gazeSettings.recLift && !gazeSettings.lift, glow: !!gazeSettings.recGlow && !gazeSettings.glow }),
+                lookedAt: () => lookObject,
+                camera: () => (gazeCameraFn ? gazeCameraFn() : null),
+                drawFx: (c, obj, fx, scale, zoom) => drawWithGazeFx(obj, fx, { c, cfg: { lift: true, liftPct: gazeSettings.liftPct, glow: true, glowColor: gazeSettings.glowColor, glowSize: gazeSettings.glowSize }, cache: gazeShadowsRec, dpr: scale, px: scale / zoom }),
+                mmPerPx: () => (gazeMmPerPx ? gazeMmPerPx() : 25.4 / 96),
+                onChange: () => { if (gazeSettings.heat || gazeSettings.numbers) { needsRender = true; ensureRenderLoop(); } },
+            }) : null;
+            let gazeCameraFn = null;        // the tracker's latest camera picture, or null (set once the tracker module exists)
+            let gazeMmPerPx = null;         // set once the tracker module knows the screen size
             let frameBusy = false;          // something is moving (video, animation, drag): draw() favours speed over resampling quality
             function gazeFxUpdate() {
                 let busy = false;
@@ -2395,7 +2447,7 @@
             }
             // Blurring is the expensive part of a halo or a drop shadow, so each target's is blurred once and kept; every frame just pastes it
             // (fading it in and out). It is rebuilt only if the target's size, rotation or the settings change.
-            const gazeShadows = new WeakMap();
+            const gazeShadowsLive = new WeakMap(), gazeShadowsRec = new WeakMap();
             // Reading the canvas size from the page forces a layout every time it is asked, which is slow while the page is changing every frame; ask a few times a second.
             let gazeBackingScale = 1, gazeBackingAt = -1e9;
             function gazeBackingPerCss() {
@@ -2403,7 +2455,7 @@
                 if (now - gazeBackingAt > 500) { gazeBackingAt = now; gazeBackingScale = ctx.canvas.width / (ctx.canvas.getBoundingClientRect().width || ctx.canvas.width); }
                 return gazeBackingScale;
             }
-            function cachedShadow(obj, s, dpr, color, blurDev, offYDev) {
+            function cachedShadow(obj, s, dpr, color, blurDev, offYDev, gazeShadows = gazeShadowsLive) {
                 const pose = animationPose(obj), key = [obj.width | 0, obj.height | 0, Math.round((pose.rotation || 0) * 50), s.toFixed(3), color, blurDev.toFixed(1), offYDev.toFixed(1), dpr].join('|');
                 let e = gazeShadows.get(obj);
                 if (e && e.key === key) return e;
@@ -2422,22 +2474,24 @@
                 if (blurDev > 8) g.drawImage(gazeLayer, 0, 0, sw, sw, pad - D, pad, sw, sw);        // twice, so a halo is bold enough to notice
                 gazeShadows.set(obj, e); return e;
             }
-            function drawWithGazeFx(obj, fx) {
-                const pose = animationPose(obj), c = obj.getCenterPoint(), cx = c.x + pose.x, cy = c.y + pose.y;   // follow the target while it moves
-                const sFull = gazeSettings.lift ? 1 + gazeSettings.liftPct / 100 : 1, s = 1 + (sFull - 1) * fx.lift, dpr = ctx.canvas.width / CANVAS_WIDTH;
-                const px = gazeBackingPerCss() / canvasZoom;                                                       // sprite pixels per screen pixel (the sprite is pasted through the current pan/zoom)
+            // t (optional) draws somewhere other than the page canvas, e.g. the recording: { c, cfg, cache, dpr, px }
+            function drawWithGazeFx(obj, fx, t) {
+                const c = t ? t.c : ctx, cfg = t ? t.cfg : gazeSettings, cache = t ? t.cache : gazeShadowsLive;
+                const pose = animationPose(obj), ctr = obj.getCenterPoint(), cx = ctr.x + pose.x, cy = ctr.y + pose.y;   // follow the target while it moves
+                const sFull = cfg.lift ? 1 + cfg.liftPct / 100 : 1, s = 1 + (sFull - 1) * fx.lift, dpr = t ? t.dpr : ctx.canvas.width / CANVAS_WIDTH;
+                const px = t ? t.px : gazeBackingPerCss() / canvasZoom;                                           // sprite pixels per screen pixel (the sprite is pasted through the current pan/zoom)
                 let sh = null, alpha = 0;
                 // built once at the fully-lifted size, then scaled while the lift eases in and out (so it is not rebuilt every frame)
-                if (fx.glow > 0.01) { sh = cachedShadow(obj, sFull, dpr, gazeSettings.glowColor, gazeSettings.glowSize * px, 0); alpha = fx.glow; }
-                else if (fx.lift > 0.01) { const k = Math.min(1, gazeSettings.liftPct / 15); sh = cachedShadow(obj, sFull, dpr, 'rgba(0, 0, 0, 0.3)', 15 * k, 5 * k); alpha = fx.lift; }
+                if (fx.glow > 0.01) { sh = cachedShadow(obj, sFull, dpr, cfg.glowColor, cfg.glowSize * px, 0, cache); alpha = fx.glow; }
+                else if (fx.lift > 0.01) { const k = Math.min(1, cfg.liftPct / 15); sh = cachedShadow(obj, sFull, dpr, 'rgba(0, 0, 0, 0.3)', 15 * k, 5 * k, cache); alpha = fx.lift; }
                 if (sh) {
                     const k = s / sFull / dpr, W = sh.canvas.width;       // sprite pixels -> canvas units, drawn through the page's own pan/zoom/dpr transform
-                    ctx.save(); ctx.translate(cx, cy); ctx.scale(k, k); ctx.globalAlpha = alpha;
-                    ctx.drawImage(sh.canvas, -W / 2, -W / 2); ctx.restore();
+                    c.save(); c.translate(cx, cy); c.scale(k, k); c.globalAlpha = alpha;
+                    c.drawImage(sh.canvas, -W / 2, -W / 2); c.restore();
                 }
-                ctx.save(); ctx.translate(cx, cy); ctx.scale(s, s); ctx.translate(-cx, -cy);
-                obj.draw(ctx);
-                ctx.restore();
+                c.save(); c.translate(cx, cy); c.scale(s, s); c.translate(-cx, -cy);
+                obj.draw(c);
+                c.restore();
             }
 
             // Grid State
@@ -3019,6 +3073,8 @@
                         drawCoverImage(foregroundImage.img, CANVAS_WIDTH, CANVAS_HEIGHT);
                     }
 
+                    if (gazeRec) gazeRec.drawLive(ctx);     // heat map / numbered shifts of gaze, when switched on live
+
                     // Draw active drag indicator on top (above objects)
                     drawGridDragIndicator();
 
@@ -3046,7 +3102,8 @@
                     const dragging = isDragging || isResizing;
                     const animating = objects.some(o => o.isAnimating || o.animationTransition);
                     const snapping = isSnapping;
-                    const hoverAnimating = enableHoverPopup && (hoveredObject !== null || Math.abs(hoverScale - 1.0) > 0.001);
+                    // only while the pop-up is still easing: resting on a target must not keep redrawing the canvas 60 times a second
+                    const hoverAnimating = enableHoverPopup && Math.abs((hoveredObject !== null ? HOVER_SCALE_TARGET : 1.0) - hoverScale) > 0.001;
                     frameBusy = hasVideo || animating || dragging || snapping;
                     if (hasVideo || dragging || animating || snapping || hoverAnimating || gazeFxBusy || gazeFxPending() || needsRender) {
                         if (needsRender) needsRender = false;
@@ -4740,7 +4797,7 @@
                     if (content && content.classList.contains('accordion-content')) {
                         if (!isExpanded) {
                             // Expand: use a stable max-height approach
-                            content.style.maxHeight = '2000px'; // Large enough for any content
+                            content.style.maxHeight = 'none'; // no cap: a section grows with its content (a fixed 2000px cut the Eye Tracking section off and let it overlap Layers)
                         } else {
                             // Collapse
                             content.style.maxHeight = '0px';
@@ -4754,7 +4811,7 @@
                 if (button.getAttribute('aria-expanded') === 'true') {
                     const content = button.parentElement.nextElementSibling;
                     if (content) {
-                       content.style.maxHeight = '2000px'; // Stable initial height
+                       content.style.maxHeight = 'none';
                     }
                 }
                 // Set initial indicators once
@@ -10053,7 +10110,7 @@
             };
             
             // --- Eye gaze (optional) ------------------------------------------------------------------------
-            // Looking at a target can lift it, make it glow, and/or select it (start its animation, say its name).
+            // Looking at a target can lift it, make it glow, say its name and/or play its animation.
             // Needs js/gaze-bridge.js and the Gaze Assessment Tools on this computer (viewer.py) with the gaze link on and
             // this site allowed. Switched on in the "Eye Tracking" section; also with ?gaze, or Ctrl+Alt+L. When it is off
             // the page never contacts localhost.
@@ -10066,16 +10123,21 @@
                     const note = $g('gaze-usb-browser'); note.classList.add('gz-warn');
                     note.innerHTML = 'This browser can’t use a USB eye tracker. Open this page in <b>Chrome</b>, <b>Chromium</b> or <b>Edge</b>.';
                 }
-                const useUsb = () => !!td && (gazeSettings.source || 'usb') === 'usb';
+                // ...or from the computer's own webcam (js/webcam-gaze.js: MediaPipe face landmarks and a per-person calibration)
+                const wg = (window.WebcamGaze && window.WebcamModel && WebcamGaze.supported()) ? WebcamGaze.create() : null;
+                const srcKind = () => gazeSettings.source || 'usb';
+                const useUsb = () => !!td && srcKind() === 'usb';
+                const useCam = () => !!wg && srcKind() === 'webcam';
                 // the calibration tools menu: position guide (also shown while Ctrl is held), calibration, accuracy check
                 const tools = (td && window.GazeTools) ? GazeTools.create({ td, drawer: document.getElementById('controls-drawer'), isEnabled: () => gazeSettings.enabled && useUsb() }) : null;
+                const camTools = (wg && window.GazeTools) ? GazeTools.create({ td: wg, drawer: document.getElementById('controls-drawer'), isEnabled: () => gazeSettings.enabled && useCam() }) : null;
                 const saveGaze = () => { try { localStorage.setItem('gazeInteraction.v1', JSON.stringify(gazeSettings)); } catch {} };
                 const setGazeStatus = (text, cls) => { const el = $g('gaze-status'); if (el) { el.textContent = text; el.className = cls || ''; } };
                 const bridgeOpts = () => ({ dwellMs: Math.round(gazeSettings.selectSec * 1000), tolerancePx: gazeSettings.tolerance, pointer: gazeSettings.pointer, dotPx: gazeSettings.dotPx, circleInches: gazeSettings.circleIn,
                                               pointerColor: gazeSettings.pointerColor, pointerOpacity: 1 - gazeSettings.transparency / 100, persist: false });
                 function syncGazeUi() {
-                    $g('gaze-enable').checked = gazeSettings.enabled; $g('gaze-lift').checked = gazeSettings.lift; $g('gaze-glow').checked = gazeSettings.glow;
-                    $g('gaze-select').checked = gazeSettings.select; $g('gaze-anim').checked = gazeSettings.anim; $g('gaze-speak').checked = gazeSettings.speak; $g('gaze-name').checked = gazeSettings.nameOn; $g('gaze-pointer').value = gazeSettings.pointer;
+                    $g('gaze-enable').checked = gazeSettings.enabled; $g('gaze-record-card').hidden = !gazeSettings.enabled; $g('gaze-lift').checked = gazeSettings.lift; $g('gaze-glow').checked = gazeSettings.glow;
+                    $g('gaze-anim').checked = gazeSettings.anim; $g('gaze-name').checked = gazeSettings.nameOn; $g('gaze-pointer').value = gazeSettings.pointer;
                     $g('gaze-lift-pct').value = gazeSettings.liftPct; $g('gaze-glow-color').value = gazeSettings.glowColor; $g('gaze-glow-size').value = gazeSettings.glowSize;
                     $g('gaze-select-sec').value = gazeSettings.selectSec; $g('gaze-tol').value = gazeSettings.tolerance;
                     $g('gaze-name-sec').value = gazeSettings.nameSec; $g('gaze-dot-px').value = gazeSettings.dotPx; $g('gaze-circle-in').value = gazeSettings.circleIn;
@@ -10085,41 +10147,64 @@
                     $g('gaze-name-sec-v').textContent = gazeSettings.nameSec.toFixed(1) + ' s'; $g('gaze-dot-px-v').textContent = gazeSettings.dotPx + ' px';
                     $g('gaze-circle-in-v').textContent = gazeSettings.circleIn.toFixed(1) + ' in'; $g('gaze-transparency-v').textContent = gazeSettings.transparency + '%';
                     // each switch's own settings only show while it is on; the pointer card shows the options for the chosen style
-                    $g('gaze-lift-sub').hidden = !gazeSettings.lift; $g('gaze-glow-sub').hidden = !gazeSettings.glow;
-                    $g('gaze-name-sub').hidden = !gazeSettings.nameOn; $g('gaze-select-sub').hidden = !gazeSettings.select;
-                    $g('gaze-pointer-card').dataset.pointer = gazeSettings.pointer;
-                    document.querySelectorAll('#gaze-pointer-card .gz-seg button').forEach(b => b.setAttribute('aria-checked', String(b.dataset.pointer === gazeSettings.pointer)));
+                    $g('gaze-lift-sub').hidden = !(gazeSettings.lift || gazeSettings.recLift); $g('gaze-glow-sub').hidden = !(gazeSettings.glow || gazeSettings.recGlow);
+                    $g('gaze-name-sub').hidden = !gazeSettings.nameOn; $g('gaze-select-sub').hidden = !gazeSettings.anim;
+                    { const a = gazeSettings.pointer, b = gazeSettings.recPointer;       // the size options that apply to whichever pointer styles are in use
+                      $g('gaze-pointer-card').dataset.pointer = a === 'off' ? b : b === 'off' || a === b ? a : 'both'; $g('gaze-recpointer').value = b; }
+                    $g('gaze-cam').checked = gazeSettings.camLive; $g('gaze-cam-rec').checked = gazeSettings.camRec; $g('gaze-cam-corner').value = gazeSettings.camCorner; $g('gaze-cam-size').value = gazeSettings.camSize;
+                    $g('gaze-cam-sub').hidden = !(gazeSettings.camLive || gazeSettings.camRec);
+                    $g('gaze-lift-rec').checked = gazeSettings.recLift; $g('gaze-glow-rec').checked = gazeSettings.recGlow;
+                    $g('gaze-heat').checked = gazeSettings.heat; $g('gaze-heat-rec').checked = gazeSettings.recHeat; $g('gaze-num').checked = gazeSettings.numbers; $g('gaze-num-rec').checked = gazeSettings.recNumbers;
                 }
                 function applyGaze() {
-                    if (gazeLink) { gazeLink.setOptions(bridgeOpts()); gazeLink.setDwellEnabled(gazeSettings.select); }
+                    if (gazeLink) { gazeLink.setOptions(bridgeOpts()); gazeLink.setDwellEnabled(gazeSettings.anim); }
                     if (!gazeSettings.lift && !gazeSettings.glow) gazeObject = null;
-                    ensureRenderLoop();
+                    else if (!gazeObject) gazeObject = lookObject;      // switched on while the child is already looking at a target
+                    syncCamera(); needsRender = true; ensureRenderLoop();
                 }
                 let pickRect = null, pickRectAt = 0;
+                // 'either eye' mode asks where the targets are, to tell which eye is looking at one (0 = nowhere near a target, 1 = on one)
+                if (td) td.setTargetHint((fx, fy) => {
+                    if (!objects.length) return 0.5;
+                    const full = document.fullscreenElement || (innerWidth >= screen.width - 2 && innerHeight >= screen.height - 2); let cx, cy;
+                    if (full) { cx = fx * innerWidth; cy = fy * innerHeight; } else { const side = (outerWidth - innerWidth) / 2, left = screenX + side, top = screenY + (outerHeight - innerHeight) - side; cx = fx * screen.width - left; cy = fy * screen.height - top; }
+                    const r = pickRect || canvasContainer.getBoundingClientRect(), x = (cx - r.left - canvasPanX) / canvasZoom, y = (cy - r.top - canvasPanY) / canvasZoom;
+                    let best = 0; for (const o of objects) { if (!o.visible) continue; const c = o.getCenterPoint(), d = Math.max(0, Math.hypot(x - c.x, y - c.y) - Math.max(o.width, o.height) / 2); best = Math.max(best, Math.exp(-d / 120)); if (best > 0.999) break; }
+                    return best;
+                });
                 function startGaze() {
                     if (gazeLink) return;
                     gazeLink = GazeBridge.create({
-                        ...bridgeOpts(), source: useUsb() ? td.source : null,
+                        ...bridgeOpts(), source: useUsb() ? td.source : useCam() ? wg.source : null, emitGaze: true,
                         // gaze-bridge hands us page pixels; reuse the page's own pointer maths and hit test
                         pick: (cx, cy) => {                  // runs several times per gaze sample, so measure the canvas only a few times a second
                             const now = performance.now(); if (!pickRect || now - pickRectAt > 250) { pickRect = canvasContainer.getBoundingClientRect(); pickRectAt = now; }
                             return getObjectAt((cx - pickRect.left - canvasPanX) / canvasZoom, (cy - pickRect.top - canvasPanY) / canvasZoom);
                         },
                         onHover: obj => { noteLook(obj); gazeObject = (gazeSettings.lift || gazeSettings.glow) ? obj : null; ensureRenderLoop(); },
-                        onDwell: obj => {                    // Edit too, so whoever sets up the page sees how targets will respond
-                            if (gazeSettings.speak) sayTargetName(obj);
+                        onDwell: obj => {                    // looked at long enough: play its animation (Edit too, so whoever sets up the page sees how targets will respond)
                             if (gazeSettings.anim && obj.animationType) triggerAnimation(obj);
                         },
                     }).start();
-                    gazeLink.setDwellEnabled(gazeSettings.select);
+                    gazeLink.setDwellEnabled(gazeSettings.anim);
                     if (useUsb()) td.autoConnect();                  // no click needed once this browser has permission for the tracker
+                    if (useCam()) wg.autoConnect().then(on => { if (!on && gazeLink && useCam()) setGazeStatus('Click Start camera', 'wait'); });   // the same for the camera
+                    syncCamera();
                 }
-                function stopGaze() { if (gazeLink) { gazeLink.stop(); gazeLink = null; } if (td) td.disconnect(); noteLook(null); gazeObject = null; setGazeStatus('Off'); ensureRenderLoop(); }
-                function setGazeEnabled(on) { gazeSettings.enabled = on; saveGaze(); syncGazeUi(); if (on) { setGazeStatus('Connecting…', 'wait'); startGaze(); } else stopGaze(); }
+                function stopGaze() { if (gazeLink) { gazeLink.stop(); gazeLink = null; } syncCamera(); if (td) td.disconnect(); if (wg) wg.disconnect(); noteLook(null); gazeObject = null; setGazeStatus('Off'); ensureRenderLoop(); }
+                function setGazeEnabled(on) { gazeSettings.enabled = on; saveGaze(); syncGazeUi(); if (on) { setGazeStatus('Connecting…', 'wait'); startGaze(); } else stopGaze(); window.dispatchEvent(new Event('gaze:enabled')); }
+
+                // every gaze sample, in canvas (world) coordinates: feeds the heat map, the numbered shifts and the recording's pointer
+                gazeMmPerPx = () => { const mm = useCam() ? wg.state().screenMm : td && td.state().screenMm; return mm && screen.width ? mm[0] / screen.width : 25.4 / 96; };
+                window.addEventListener('gazebridge:gaze', e => {
+                    if (!gazeRec || !gazeLink) return;
+                    const now = performance.now(); if (!pickRect || now - pickRectAt > 250) { pickRect = canvasContainer.getBoundingClientRect(); pickRectAt = now; }
+                    gazeRec.sample((e.detail.x - pickRect.left - canvasPanX) / canvasZoom, (e.detail.y - pickRect.top - canvasPanY) / canvasZoom, now);
+                });
 
                 window.addEventListener('gazebridge:status', e => {
                     if (!gazeLink) return; const { status, detail } = e.detail;
-                    if (useUsb()) {                                // the tracker module words its own messages
+                    if (useUsb() || useCam()) {                    // the tracker and webcam modules word their own messages
                         const d = (detail || '').replace(/^./, c => c.toUpperCase());
                         setGazeStatus(status === 'live' ? 'Eye gaze is live' + (/NOT/.test(detail) ? ' — but not calibrated yet' : '') : d || 'Not connected', status === 'live' ? 'ok' : status === 'unreachable' ? 'bad' : 'wait');
                         return;
@@ -10132,14 +10217,20 @@
                 $g('gaze-enable').addEventListener('change', e => setGazeEnabled(e.target.checked));
                 bindChange('gaze-lift', t => { gazeSettings.lift = t.checked; });         bindChange('gaze-lift-pct', t => { gazeSettings.liftPct = +t.value; });
                 bindChange('gaze-glow', t => { gazeSettings.glow = t.checked; });         bindChange('gaze-glow-color', t => { gazeSettings.glowColor = t.value; });
-                bindChange('gaze-glow-size', t => { gazeSettings.glowSize = +t.value; }); bindChange('gaze-select', t => { gazeSettings.select = t.checked; });
+                bindChange('gaze-glow-size', t => { gazeSettings.glowSize = +t.value; });
                 bindChange('gaze-select-sec', t => { gazeSettings.selectSec = +t.value; }); bindChange('gaze-anim', t => { gazeSettings.anim = t.checked; });
-                bindChange('gaze-speak', t => { gazeSettings.speak = t.checked; });       bindChange('gaze-tol', t => { gazeSettings.tolerance = +t.value; });
+                bindChange('gaze-tol', t => { gazeSettings.tolerance = +t.value; });
                 bindChange('gaze-name', t => { gazeSettings.nameOn = t.checked; });         bindChange('gaze-name-sec', t => { gazeSettings.nameSec = +t.value; });
                 bindChange('gaze-pointer', t => { gazeSettings.pointer = t.value; });       bindChange('gaze-dot-px', t => { gazeSettings.dotPx = +t.value; });
                 bindChange('gaze-circle-in', t => { gazeSettings.circleIn = +t.value; });   bindChange('gaze-pointer-color', t => { gazeSettings.pointerColor = t.value; });
                 bindChange('gaze-transparency', t => { gazeSettings.transparency = +t.value; });
-                document.querySelectorAll('#gaze-pointer-card .gz-seg button').forEach(b => b.addEventListener('click', () => { gazeSettings.pointer = b.dataset.pointer; saveGaze(); syncGazeUi(); applyGaze(); }));
+                bindChange('gaze-lift-rec', t => { gazeSettings.recLift = t.checked; });   bindChange('gaze-glow-rec', t => { gazeSettings.recGlow = t.checked; });
+                bindChange('gaze-heat', t => { gazeSettings.heat = t.checked; });         bindChange('gaze-heat-rec', t => { gazeSettings.recHeat = t.checked; });
+                bindChange('gaze-num', t => { gazeSettings.numbers = t.checked; });       bindChange('gaze-num-rec', t => { gazeSettings.recNumbers = t.checked; });
+                bindChange('gaze-recpointer', t => { gazeSettings.recPointer = t.value; });
+                bindChange('gaze-cam', t => { gazeSettings.camLive = t.checked; });       bindChange('gaze-cam-rec', t => { gazeSettings.camRec = t.checked; });
+                bindChange('gaze-cam-corner', t => { gazeSettings.camCorner = t.value; }); bindChange('gaze-cam-size', t => { gazeSettings.camSize = t.value; });
+                $g('gaze-overlay-clear').addEventListener('click', () => { if (gazeRec) gazeRec.clear(); needsRender = true; ensureRenderLoop(); });
                 // the adult's hotkeys inside the bridge (Ctrl+Alt+G pointer style, Ctrl+Alt+Up/Down dwell time) keep these settings in step
                 window.addEventListener('gazebridge:option', e => {
                     if (e.detail.pointer) gazeSettings.pointer = e.detail.pointer;
@@ -10148,30 +10239,57 @@
                 });
 
                 // --- tracker connection (USB) ---
+                const EYES = { both: 'both eyes', left: 'left eye', right: 'right eye', either: 'either eye' };
                 function syncUsbUi() {
-                    const sel = $g('gaze-source'); sel.value = useUsb() ? 'usb' : 'server';
+                    const sel = $g('gaze-source'); sel.value = useUsb() ? 'usb' : useCam() ? 'webcam' : 'server';
                     if (!td) { sel.querySelector('option[value=usb]').disabled = true; sel.querySelector('option[value=usb]').textContent = 'Tracker on this computer (needs Chrome or Edge)'; }
+                    if (!wg) { sel.querySelector('option[value=webcam]').disabled = true; sel.querySelector('option[value=webcam]').textContent = 'Webcam on this computer (not available in this browser)'; }
                     $g('gaze-usb').style.display = useUsb() ? '' : 'none';
+                    $g('gaze-webcam').hidden = !useCam();
+                    $g('gaze-screen-row').style.display = useUsb() || useCam() ? '' : 'none';
+                    $g('gaze-usb-browser').style.display = srcKind() === 'usb' ? '' : 'none';
+                    { const s = useCam() ? wg.state() : td ? td.state() : null; if (s && document.activeElement !== $g('gaze-screen-in')) $g('gaze-screen-in').value = s.diagIn || ''; }
+                    if (wg) {
+                        const w = wg.state();
+                        $g('gaze-wc-connect').textContent = wg.running ? 'Stop camera' : 'Start camera';
+                        $g('gaze-wc-connect').classList.toggle('gz-primary', !wg.running);
+                        $g('gaze-wc-tools').classList.toggle('gz-primary', wg.running && w.status === 'live' && !w.calibrated);
+                        $g('gaze-wc-clear-cal').hidden = !w.anyCalibration;
+                        $g('gaze-wc-cal-box').classList.toggle('is-done', w.calibrated);
+                        $g('gaze-wc-cal-note').textContent = w.calibrated ? 'Calibrated ' + new Date(w.cal.created).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) + ' · ' + EYES[w.eyeMode] + (w.cal.score != null ? ' · accuracy ' + w.cal.score + ' / 100' : '') + (w.cal.errDeg != null ? ' (about ' + w.cal.errDeg + '° off)' : '') + (w.drift && w.drift.far ? ' · the head has moved since' : '')
+                            : (w.anyCalibration ? 'Not calibrated for ' + EYES[w.eyeMode] + ' yet. Click Set up and calibrate.' : 'Not calibrated yet. Start the camera, then click Set up and calibrate.');
+                    }
                     if (!td) return; const s = td.state();
-                    if (document.activeElement !== $g('gaze-screen-in')) $g('gaze-screen-in').value = s.diagIn || '';
                     $g('gaze-connect').textContent = td.running ? 'Disconnect' : 'Connect tracker';
                     $g('gaze-connect').classList.toggle('gz-primary', !td.running);
                     $g('gaze-tools-open').classList.toggle('gz-primary', td.running && s.status === 'live' && !s.calibrated);
                     $g('gaze-clear-cal').hidden = !s.calibrated;
                     $g('gaze-cal-box').classList.toggle('is-done', s.calibrated);
-                    $g('gaze-cal-note').textContent = s.calibrated ? 'Calibrated ' + new Date(s.cal.created).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) + (s.cal.grade ? ' · ' + s.cal.grade : '') + (s.cal.errDeg != null ? ' (about ' + s.cal.errDeg + '° off)' : '')
-                        : 'Not calibrated yet. Sit where the child will sit, then click Calibrate.';
+                    $g('gaze-cal-note').textContent = s.calibrated ? 'Calibrated ' + new Date(s.cal.created).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) + ' · ' + EYES[s.eyeMode] + (s.cal.score != null ? ' · accuracy ' + s.cal.score + ' / 100' : '') + (s.cal.errDeg != null ? ' (about ' + s.cal.errDeg + '° off)' : '')
+                        : (s.anyCalibration ? 'Not calibrated for ' + EYES[s.eyeMode] + ' yet. Click Set up and calibrate.' : 'Not calibrated yet. Sit where the child will sit, then click Set up and calibrate.');
                 }
                 if (td) td.onChange(syncUsbUi);
+                if (wg) { let wcAt = 0; wg.onChange(() => { const now = performance.now(); if (now - wcAt > 150) { wcAt = now; syncUsbUi(); } else setTimeout(syncUsbUi, 160); }); }
                 $g('gaze-source').addEventListener('change', e => {
                     gazeSettings.source = e.target.value; saveGaze();
                     if (gazeSettings.enabled) { stopGaze(); setGazeStatus('Connecting…', 'wait'); startGaze(); }
                     syncUsbUi();
                 });
                 $g('gaze-screen-in').addEventListener('change', e => {
+                    if (wg) wg.setScreenInches(e.target.value);
+                    if (!td) return;
                     td.setScreenInches(e.target.value);
                     if (td.running) { td.disconnect(); setTimeout(() => td.autoConnect(), 400); }
                 });
+                if (wg) {
+                    $g('gaze-wc-connect').addEventListener('click', () => {
+                        if (!gazeSettings.enabled) setGazeEnabled(true);
+                        if (wg.running) { wg.disconnect(); return; }
+                        wg.connect();
+                    });
+                    $g('gaze-wc-tools').addEventListener('click', () => { if (!gazeSettings.enabled) setGazeEnabled(true); if (!wg.running) wg.connect(); if (camTools) camTools.toggle(); });
+                    $g('gaze-wc-clear-cal').addEventListener('click', () => wg.clearCalibration());
+                }
                 $g('gaze-connect').addEventListener('click', () => {
                     if (!gazeSettings.enabled) setGazeEnabled(true);
                     if (td.running) { td.disconnect(); return; }
@@ -10180,6 +10298,28 @@
                 });
                 $g('gaze-tools-open').addEventListener('click', () => { if (!gazeSettings.enabled) setGazeEnabled(true); if (tools) tools.toggle(); });
                 $g('gaze-clear-cal').addEventListener('click', () => td.clearCalibration());
+
+                // --- eye camera: the tracker's infrared picture of the eyes, in a corner of the page and/or of the recording (both off unless switched on) ---
+                // It is only asked for from the tracker while one of the two is on; the same stream the position guide uses, alongside the gaze.
+                const camCv = document.createElement('canvas'); camCv.className = 'gz-cam'; camCv.width = camCv.height = 280; camCv.hidden = true; camCv.setAttribute('aria-hidden', 'true'); canvasContainer.appendChild(camCv);
+                let camAt = 0, unCam = null, camTick = 0;
+                gazeCameraFn = () => (performance.now() - camAt < 1500 ? camCv : null);
+                let camFrom = null;
+                function syncCamera() {
+                    const kind = useUsb() ? 'usb' : useCam() ? 'webcam' : null;
+                    const want = !!gazeLink && !!kind && !!(window.GazeTools && GazeTools.livePicture) && (gazeSettings.camLive || gazeSettings.camRec);
+                    if (unCam && (!want || camFrom !== kind)) { unCam(); unCam = null; clearInterval(camTick); camAt = 0; }
+                    if (want && !unCam) {
+                        camFrom = kind;
+                        if (kind === 'usb') unCam = td.onImage(px => { GazeTools.livePicture(px, camCv); camAt = performance.now(); if (gazeSettings.camLive) camCv.hidden = false; });
+                        else { let drawnAt = 0; unCam = wg.onFrame(() => { const now = performance.now(); if (now - drawnAt < 66) return; drawnAt = now; if (wg.drawEyes(camCv)) { camAt = now; if (gazeSettings.camLive) camCv.hidden = false; } }); }   // the webcam's own picture of the eyes, ~15 a second
+                        camTick = setInterval(() => { if (performance.now() - camAt > 1500) camCv.hidden = true; }, 500);      // the tracker lost the eyes or was unplugged
+                    }
+                    camCv.className = 'gz-cam gz-cam--' + gazeSettings.camCorner + ' gz-cam--' + gazeSettings.camSize;
+                    if (!want || !gazeSettings.camLive) camCv.hidden = true;
+                    else if (performance.now() - camAt < 1500) camCv.hidden = false;
+                }
+                if (!td && !wg) ['gaze-cam', 'gaze-cam-rec'].forEach(id => { $g(id).disabled = true; $g(id).title = 'Needs the tracker or a webcam on this computer'; });
 
                 // --- what the child looked at: log + name reading ---
                 const targetLabel = obj => (obj.name && String(obj.name).trim()) || getDefaultSpeechText(obj) || 'Target';
@@ -10246,6 +10386,53 @@
                 }, true);
             } else {
                 const el = document.getElementById('gaze-enable'); if (el) { el.disabled = true; }
+            }
+
+            // --- Recording: a video of the canvas with the "recording" gaze effects drawn over the targets ---
+            // Start / stop from the button in the Eye Tracking section, the red button in Display, the small red pill while recording, or the R key.
+            if (gazeRec) {
+                const recBtn = document.getElementById('gaze-rec-btn'), recLabel = document.getElementById('gaze-rec-label'), recStat = document.getElementById('gaze-rec-status');
+                const recTool = document.getElementById('rec-toolbar-btn'), recPill = document.getElementById('rec-pill'), recPillTime = document.getElementById('rec-pill-time');
+                const baseTitle = document.title; let recTimer = 0, recBusy = false;
+                const recAllowed = () => !!gazeSettings.enabled;           // recording belongs to eye gaze: no button, no hotkey while it is off
+                recTool.hidden = !recAllowed();
+                const mmss = ms => { const t = Math.floor(ms / 1000); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
+                function recUi(on, text, time) {
+                    recLabel.textContent = on ? 'Stop and save' : 'Start recording'; recBtn.setAttribute('aria-pressed', String(on)); recBtn.classList.toggle('is-recording', on);
+                    recTool.setAttribute('aria-pressed', String(on)); recTool.setAttribute('aria-label', on ? 'Stop recording' : 'Start recording'); recTool.classList.toggle('is-recording', on);
+                    recPill.hidden = !on; recPillTime.textContent = time || '0:00'; recStat.textContent = text; document.title = on ? '● REC ' + baseTitle : baseTitle;
+                }
+                async function toggleRecording() {
+                    if (recBusy) return; recBusy = true;
+                    try {
+                        if (!gazeRec.recording) {
+                            await gazeRec.start();
+                            recUi(true, 'Recording…', '0:00'); recTimer = setInterval(() => { const t = mmss(gazeRec.elapsed()); recUi(true, 'Recording ' + t, t); }, 500);
+                            showToast('Recording started', 'Press R to stop and save.', 'info');
+                        } else {
+                            clearInterval(recTimer); recUi(false, 'Saving…');
+                            const r = await gazeRec.stop();
+                            if (r && r.blob.size) {
+                                const a = document.createElement('a'); a.href = URL.createObjectURL(r.blob); a.download = r.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+                                recUi(false, 'Saved ' + r.name + ' (' + mmss(r.ms) + ') to your Downloads'); showToast('Recording saved', r.name, 'info');
+                            } else recUi(false, 'Nothing was recorded');
+                        }
+                    } catch (err) { clearInterval(recTimer); recUi(false, 'Could not record: ' + (err.message || err)); showToast('Could not record', String(err.message || err), 'error'); }
+                    recBusy = false;
+                }
+                window.addEventListener('gaze:enabled', () => { recTool.hidden = !recAllowed(); if (!recAllowed() && gazeRec.recording) toggleRecording(); });      // switching eye gaze off saves what was recorded
+                recBtn.addEventListener('click', toggleRecording);
+                recTool.addEventListener('click', toggleRecording);
+                recPill.addEventListener('click', toggleRecording);
+                // R on its own (not while typing, in a dialog, or when a target already uses R as its animation key); Ctrl+Alt+R always works
+                window.addEventListener('keydown', e => {
+                    if (!recAllowed()) return;
+                    if (e.ctrlKey && e.altKey && e.code === 'KeyR') { e.preventDefault(); toggleRecording(); return; }
+                    if (e.code !== 'KeyR' || e.ctrlKey || e.altKey || e.metaKey || e.shiftKey || e.repeat || e.isComposing) return;
+                    if (e.target.closest?.('input, textarea, select, [contenteditable="true"], [role="dialog"], dialog')) return;
+                    if (objects.some(o => o.triggerOnKey && o.triggerKey && o.triggerKey.toLowerCase() === 'r')) return;
+                    e.preventDefault(); e.stopImmediatePropagation(); toggleRecording();
+                }, true);
             }
 
             // Warn before page unload

@@ -78,3 +78,63 @@
 
 html[data-menu-colour="high-contrast"] #gaze-options :is(.gz-sub, .gz-status, .gaze-log-row) { background: transparent; border-color: var(--md-on-surface); }
 html[data-menu-colour="high-contrast"] #gaze-options .gz-seg button[aria-checked=true] { background: var(--hc-fill, var(--md-primary)); color: var(--hc-on, var(--md-on-primary)); }
+
+/* Record button: the first thing in the section, so it is always one tap away */
+#gaze-options .gz-recbar { padding-bottom: 6px; }
+#gaze-options .gz-recbtn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 48px; margin: 0 0 10px; padding: 10px 14px; border-radius: 12px;
+    border: 1px solid var(--md-outline); background: var(--md-surface-variant, var(--md-surface)); color: var(--md-on-surface); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+#gaze-options .gz-recbtn:hover { border-color: #ef4444; }
+#gaze-options .gz-recbtn:focus-visible { outline: 2px solid var(--md-primary); outline-offset: 2px; }
+#gaze-options .gz-recbtn kbd { margin-left: auto; padding: 1px 8px; border-radius: 6px; border: 1px solid var(--md-outline); background: var(--md-surface); font: inherit; font-size: 12px; font-weight: 700; color: var(--md-on-surface-muted); }
+#gaze-options .gz-recdot { flex: none; width: 14px; height: 14px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 0 3px rgb(239 68 68 / 25%); }
+#gaze-options .gz-recbtn.is-recording { border-color: transparent; background: #dc2626; color: #fff; }
+#gaze-options .gz-recbtn.is-recording .gz-recdot { border-radius: 3px; background: #fff; box-shadow: none; }
+#gaze-options .gz-recbtn.is-recording kbd { border-color: rgb(255 255 255 / 55%); background: transparent; color: #fff; }
+#gaze-options .gz-recbar:has(.is-recording) .gz-status__dot { background: #ef4444; box-shadow: 0 0 0 3px rgb(239 68 68 / 25%); }
+
+/* What to show: one row per effect, a Live column and a Recording column */
+#gaze-options .gz-matrix { display: grid; gap: 0; margin: 4px 0 8px; border: 1px solid var(--md-outline); border-radius: 12px; overflow: hidden; background: color-mix(in srgb, var(--md-surface) 65%, transparent); }
+#gaze-options .gz-mhead, #gaze-options .gz-mrow { display: grid; grid-template-columns: minmax(0, 1fr) 66px 66px; align-items: center; gap: 6px; padding: 8px 10px; }
+#gaze-options .gz-mhead { padding-block: 6px; font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; text-align: center; color: var(--md-on-surface-muted);
+    background: color-mix(in srgb, var(--md-surface) 85%, transparent); }
+#gaze-options .gz-mrow + .gz-mrow { border-top: 1px solid var(--md-outline); }
+#gaze-options .gz-mname { display: grid; gap: 1px; min-width: 0; font-size: 12.5px; font-weight: 650; color: var(--md-on-surface); }
+#gaze-options .gz-mname small { font-size: 11px; font-weight: 400; line-height: 1.25; color: var(--md-on-surface-muted); }
+#gaze-options .gz-matrix .gz-msw { justify-self: center; }
+#gaze-options .gz-matrix .gz-msel { width: 100%; min-width: 0; min-height: 32px; padding: 3px 2px 3px 6px; font-size: 11.5px; }
+#gaze-options .gz-details { margin: 0 0 10px; }
+#gaze-options .gz-details > summary { padding: 6px 2px; font-size: 12px; font-weight: 650; color: var(--md-primary); cursor: pointer; }
+#gaze-options .gz-details[open] > summary { margin-bottom: 6px; }
+#gaze-options .gz-details .gz-sub { margin: 0 0 8px; }
+#gaze-options .gz-details .gz-row { grid-template-columns: 82px minmax(0, 1fr) 42px; }
+#gaze-options .gz-buttons--one { grid-template-columns: 1fr; }
+
+/* toolbar button and the small indicator that stays on screen while recording */
+#controls-drawer .toolbar-icon-btn.rec-toolbar-btn { color: #ef4444; }
+#controls-drawer .toolbar-icon-btn.rec-toolbar-btn.is-recording { background: #dc2626; color: #fff; }
+.rec-toolbar-btn.is-recording svg circle:first-child { animation: rec-blink 1.1s ease-in-out infinite; }
+.rec-pill { position: fixed; right: 14px; bottom: 14px; z-index: 2147483100; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 0; border-radius: 999px;
+    background: rgb(0 0 0 / 55%); color: #fff; font: 600 12px/1 system-ui, sans-serif; font-variant-numeric: tabular-nums; cursor: pointer; opacity: .55; transition: opacity .15s; }
+.rec-pill:hover, .rec-pill:focus-visible { opacity: 1; }
+.rec-pill[hidden] { display: none; }
+.rec-pill__dot { width: 10px; height: 10px; border-radius: 50%; background: #ef4444; animation: rec-blink 1.1s ease-in-out infinite; }
+@keyframes rec-blink { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .rec-pill__dot, .rec-toolbar-btn.is-recording svg circle:first-child { animation: none; } }
+
+/* the eye camera picture in a corner of the page (mirrored; it never takes clicks) */
+#canvas-container .gz-cam { position: absolute; z-index: 5; width: 20%; min-width: 110px; max-width: 360px; aspect-ratio: 1; height: auto; margin: 14px; pointer-events: none;
+    transform: scaleX(-1); border: 2px solid rgb(255 255 255 / 75%); border-radius: 12px; box-shadow: 0 6px 20px rgb(0 0 0 / 40%); background: #05080a; }
+#canvas-container .gz-cam[hidden] { display: none; }
+#canvas-container .gz-cam--small { width: 14%; }
+#canvas-container .gz-cam--large { width: 28%; }
+#canvas-container .gz-cam--bottom-left { left: 0; bottom: 0; }
+#canvas-container .gz-cam--bottom-right { right: 0; bottom: 0; }
+#canvas-container .gz-cam--top-left { left: 0; top: 0; }
+#canvas-container .gz-cam--top-right { right: 0; top: 0; }
+#gaze-options .gz-details .gz-row select { min-width: 0; min-height: 32px; font-size: 12px; }
+
+#gaze-options .gz-card[hidden], .rec-toolbar-btn[hidden] { display: none !important; }
+#gaze-options .gz-details .gz-row--select { grid-template-columns: 82px minmax(0, 1fr); }
+html[data-menu-colour="high-contrast"] #gaze-options :is(.gz-matrix, .gz-mhead, .gz-recbtn) { background: transparent; border-color: var(--md-on-surface); }
+html[data-menu-colour="high-contrast"] #gaze-options .gz-recbtn.is-recording { background: var(--md-on-surface); color: var(--md-surface); }
+html[data-menu-colour="high-contrast"] #gaze-options .gz-mrow + .gz-mrow { border-color: var(--md-on-surface); }

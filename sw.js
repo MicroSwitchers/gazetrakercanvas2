@@ -1,5 +1,5 @@
-const CACHE_NAME = 'gaze-tracker-v2026.10.11.003'; // Update this with each deployment
-const APP_VERSION = '2026.10.11.003'; // Keep in sync with main app version
+const CACHE_NAME = 'gaze-tracker-v2026.10.15.001'; // Update this with each deployment
+const APP_VERSION = '2026.10.15.001'; // Keep in sync with main app version
 const urlsToCache = [
   './',
   './index.html',
@@ -20,11 +20,17 @@ const urlsToCache = [
   './js/media-store.js',
   './js/media-library.js',
   './js/gaze-bridge.js',
+  './js/gaze-record.js',
   './js/calmath.js',
+  './js/eye-model.js',
   './js/tet-usb.js',
   './js/tet-direct.js',
   './js/gaze-tools.js',
+  './js/webcam-model.js',
+  './js/webcam-gaze.js',
+  './js/webcam-worker.js',
   './data/tet-init.bin',
+  // vendor/mediapipe (webcam eye tracking, ~16 MB) is not stored up front: it is cached the first time the webcam is used
   // JavaScript modules
   './js/pwa.js',
   './js/service-worker-manager.js',

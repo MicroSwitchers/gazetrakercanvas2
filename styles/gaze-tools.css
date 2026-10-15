@@ -1,4 +1,4 @@
-/* Calibration tools: the side panel (position guide, calibrate, check) and the hold-Ctrl position guide. Uses the app's theme variables. */
+/* Eye tracker set-up: the side panel (position, which eyes, calibrate) and the hold-Ctrl position guide. Uses the app's theme variables. */
 .gt-panel { position: fixed; top: 12px; bottom: 12px; left: 12px; z-index: 60; display: flex; flex-direction: column; width: min(468px, calc(100vw - 24px)); box-sizing: border-box;
     border-radius: 18px; border: 1px solid var(--md-outline); background: var(--md-surface); color: var(--md-on-surface); box-shadow: 0 18px 56px rgb(0 0 0 / 40%); font-family: Inter, "Segoe UI", system-ui, sans-serif; overflow: hidden; }
 .gt-panel[hidden], .gt-peek[hidden], .gt-page[hidden] { display: none; }
@@ -7,13 +7,7 @@
 .gt-title span { font-size: 12px; color: var(--md-on-surface-muted); }
 .gt-x { flex: none; width: 32px; height: 32px; border-radius: 10px; border: 1px solid var(--md-outline); background: var(--md-surface-variant); color: var(--md-on-surface); font-size: 20px; line-height: 1; cursor: pointer; }
 .gt-x:hover { border-color: var(--md-primary); }
-.gt-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 0 16px 12px; border-bottom: 1px solid var(--md-outline); }
-.gt-step { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 38px; padding: 6px 8px; border-radius: 11px; border: 1px solid var(--md-outline); background: var(--md-surface-variant); color: var(--md-on-surface-muted); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; }
-.gt-step i { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--md-outline); color: var(--md-on-surface); font-style: normal; font-size: 11px; font-weight: 700; }
-.gt-step.done i { background: #34d399; color: #052e1f; font-size: 0; }
-.gt-step.done i::before { content: "✓"; font-size: 12px; }
-.gt-step[aria-selected=true] { border-color: var(--md-primary); background: var(--md-primary-container); color: var(--md-on-primary-container, var(--md-on-surface)); }
-.gt-step:focus-visible, .gt-btn:focus-visible, .gt-x:focus-visible { outline: 2px solid var(--md-primary); outline-offset: 2px; }
+.gt-btn:focus-visible, .gt-x:focus-visible { outline: 2px solid var(--md-primary); outline-offset: 2px; }
 .gt-body { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--md-outline) transparent; padding: 14px 16px 18px; }
 .gt-page { display: grid; gap: 12px; align-content: start; }
 
@@ -64,3 +58,8 @@
 .gt-peek-state.good { border-left-color: #34d399; } .gt-peek-state.warn { border-left-color: #fbbf24; } .gt-peek-state.bad { border-left-color: #f87171; }
 @media (max-width: 760px) { .gt-panel { left: 8px !important; right: 8px; width: auto; top: 8px; bottom: 8px; } }
 html[data-menu-colour="high-contrast"] .gt-panel, html[data-menu-colour="high-contrast"] .gt-card { border-color: var(--md-on-surface); }
+
+.gt-row { flex-wrap: wrap; }
+.gt-row .gt-btn { flex: 1 1 auto; }
+.gt-card > .gt-input { width: 100%; box-sizing: border-box; }
+.gt-note[hidden] { display: none; }

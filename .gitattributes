@@ -1,0 +1,7 @@
+*.sh text eol=lf
+*.rules text eol=lf
+*.bat text eol=crlf
+vendor/** -text
+*.bin binary
+*.task binary
+*.wasm binary
